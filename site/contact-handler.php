@@ -27,6 +27,7 @@ $name    = htmlspecialchars(strip_tags(trim($_POST['name'] ?? '')));
 $email   = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
 $phone   = htmlspecialchars(strip_tags(trim($_POST['phone'] ?? '')));
 $vehicle = htmlspecialchars(strip_tags(trim($_POST['vehicle'] ?? '')));
+$plate   = strtoupper(htmlspecialchars(strip_tags(trim($_POST['plate'] ?? ''))));
 $message = htmlspecialchars(strip_tags(trim($_POST['message'] ?? '')));
 
 // Validate required fields
@@ -49,7 +50,8 @@ $body .= "=============================================\n\n";
 $body .= "Name:    $name\n";
 $body .= "Email:   $email\n";
 $body .= "Phone:   $phone\n";
-$body .= "Vehicle: $vehicle\n\n";
+$body .= "Vehicle: $vehicle\n";
+$body .= "Plate:   $plate\n\n";
 $body .= "Message:\n$message\n";
 
 $headers  = "From: noreply@tireplus.ca\r\n";
