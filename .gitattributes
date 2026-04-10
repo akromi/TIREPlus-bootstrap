@@ -1,2 +1,6 @@
-*.png binaryn*.jpg binaryn*.jpeg binaryn*.ico binaryn*.gif binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.gif binary
 *.webp binary
