@@ -347,6 +347,24 @@ img { max-width: 100%; height: auto; }
   width: 100%;
 }
 
+/* ---------- Booking Iframe ---------- */
+.booking-frame-container {
+  border-radius: var(--tp-radius);
+  overflow: hidden;
+  box-shadow: var(--tp-shadow-sm);
+  border: 1px solid var(--tp-gray-200);
+  background: var(--tp-white);
+}
+.booking-frame {
+  width: 100%;
+  height: 750px;
+  border: 0;
+  display: block;
+}
+@media (max-width: 575.98px) {
+  .booking-frame { height: 600px; }
+}
+
 /* ---------- Contact Form ---------- */
 .contact-form .form-label {
   font-weight: 600;
