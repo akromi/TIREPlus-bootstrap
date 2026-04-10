@@ -17,7 +17,7 @@ if (!isset($_POST['math']) || intval($_POST['math']) !== 18) {
 }
 
 // Honeypot: hidden field that bots fill in
-if (!empty($_POST['website'])) {
+if (!empty($_POST['company_url'])) {
     header('Location: /contact-us/?status=success');
     exit;
 }

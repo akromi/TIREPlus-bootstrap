@@ -55,7 +55,6 @@
 
   <main id="main-content">
 
-    <!-- ===== PAGE HEADER ===== -->
     <section class="page-header">
       <div class="container">
         <h1>Contact Us</h1>
@@ -63,36 +62,16 @@
       </div>
     </section>
 
-    <!-- ===== CONTACT CONTENT ===== -->
     <section class="section-padding">
       <div class="container">
         <div class="row gy-5">
 
-          <!-- Contact Form -->
           <div class="col-lg-7">
             <h2 class="h4 mb-4">Send Us a Message</h2>
 
-            <!--
-              ============================================================
-              CONTACT FORM
-              ============================================================
-              This is a static HTML form. To make it functional you need
-              one of these approaches:
+            <div id="form-status"></div>
 
-              Option A – Formspree (easiest, no backend):
-                Change the <form> action to https://formspree.io/f/YOUR_FORM_ID
-                and set method="POST". Sign up at formspree.io.
-
-              Option B – mailto fallback:
-                action="mailto:info@tireplus.ca" method="POST" enctype="text/plain"
-
-              Option C – Custom PHP handler on SiteGround:
-                Point the action to /contact-handler.php and write
-                a simple mail() script.
-
-              The math challenge is a simple anti-spam measure.
-            -->
-            <form class="contact-form" action="#" method="POST" novalidate>
+            <form class="contact-form" action="/contact-handler.php" method="POST" novalidate>
               <div class="row g-3">
                 <div class="col-md-6">
                   <label for="cf-name" class="form-label">Name <span class="text-red">*</span></label>
@@ -115,7 +94,11 @@
                   <textarea class="form-control" id="cf-message" name="message" rows="5" required></textarea>
                 </div>
 
-                <!-- Simple anti-spam -->
+                <div class="col-12" style="display:none;" aria-hidden="true">
+                  <label for="cf-hp">Company</label>
+                  <input type="text" id="cf-hp" name="company_url" tabindex="-1" autocomplete="off">
+                </div>
+
                 <div class="col-md-4">
                   <label for="cf-math" class="form-label">What is 12 + 6? <span class="text-red">*</span></label>
                   <input type="text" class="form-control" id="cf-math" name="math" required inputmode="numeric" autocomplete="off">
@@ -129,9 +112,20 @@
               </div>
             </form>
 
-            <!-- Client-side validation + anti-spam check -->
             <script>
               (function(){
+                var params = new URLSearchParams(window.location.search);
+                var statusEl = document.getElementById('form-status');
+                if (params.get('status') === 'success') {
+                  statusEl.innerHTML = '<div class="alert alert-success mt-3" role="alert"><strong>Thank you!</strong> Your message has been sent. We will reply as soon as possible.</div>';
+                } else if (params.get('status') === 'error') {
+                  var reason = params.get('reason');
+                  var msg = 'Something went wrong. Please try again or call us at <a href="tel:6138347325">613-834-7325</a>.';
+                  if (reason === 'math') msg = 'Please answer the math question correctly (12 + 6 = ?).';
+                  if (reason === 'required') msg = 'Please fill in all required fields.';
+                  if (reason === 'email') msg = 'Please enter a valid email address.';
+                  statusEl.innerHTML = '<div class="alert alert-danger mt-3" role="alert">' + msg + '</div>';
+                }
                 var form = document.querySelector('.contact-form');
                 if(!form) return;
                 form.addEventListener('submit', function(e){
@@ -146,7 +140,6 @@
             </script>
           </div>
 
-          <!-- Location Info -->
           <div class="col-lg-5">
             <h2 class="h4 mb-4">Our Location</h2>
 
@@ -206,7 +199,6 @@
     </section>
 
   </main>
-
   <!-- ===== FOOTER ===== -->
   <footer class="footer" role="contentinfo">
     <div class="container">
