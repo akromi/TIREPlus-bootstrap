@@ -1,0 +1,52 @@
+# ==============================================================================
+# Deploy to SiteGround Staging (FTPS)
+# ==============================================================================
+# Triggers on every push to the "main" branch.
+# Uploads the CONTENTS of /site to the staging web root.
+#
+# Required GitHub repository secrets:
+#   FTP_SERVER    – e.g. staging2.tireplus.ca  (or SiteGround FTPS host)
+#   FTP_USERNAME  – your SiteGround FTP user
+#   FTP_PASSWORD  – your SiteGround FTP password
+#   FTP_REMOTE    – remote path, e.g. /staging2.tireplus.ca/public_html
+#
+# Docs: https://github.com/SamKirkland/FTP-Deploy-Action
+
+name: Deploy Staging
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:          # allow manual trigger from GitHub UI
+
+jobs:
+  deploy:
+    name: FTPS Deploy to SiteGround
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build pages from partials
+        run: node build.js
+
+      - name: Deploy via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server:   ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port:     21
+          local-dir: ./site/             # upload CONTENTS of /site
+          server-dir: ${{ secrets.FTP_REMOTE }}/
+          dangerous-clean-slate: true    # remove stale files on staging
+          log-level: standard

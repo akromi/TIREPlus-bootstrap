@@ -1,0 +1,157 @@
+---
+title: Contact Us – Tire Plus | Orleans, ON
+description: Contact Tire Plus in Orleans, Ontario. Call 613-834-7325 or send us a message.
+---
+  <main id="main-content">
+
+    <!-- ===== PAGE HEADER ===== -->
+    <section class="page-header">
+      <div class="container">
+        <h1>Contact Us</h1>
+        <p>Complete the form below and we'll reply as soon as possible.</p>
+      </div>
+    </section>
+
+    <!-- ===== CONTACT CONTENT ===== -->
+    <section class="section-padding">
+      <div class="container">
+        <div class="row gy-5">
+
+          <!-- Contact Form -->
+          <div class="col-lg-7">
+            <h2 class="h4 mb-4">Send Us a Message</h2>
+
+            <!--
+              ============================================================
+              CONTACT FORM
+              ============================================================
+              This is a static HTML form. To make it functional you need
+              one of these approaches:
+
+              Option A – Formspree (easiest, no backend):
+                Change the <form> action to https://formspree.io/f/YOUR_FORM_ID
+                and set method="POST". Sign up at formspree.io.
+
+              Option B – mailto fallback:
+                action="mailto:info@tireplus.ca" method="POST" enctype="text/plain"
+
+              Option C – Custom PHP handler on SiteGround:
+                Point the action to /contact-handler.php and write
+                a simple mail() script.
+
+              The math challenge is a simple anti-spam measure.
+            -->
+            <form class="contact-form" action="#" method="POST" novalidate>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="cf-name" class="form-label">Name <span class="text-red">*</span></label>
+                  <input type="text" class="form-control" id="cf-name" name="name" required autocomplete="name">
+                </div>
+                <div class="col-md-6">
+                  <label for="cf-email" class="form-label">Email Address <span class="text-red">*</span></label>
+                  <input type="email" class="form-control" id="cf-email" name="email" required autocomplete="email">
+                </div>
+                <div class="col-md-6">
+                  <label for="cf-phone" class="form-label">Phone</label>
+                  <input type="tel" class="form-control" id="cf-phone" name="phone" autocomplete="tel">
+                </div>
+                <div class="col-md-6">
+                  <label for="cf-vehicle" class="form-label">Year, Make &amp; Model</label>
+                  <input type="text" class="form-control" id="cf-vehicle" name="vehicle" placeholder="e.g. 2022 Toyota RAV4">
+                </div>
+                <div class="col-12">
+                  <label for="cf-message" class="form-label">What is your question? <span class="text-red">*</span></label>
+                  <textarea class="form-control" id="cf-message" name="message" rows="5" required></textarea>
+                </div>
+
+                <!-- Simple anti-spam -->
+                <div class="col-md-4">
+                  <label for="cf-math" class="form-label">What is 12 + 6? <span class="text-red">*</span></label>
+                  <input type="text" class="form-control" id="cf-math" name="math" required inputmode="numeric" autocomplete="off">
+                </div>
+
+                <div class="col-12">
+                  <button type="submit" class="btn btn-submit">
+                    <i class="bi bi-send me-1"></i> Submit
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <!-- Client-side validation + anti-spam check -->
+            <script>
+              (function(){
+                var form = document.querySelector('.contact-form');
+                if(!form) return;
+                form.addEventListener('submit', function(e){
+                  var math = document.getElementById('cf-math');
+                  if(math && parseInt(math.value,10) !== 18){
+                    e.preventDefault();
+                    alert('Please answer the math question correctly.');
+                    math.focus();
+                  }
+                });
+              })();
+            </script>
+          </div>
+
+          <!-- Location Info -->
+          <div class="col-lg-5">
+            <h2 class="h4 mb-4">Our Location</h2>
+
+            <div class="location-card">
+              <div class="map-embed">
+                <iframe
+                  data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2798.8!2d-75.53993!3d45.4648295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cce119150707327%3A0x2b35a26698ddde67!2sTire+Plus+Ltd!5e0!3m2!1sen!2sca!4v1700000000000"
+                  title="Tire Plus location on Google Maps"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  allowfullscreen
+                ></iframe>
+              </div>
+              <div class="location-info">
+                <h4>Orleans</h4>
+                <div class="loc-detail">
+                  <i class="bi bi-geo-alt-fill"></i>
+                  <span>
+                    <a href="https://www.google.ca/maps/place/Tire+Plus+Ltd/@45.4648295,-75.53993,17z" target="_blank" rel="noopener" class="text-decoration-none">
+                      2006 St. Joseph Blvd., Orleans, ON
+                    </a>
+                    <br><small class="text-muted">at Jeanne D'Arc &amp; St. Joseph</small>
+                  </span>
+                </div>
+                <div class="loc-detail">
+                  <i class="bi bi-telephone-fill"></i>
+                  <a href="tel:6138347325" class="text-decoration-none">613-834-7325</a>
+                </div>
+                <div class="loc-detail">
+                  <i class="bi bi-clock-fill"></i>
+                  <span>
+                    Mon–Fri: 8:00 AM – 5:30 PM<br>
+                    Saturday: 8:00 AM – 4:00 PM
+                  </span>
+                </div>
+                <div class="loc-detail">
+                  <i class="bi bi-envelope-fill"></i>
+                  <a href="mailto:info@tireplus.ca" class="text-decoration-none">info@tireplus.ca</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 d-flex flex-wrap gap-2">
+              <a href="https://www.google.ca/maps/place/Tire+Plus+Ltd/@45.4648295,-75.53993,17z"
+                 class="btn btn-outline-dark" target="_blank" rel="noopener">
+                <i class="bi bi-map me-1"></i> Get Directions
+              </a>
+              <a href="https://my.workshopsoftware.com/bookings.html#/TirePlus?token=o36ivi"
+                 class="btn btn-cta btn-cta-primary" target="_blank" rel="noopener">
+                Book Appointment
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
