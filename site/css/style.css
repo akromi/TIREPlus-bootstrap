@@ -238,21 +238,27 @@ img { max-width: 100%; height: auto; }
   transform: translateY(-4px);
   box-shadow: var(--tp-shadow);
 }
+.service-card .sc-header {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: .4rem;
+}
 .service-card .sc-icon {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   background: var(--tp-gray-100);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: .95rem;
   color: var(--tp-red);
-  margin-bottom: .5rem;
+  flex-shrink: 0;
 }
 .service-card h5 {
   font-size: .95rem;
-  margin-bottom: .25rem;
+  margin-bottom: 0;
 }
 .service-card p {
   font-size: .82rem;
