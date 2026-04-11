@@ -21,7 +21,7 @@
 }
 
 /* ---------- Base ---------- */
-html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; font-size: 125%; }
 
 body {
   font-family: 'Source Sans 3', system-ui, -apple-system, sans-serif;
