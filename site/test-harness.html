@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Test Harness – Tire Plus</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; line-height: 1.6; }
+    .container { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
+    h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: .25rem; }
+    .subtitle { color: #94a3b8; font-size: .9rem; margin-bottom: 1.5rem; }
+    .controls { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .btn { padding: .6rem 1.5rem; border: none; border-radius: .4rem; font-weight: 700; font-size: .9rem; cursor: pointer; transition: all .2s; }
+    .btn-run { background: #22c55e; color: #000; }
+    .btn-run:hover { background: #16a34a; }
+    .btn-run:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+    .btn-clear { background: #334155; color: #94a3b8; }
+    .btn-clear:hover { background: #475569; }
+    .summary { display: flex; gap: 1.5rem; margin-bottom: 1rem; font-size: .95rem; }
+    .summary .pass { color: #22c55e; }
+    .summary .fail { color: #ef4444; }
+    .summary .warn { color: #f59e0b; }
+    .summary .total { color: #94a3b8; }
+    .progress-bar { width: 100%; height: 6px; background: #1e293b; border-radius: 3px; margin-bottom: 1.5rem; overflow: hidden; }
+    .progress-fill { height: 100%; background: #22c55e; width: 0%; transition: width .3s; border-radius: 3px; }
+    .progress-fill.has-fail { background: #ef4444; }
+    .section-header { background: #1e293b; padding: .5rem .75rem; margin: 1rem 0 .25rem; border-radius: .4rem; font-weight: 700; font-size: .85rem; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; cursor: pointer; user-select: none; display: flex; justify-content: space-between; }
+    .section-header:hover { background: #334155; }
+    .section-header .counts { font-weight: 400; }
+    .test-row { display: flex; align-items: flex-start; gap: .5rem; padding: .35rem .75rem; font-size: .85rem; border-bottom: 1px solid #1e293b; }
+    .test-row:last-child { border-bottom: none; }
+    .test-row .icon { flex-shrink: 0; font-size: .9rem; width: 1.2rem; text-align: center; }
+    .test-row .name { flex: 1; }
+    .test-row .detail { color: #64748b; font-size: .8rem; max-width: 300px; text-align: right; }
+    .test-row.pass .icon { color: #22c55e; }
+    .test-row.fail .icon { color: #ef4444; }
+    .test-row.fail { background: rgba(239,68,68,.08); }
+    .test-row.warn .icon { color: #f59e0b; }
+    .section-tests { overflow: hidden; }
+    .section-tests.collapsed { display: none; }
+    .running { color: #38bdf8; }
+    .timestamp { color: #64748b; font-size: .8rem; }
+    .final-result { text-align: center; padding: 1.5rem; margin-top: 1rem; border-radius: .5rem; font-size: 1.2rem; font-weight: 700; }
+    .final-result.all-pass { background: rgba(34,197,94,.12); color: #22c55e; }
+    .final-result.has-fail { background: rgba(239,68,68,.12); color: #ef4444; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔧 TirePlus Test Harness</h1>
+    <p class="subtitle">Automated sanity checks for <span id="target-url"></span></p>
+
+    <div class="controls">
+      <button class="btn btn-run" id="btn-run" onclick="runAllTests()">▶ Run All Tests</button>
+      <button class="btn btn-clear" onclick="clearResults()">Clear</button>
+      <span class="timestamp" id="timestamp"></span>
+    </div>
+
+    <div class="summary" id="summary" style="display:none;">
+      <span class="pass">✅ <span id="s-pass">0</span> passed</span>
+      <span class="fail">❌ <span id="s-fail">0</span> failed</span>
+      <span class="warn">⚠️ <span id="s-warn">0</span> warnings</span>
+      <span class="total">/ <span id="s-total">0</span> total</span>
+    </div>
+
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+    <div id="results"></div>
+    <div id="final"></div>
+  </div>
+
+<script>
+const BASE = window.location.origin;
+document.getElementById("target-url").textContent = BASE;
+
+let stats = { pass: 0, fail: 0, warn: 0, total: 0 };
+let sections = {};
+let totalExpected = 0;
+
+function clearResults() {
+  document.getElementById("results").innerHTML = "";
+  document.getElementById("final").innerHTML = "";
+  document.getElementById("summary").style.display = "none";
+  document.getElementById("progress").style.width = "0%";
+  document.getElementById("progress").className = "progress-fill";
+  document.getElementById("timestamp").textContent = "";
+  stats = { pass: 0, fail: 0, warn: 0, total: 0 };
+  sections = {};
+}
+
+function updateSummary() {
+  document.getElementById("summary").style.display = "flex";
+  document.getElementById("s-pass").textContent = stats.pass;
+  document.getElementById("s-fail").textContent = stats.fail;
+  document.getElementById("s-warn").textContent = stats.warn;
+  document.getElementById("s-total").textContent = stats.total;
+  const pct = totalExpected > 0 ? Math.round((stats.total / totalExpected) * 100) : 0;
+  const bar = document.getElementById("progress");
+  bar.style.width = pct + "%";
+  bar.className = "progress-fill" + (stats.fail > 0 ? " has-fail" : "");
+}
+
+function ensureSection(name) {
+  if (sections[name]) return;
+  const container = document.getElementById("results");
+  const header = document.createElement("div");
+  header.className = "section-header";
+  header.innerHTML = `<span>${name}</span><span class="counts" id="sec-count-${name.replace(/\W/g,'')}"></span>`;
+  const tests = document.createElement("div");
+  tests.className = "section-tests";
+  tests.id = "sec-" + name.replace(/\W/g, "");
+  header.onclick = () => tests.classList.toggle("collapsed");
+  container.appendChild(header);
+  container.appendChild(tests);
+  sections[name] = { el: tests, pass: 0, fail: 0, warn: 0 };
+}
+
+function updateSectionCount(name) {
+  const s = sections[name];
+  const id = "sec-count-" + name.replace(/\W/g, "");
+  const el = document.getElementById(id);
+  if (el) {
+    el.innerHTML = `<span style="color:#22c55e">${s.pass}✓</span> <span style="color:#ef4444">${s.fail}✗</span>`;
+  }
+}
+
+function record(section, name, passed, detail) {
+  const status = passed === true ? "pass" : passed === "warn" ? "warn" : "fail";
+  stats[status]++;
+  stats.total++;
+  ensureSection(section);
+  sections[section][status]++;
+  updateSectionCount(section);
+
+  const row = document.createElement("div");
+  row.className = "test-row " + status;
+  const icon = status === "pass" ? "✅" : status === "warn" ? "⚠️" : "❌";
+  row.innerHTML = `<span class="icon">${icon}</span><span class="name">${name}</span><span class="detail">${detail || ""}</span>`;
+  sections[section].el.appendChild(row);
+  updateSummary();
+}
+
+async function fetchPage(path) {
+  try {
+    const res = await fetch(BASE + path, { redirect: "follow", credentials: "same-origin" });
+    const body = await res.text();
+    return { status: res.status, body, headers: Object.fromEntries(res.headers.entries()) };
+  } catch (e) {
+    return { status: 0, body: "", error: e.message };
+  }
+}
+
+function has(html, text) {
+  return html.toLowerCase().includes(text.toLowerCase());
+}
+
+// ── Test Definitions ──────────────────────────
+
+async function testHomePage() {
+  const sec = "Home Page";
+  const r = await fetchPage("/");
+  record(sec, "HTTP 200", r.status === 200, `Status: ${r.status}`);
+  if (r.status !== 200) return;
+
+  const h = r.body;
+  // Title
+  const tm = h.match(/<title>(.*?)<\/title>/i);
+  record(sec, "Title contains 'Tire Plus'", tm && has(tm[1], "Tire Plus"), tm ? tm[1] : "no title");
+
+  // Hero
+  record(sec, "Hero heading", has(h, "Your Trusted"));
+  record(sec, "Phone number", has(h, "613-834-7325"));
+  record(sec, "Address", has(h, "2006 St. Joseph Blvd"));
+  record(sec, "Hours present", has(h, "Mon–Fri") || has(h, "Mon-Fri"));
+  record(sec, "Search for Tires link", has(h, "/tire-search/"));
+  record(sec, "Search for Wheels link", has(h, "/wheel-search/"));
+  record(sec, "Free inspection text", has(h, "Free Brake"));
+
+  // Highlights
+  record(sec, "Wheel Alignment", has(h, "Wheel Alignment"));
+  record(sec, "Alignment price $159", has(h, "$159"));
+  record(sec, "DriveON Licensed", has(h, "DriveON Licensed"));
+  record(sec, "Inspection price $199", has(h, "$199"));
+  record(sec, "Road Force Balancing", has(h, "Road Force Balancing"));
+  record(sec, "Road Force price $39", has(h, "$39"));
+  record(sec, "Oil Changes", has(h, "Oil Changes"));
+  record(sec, "Oil price $69", has(h, "$69"));
+
+  // Images
+  record(sec, "Logo image", has(h, "/img/logo.png"));
+  record(sec, "Hero image", has(h, "/img/hero-service.png"));
+  record(sec, "DriveON logo", has(h, "/img/driveon-logo.png"));
+  record(sec, "Road Force logo", has(h, "/img/roadforce-logo.png"));
+  record(sec, "Alignment icon", has(h, "/img/alignment-logo.svg"));
+  record(sec, "Oil change icon", has(h, "/img/oilchange-logo.svg"));
+  record(sec, "Shop photo", has(h, "/img/shop.png"));
+
+  // Services
+  record(sec, "Our Services heading", has(h, "Our Services"));
+  record(sec, "General Repairs", has(h, "General Repairs"));
+  record(sec, "DriveON Safety Inspection", has(h, "DriveON Safety Inspection"));
+  record(sec, "Brakes", has(h, "Brakes"));
+  record(sec, "Exhaust Repairs", has(h, "Exhaust Repairs"));
+  record(sec, "Front-End Alignment", has(h, "Front-End Alignment"));
+  record(sec, "Radiator & Coolant", has(h, "Radiator"));
+  record(sec, "Fuel Injector Service", has(h, "Fuel Injector"));
+
+  // CTA
+  record(sec, "CTA banner", has(h, "Ready to Get Started"));
+  record(sec, "Appointments link", has(h, "/appointments/"));
+
+  // Location
+  record(sec, "Visit Us section", has(h, "Visit Us"));
+  record(sec, "Get Directions", has(h, "Get Directions"));
+
+  // Reviews
+  record(sec, "Reviews heading", has(h, "What Our Customers Say"));
+  record(sec, "Elfsight widget", has(h, "elfsight"));
+
+  // Footer
+  record(sec, "Footer present", has(h, "<footer"));
+  record(sec, "Quick Links", has(h, "Quick Links"));
+  record(sec, "DriveON Inspection in footer", has(h, "DriveON Inspection"));
+
+  // No MTO
+  const stripped = h.replace(/<!--[\s\S]*?-->/g, "");
+  record(sec, "No MTO in text", !/\bMTO\b/.test(stripped));
+
+  // Accessibility
+  record(sec, "Skip link", has(h, "skip-link"));
+  record(sec, "Main landmark", has(h, "<main"));
+  record(sec, "Nav landmark", has(h, "<nav"));
+  record(sec, "ARIA labels", has(h, "aria-label"));
+  record(sec, "Meta description", has(h, 'name="description"'));
+}
+
+async function testTireSearch() {
+  const sec = "Tire Search";
+  const r = await fetchPage("/tire-search/");
+  record(sec, "HTTP 200", r.status === 200, `Status: ${r.status}`);
+  if (r.status !== 200) return;
+  const h = r.body;
+
+  record(sec, "Page heading", has(h, "Search for Tires") || has(h, "Search for tires"));
+  record(sec, "Price includes note", has(h, "installation, balancing"));
+  record(sec, "TireConnect container", has(h, "tireconnect"));
+  record(sec, "Config script", has(h, "tireconnect-config.js"));
+  record(sec, "Init script", has(h, "tireconnect-init.js"));
+  record(sec, "Widget.js", has(h, "widget.js"));
+  record(sec, "Page type = tires", has(h, '"tires"'));
+  record(sec, "Loading state", has(h, "tc-loading"));
+  record(sec, "Error fallback", has(h, "tc-error"));
+  record(sec, "Link to wheels", has(h, "/wheel-search/"));
+  record(sec, "Link to appointments", has(h, "/appointments/"));
+  record(sec, "Meta description", has(h, 'name="description"'));
+}
+
+async function testWheelSearch() {
+  const sec = "Wheel Search";
+  const r = await fetchPage("/wheel-search/");
+  record(sec, "HTTP 200", r.status === 200, `Status: ${r.status}`);
+  if (r.status !== 200) return;
+  const h = r.body;
+
+  record(sec, "Page heading", has(h, "Search for Wheels") || has(h, "Search for wheels"));
+  record(sec, "OE Hub tip", has(h, "OE Hub"));
+  record(sec, "TireConnect container", has(h, "tireconnect"));
+  record(sec, "Page type = wheels", has(h, '"wheels"'));
+  record(sec, "Loading state", has(h, "tc-loading"));
+  record(sec, "Error fallback", has(h, "tc-error"));
+  record(sec, "Link to tires", has(h, "/tire-search/"));
+  record(sec, "Link to appointments", has(h, "/appointments/"));
+  record(sec, "Meta description", has(h, 'name="description"'));
+}
+
+async function testAppointments() {
+  const sec = "Appointments";
+  const r = await fetchPage("/appointments/");
+  record(sec, "HTTP 200", r.status === 200, `Status: ${r.status}`);
+  if (r.status !== 200) return;
+  const h = r.body;
+
+  record(sec, "Ready to book", has(h, "Ready to book"));
+  record(sec, "Book Now button", has(h, "Book Now"));
+  record(sec, "Workshop Software URL", has(h, "workshopsoftware.com"));
+  record(sec, "Booking token", has(h, "o36ivi"));
+  record(sec, "Same-day warning", has(h, "today or tomorrow"));
+  record(sec, "Phone in warning", has(h, "613-834-7325"));
+  record(sec, "2 business days", has(h, "2 business days"));
+  record(sec, "Prefer to call", has(h, "Prefer to call"));
+  record(sec, "Walk-ins welcome", has(h, "Walk-ins welcome"));
+  record(sec, "Meta description", has(h, 'name="description"'));
+}
+
+async function testContact() {
+  const sec = "Contact Us";
+  const r = await fetchPage("/contact-us/");
+  record(sec, "HTTP 200", r.status === 200, `Status: ${r.status}`);
+  if (r.status !== 200) return;
+  const h = r.body;
+
+  record(sec, "Form heading", has(h, "Send Us a Message"));
+  record(sec, "Form action = PHP handler", has(h, "contact-handler.php"));
+  record(sec, "Name field", has(h, 'name="name"'));
+  record(sec, "Email field", has(h, 'name="email"'));
+  record(sec, "Phone field", has(h, 'name="phone"'));
+  record(sec, "Vehicle field", has(h, 'name="vehicle"'));
+  record(sec, "License plate field", has(h, 'name="plate"'));
+  record(sec, "Message field", has(h, 'name="message"'));
+  record(sec, "Math field", has(h, 'name="math"'));
+  record(sec, "Honeypot (company_url)", has(h, 'name="company_url"'));
+  record(sec, "Math question: 12 + 6", has(h, "12 + 6"));
+  record(sec, "Location section", has(h, "Our Location"));
+  record(sec, "Phone number", has(h, "613-834-7325"));
+  record(sec, "Email address", has(h, "info@tireplus.ca"));
+  record(sec, "Get Directions", has(h, "Get Directions"));
+  record(sec, "Appointments link", has(h, "/appointments/"));
+  record(sec, "Meta description", has(h, 'name="description"'));
+}
+
+async function testTireConnectConfig() {
+  const sec = "TireConnect Config";
+  const r = await fetchPage("/assets/js/tireconnect-config.js");
+  record(sec, "Config file loads", r.status === 200, `Status: ${r.status}`);
+  if (r.status !== 200) return;
+  const h = r.body;
+
+  record(sec, "API key present", has(h, "165d92b73544d5ec4caf11c14e194648"));
+  record(sec, "Locale en_CA", has(h, "en_CA"));
+  record(sec, "Location ID 15994", has(h, "15994"));
+  record(sec, "Location lock true", has(h, "locationLock") && has(h, "true"));
+}
+
+async function testStaticAssets() {
+  const sec = "Static Assets";
+  const assets = [
+    ["/css/style.css", "CSS stylesheet"],
+    ["/js/main.js", "Main JavaScript"],
+    ["/assets/js/tireconnect-config.js", "TireConnect config"],
+    ["/assets/js/tireconnect-init.js", "TireConnect init"],
+    ["/img/logo.png", "Logo image"],
+    ["/img/hero-service.png", "Hero image"],
+    ["/img/driveon-logo.png", "DriveON logo"],
+    ["/img/roadforce-logo.png", "Road Force logo"],
+    ["/img/alignment-logo.svg", "Alignment icon"],
+    ["/img/oilchange-logo.svg", "Oil change icon"],
+    ["/img/shop.png", "Shop photo"],
+    ["/img/favicon.ico", "Favicon"],
+  ];
+
+  for (const [path, label] of assets) {
+    try {
+      const res = await fetch(BASE + path, { method: "HEAD" });
+      record(sec, `${label}`, res.status === 200, `${res.status} ${path}`);
+    } catch (e) {
+      record(sec, `${label}`, false, e.message);
+    }
+  }
+}
+
+async function testSecurity() {
+  const sec = "Security";
+  const r = await fetchPage("/");
+  if (r.headers) {
+    record(sec, "X-Content-Type-Options", r.headers["x-content-type-options"] === "nosniff");
+    record(sec, "X-Frame-Options present", !!r.headers["x-frame-options"]);
+    record(sec, "Referrer-Policy present", !!r.headers["referrer-policy"]);
+  }
+
+  // mail-test.php should not be accessible
+  const mt = await fetchPage("/mail-test.php");
+  record(sec, "mail-test.php not accessible", mt.status === 404 || mt.status === 403, `Status: ${mt.status}`);
+
+  // No WordPress
+  const wp = await fetchPage("/wp-login.php");
+  record(sec, "No wp-login.php", wp.status === 404 || wp.status === 403, `Status: ${wp.status}`);
+}
+
+async function testCrossPageConsistency() {
+  const sec = "Cross-Page Consistency";
+  const pages = ["/", "/tire-search/", "/wheel-search/", "/appointments/", "/contact-us/"];
+
+  for (const page of pages) {
+    const r = await fetchPage(page);
+    if (r.status === 200) {
+      record(sec, `${page} → navbar`, has(r.body, "navbar-tp"));
+      record(sec, `${page} → footer`, has(r.body, "<footer"));
+      record(sec, `${page} → phone in nav`, has(r.body, "613-834-7325"));
+      const stripped = r.body.replace(/<!--[\s\S]*?-->/g, "");
+      record(sec, `${page} → no MTO`, !/\bMTO\b/.test(stripped), /\bMTO\b/.test(stripped) ? "FOUND" : "");
+    }
+  }
+}
+
+// ── Runner ────────────────────────────────────
+
+async function runAllTests() {
+  clearResults();
+  const btn = document.getElementById("btn-run");
+  btn.disabled = true;
+  btn.textContent = "⏳ Running...";
+  document.getElementById("timestamp").textContent = new Date().toLocaleString();
+
+  totalExpected = 157; // approximate
+
+  try {
+    await testHomePage();
+    await testTireSearch();
+    await testWheelSearch();
+    await testAppointments();
+    await testContact();
+    await testTireConnectConfig();
+    await testStaticAssets();
+    await testSecurity();
+    await testCrossPageConsistency();
+  } catch (e) {
+    record("Error", "Test harness error", false, e.message);
+  }
+
+  // Final result
+  const final = document.getElementById("final");
+  if (stats.fail === 0) {
+    final.innerHTML = `<div class="final-result all-pass">🎉 All ${stats.total} tests passed!</div>`;
+  } else {
+    final.innerHTML = `<div class="final-result has-fail">🔴 ${stats.fail} of ${stats.total} tests failed</div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = "▶ Run All Tests";
+}
+</script>
+</body>
+</html>
