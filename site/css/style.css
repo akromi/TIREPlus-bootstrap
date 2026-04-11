@@ -205,18 +205,18 @@ img { max-width: 100%; height: auto; }
 }
 .highlight-item {
   text-align: center;
-  padding: .75rem .5rem;
+  padding: 1rem .5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
 }
 .highlight-item img {
-  height: 24px;
+  height: 36px;
   width: auto;
   max-width: 90%;
   object-fit: contain;
-  margin-bottom: .3rem;
+  margin-bottom: .35rem;
 }
 .highlight-item .hi-icon {
   font-size: 1.5rem;
@@ -224,14 +224,14 @@ img { max-width: 100%; height: auto; }
   margin-bottom: .3rem;
 }
 .highlight-item h6 {
-  font-size: .78rem;
+  font-size: .82rem;
   text-transform: uppercase;
   letter-spacing: .04em;
   margin-bottom: .1rem;
   color: var(--tp-navy);
 }
 .highlight-item p {
-  font-size: .72rem;
+  font-size: .78rem;
   color: var(--tp-gray-600);
   margin: 0;
 }
@@ -505,10 +505,10 @@ img { max-width: 100%; height: auto; }
 @media (max-width: 575.98px) {
   .hero h1 { font-size: 1.75rem; }
   .hero .hero-phone { font-size: 1.3rem; }
-  .highlight-item { padding: .5rem .35rem; }
-  .highlight-item img { height: 20px; }
-  .highlight-item h6 { font-size: .7rem; }
-  .highlight-item p { font-size: .65rem; }
+  .highlight-item { padding: .65rem .35rem; }
+  .highlight-item img { height: 28px; }
+  .highlight-item h6 { font-size: .72rem; }
+  .highlight-item p { font-size: .68rem; }
   .tc-widget-container { min-height: 400px; }
 }
 
