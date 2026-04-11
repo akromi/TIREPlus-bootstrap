@@ -212,7 +212,7 @@ img { max-width: 100%; height: auto; }
   justify-content: flex-start;
 }
 .highlight-item img {
-  height: 44px;
+  height: 74px;
   width: auto;
   max-width: 90%;
   object-fit: contain;
@@ -506,7 +506,7 @@ img { max-width: 100%; height: auto; }
   .hero h1 { font-size: 1.75rem; }
   .hero .hero-phone { font-size: 1.3rem; }
   .highlight-item { padding: .65rem .35rem; }
-  .highlight-item img { height: 28px; }
+  .highlight-item img { height: 48px; }
   .highlight-item h6 { font-size: .72rem; }
   .highlight-item p { font-size: .68rem; }
   .tc-widget-container { min-height: 400px; }
