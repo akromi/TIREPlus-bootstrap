@@ -454,9 +454,6 @@ img { max-width: 100%; height: auto; }
   outline-offset: 2px;
 }
 
-.grecaptcha-badge { visibility: hidden; }
-
-
 /* ---------- Footer ---------- */
 .footer {
   background: var(--tp-navy-dark);

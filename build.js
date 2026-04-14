@@ -79,7 +79,7 @@ const SCRIPT_BLOCKS = {
 
 // ── Parse front-matter ─────────────────────────────────────────
 function parsePage(filePath) {
-  const raw = fs.readFileSync(filePath, "utf-8");
+  const raw = fs.readFileSync(filePath, "utf-8").replace(/\r\n/g, "\n");
   const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!match) {
     console.error(`  ⚠  No front-matter found in ${filePath}, using raw content`);
