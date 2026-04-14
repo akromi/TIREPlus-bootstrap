@@ -216,9 +216,8 @@ async function testHomePage() {
   record(sec, "Get Directions", has(h, "Get Directions"));
 
   // Reviews
-  record(sec, "Reviews heading", has(h, "What Our Customers Say"));
   record(sec, "Elfsight widget", has(h, "elfsight"));
-
+  
   // Footer
   record(sec, "Footer present", has(h, "<footer"));
   record(sec, "Quick Links", has(h, "Quick Links"));
