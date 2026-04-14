@@ -58,8 +58,11 @@ const SCRIPT_BLOCKS = {
 };
 
 function parsePage(filePath) {
-  // Normalize CRLF → LF so regex works on Windows
-  const raw = fs.readFileSync(filePath, "utf-8").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  // Strip BOM + normalize line endings (Windows CRLF → LF)
+  const raw = fs.readFileSync(filePath, "utf-8")
+    .replace(/^\uFEFF/, "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n");
   const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!match) {
     console.error(`  ⚠  No front-matter in ${filePath}`);
@@ -72,6 +75,10 @@ function parsePage(filePath) {
       meta[line.slice(0, idx).trim()] = line.slice(idx + 1).trim();
     }
   });
+  // Debug: show detected language for FR pages
+  if (filePath.includes("/fr/") || filePath.includes("\\fr\\")) {
+    console.log(`    → lang="${meta.lang || 'NOT SET'}" for ${path.basename(path.dirname(filePath))}`);
+  }
   return { meta, body: match[2] };
 }
 
