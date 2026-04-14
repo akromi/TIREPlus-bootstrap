@@ -1,0 +1,60 @@
+---
+title: Recherche de roues – Tire Plus | Orléans, ON
+description: Recherchez des roues et jantes pour votre véhicule.
+lang: fr
+scripts: tireconnect-wheels-fr
+---
+  <main id="main-content">
+
+    <section class="page-header">
+      <div class="container">
+        <h1>Recherche de roues</h1>
+        <p>Trouvez les roues et jantes idéales pour votre véhicule.</p>
+      </div>
+    </section>
+
+    <section class="section-padding" aria-label="Outil de recherche de roues">
+      <div class="container">
+        <div class="alert alert-info d-flex align-items-start gap-2 mb-4" role="alert">
+          <i class="bi bi-info-circle-fill fs-5 mt-1"></i>
+          <div>
+            <strong>Conseil :</strong> La première option affichée est le
+            <strong>OE Direct Fit</strong>. Nous recommandons fortement de sélectionner l'option
+            <strong>OE Hub</strong> dans le menu déroulant Centerbore
+            sous <em>Filtrer les résultats</em> pour le meilleur ajustement.
+          </div>
+        </div>
+
+        <div id="tc-loading" class="alert alert-info" role="status" aria-live="polite">
+          Chargement de la recherche de roues…
+        </div>
+
+        <div id="tc-error" class="alert alert-danger d-none" role="alert">
+          La recherche de roues n'a pas pu être chargée. Veuillez réessayer ou appelez-nous au
+          <a href="tel:6138347325">613-834-7325</a>.
+        </div>
+
+        <div class="tc-widget-container">
+          <div id="tireconnect"></div>
+        </div>
+
+        <noscript>
+          <div class="alert alert-warning mt-3">
+            JavaScript est requis pour utiliser la recherche de roues.
+          </div>
+        </noscript>
+
+        <div class="text-center mt-4">
+          <p class="text-muted">
+            Vous ne trouvez pas ce que vous cherchez? N'hésitez pas à
+            <a href="/fr/contactez-nous/">nous contacter</a> par téléphone ou courriel.
+          </p>
+          <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+            <a href="/fr/recherche-pneus/" class="btn btn-cta btn-cta-primary">Recherche de pneus</a>
+            <a href="/fr/rendez-vous/" class="btn btn-outline-dark">Prendre un rendez-vous</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>

@@ -1,29 +1,32 @@
 <?php
 /**
- * TirePlus Contact Form Handler
+ * TirePlus Contact Form Handler (Bilingual EN/FR)
  * Receives form submissions, verifies reCAPTCHA v3, and emails them to info@tireplus.ca
  */
 
 // reCAPTCHA v3 secret key
 $recaptcha_secret = '6LcDWbYsAAAAAGIfYLAZXWbAYGaOlIPKohUxhaTA';
-$recaptcha_threshold = 0.5; // Score 0.0 (bot) to 1.0 (human)
+$recaptcha_threshold = 0.5;
+
+// Determine redirect base path based on language
+$lang = ($_POST['lang'] ?? '') === 'fr' ? 'fr' : 'en';
+$contact_path = $lang === 'fr' ? '/fr/contactez-nous/' : '/contact-us/';
 
 // Only accept POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: /contact-us/');
+    header("Location: $contact_path");
     exit;
 }
 
 // Anti-spam: math challenge (12 + 6 = 18)
 if (!isset($_POST['math']) || intval($_POST['math']) !== 18) {
-    header('Location: /contact-us/?status=error&reason=math');
+    header("Location: {$contact_path}?status=error&reason=math");
     exit;
 }
 
 // Honeypot: hidden field that bots fill in
 if (!empty($_POST['company_url'])) {
-    // Silently accept — bot thinks it succeeded
-    header('Location: /contact-us/?status=success');
+    header("Location: {$contact_path}?status=success");
     exit;
 }
 
@@ -51,12 +54,10 @@ if (!empty($recaptcha_token)) {
     if ($verify_response !== false) {
         $result = json_decode($verify_response, true);
         if (!$result['success'] || ($result['score'] ?? 0) < $recaptcha_threshold) {
-            header('Location: /contact-us/?status=error&reason=captcha');
+            header("Location: {$contact_path}?status=error&reason=captcha");
             exit;
         }
     }
-    // If verification request fails (network issue), allow form through
-    // Math + honeypot still provide protection
 }
 
 // Sanitize inputs
@@ -69,26 +70,28 @@ $message = htmlspecialchars(strip_tags(trim($_POST['message'] ?? '')));
 
 // Validate required fields
 if (empty($name) || empty($email) || empty($message)) {
-    header('Location: /contact-us/?status=error&reason=required');
+    header("Location: {$contact_path}?status=error&reason=required");
     exit;
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    header('Location: /contact-us/?status=error&reason=email');
+    header("Location: {$contact_path}?status=error&reason=email");
     exit;
 }
 
 // Build the email
 $to      = 'info@tireplus.ca';
 $subject = 'TirePlus Website Contact: ' . $name;
+$lang_label = $lang === 'fr' ? 'French' : 'English';
 
-$body  = "New contact form submission from tireplus.ca\n";
+$body  = "New contact form submission from tireplus.ca ($lang_label)\n";
 $body .= "=============================================\n\n";
 $body .= "Name:          $name\n";
 $body .= "Email:         $email\n";
 $body .= "Phone:         $phone\n";
 $body .= "Vehicle:       $vehicle\n";
-$body .= "License Plate: $plate\n\n";
+$body .= "License Plate: $plate\n";
+$body .= "Language:      $lang_label\n\n";
 $body .= "Message:\n$message\n";
 
 $headers  = "From: noreply@tireplus.ca\r\n";
@@ -100,9 +103,9 @@ $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 $sent = mail($to, $subject, $body, $headers);
 
 if ($sent) {
-    header('Location: /contact-us/?status=success');
+    header("Location: {$contact_path}?status=success");
 } else {
-    header('Location: /contact-us/?status=error&reason=send');
+    header("Location: {$contact_path}?status=error&reason=send");
 }
 exit;
 ?>

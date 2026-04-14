@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Contact Us – Tire Plus | Orleans, ON</title>
-  <meta name="description" content="Contact Tire Plus in Orleans, Ontario. Call 613-834-7325 or send us a message.">
+  <title>Contactez-nous – Tire Plus | Orléans, ON</title>
+  <meta name="description" content="Contactez Tire Plus à Orléans, Ontario. Appelez le 613-834-7325 ou envoyez-nous un message.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,158 +57,139 @@
 
   <main id="main-content">
 
-    <!-- ===== PAGE HEADER ===== -->
     <section class="page-header">
       <div class="container">
-        <h1>Contact Us</h1>
-        <p>Complete the form below and we'll reply as soon as possible.</p>
+        <h1>Contactez-nous</h1>
+        <p>Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.</p>
       </div>
     </section>
 
-    <!-- ===== CONTACT CONTENT ===== -->
     <section class="section-padding">
       <div class="container">
         <div class="row gy-5">
 
-          <!-- Contact Form -->
           <div class="col-lg-7">
-            <h2 class="h4 mb-4">Send Us a Message</h2>
+            <h2 class="h4 mb-4">Envoyez-nous un message</h2>
 
-            <!-- Success / Error messages -->
             <div id="form-status"></div>
 
             <form class="contact-form" id="contact-form" action="/contact-handler.php" method="POST" novalidate>
+              <input type="hidden" name="lang" value="fr">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label for="cf-name" class="form-label">Name <span class="text-red">*</span></label>
+                  <label for="cf-name" class="form-label">Nom <span class="text-red">*</span></label>
                   <input type="text" class="form-control" id="cf-name" name="name" required autocomplete="name">
                 </div>
                 <div class="col-md-6">
-                  <label for="cf-email" class="form-label">Email Address <span class="text-red">*</span></label>
+                  <label for="cf-email" class="form-label">Adresse courriel <span class="text-red">*</span></label>
                   <input type="email" class="form-control" id="cf-email" name="email" required autocomplete="email">
                 </div>
                 <div class="col-md-6">
-                  <label for="cf-phone" class="form-label">Phone</label>
+                  <label for="cf-phone" class="form-label">Téléphone</label>
                   <input type="tel" class="form-control" id="cf-phone" name="phone" autocomplete="tel">
                 </div>
                 <div class="col-md-6">
-                  <label for="cf-vehicle" class="form-label">Year, Make &amp; Model</label>
-                  <input type="text" class="form-control" id="cf-vehicle" name="vehicle" placeholder="e.g. 2022 Toyota RAV4">
+                  <label for="cf-vehicle" class="form-label">Année, marque et modèle</label>
+                  <input type="text" class="form-control" id="cf-vehicle" name="vehicle" placeholder="ex. 2022 Toyota RAV4">
                 </div>
                 <div class="col-md-6">
-                  <label for="cf-plate" class="form-label">License Plate</label>
-                  <input type="text" class="form-control" id="cf-plate" name="plate" placeholder="e.g. ABCD 123" style="text-transform:uppercase;">
+                  <label for="cf-plate" class="form-label">Plaque d'immatriculation</label>
+                  <input type="text" class="form-control" id="cf-plate" name="plate" placeholder="ex. ABCD 123" style="text-transform:uppercase;">
                 </div>
                 <div class="col-12">
-                  <label for="cf-message" class="form-label">What is your question? <span class="text-red">*</span></label>
+                  <label for="cf-message" class="form-label">Quelle est votre question? <span class="text-red">*</span></label>
                   <textarea class="form-control" id="cf-message" name="message" rows="5" required></textarea>
                 </div>
 
-                <!-- Honeypot anti-spam (hidden from humans) -->
                 <div class="col-12" style="display:none;" aria-hidden="true">
-                  <label for="cf-hp">Company</label>
+                  <label for="cf-hp">Entreprise</label>
                   <input type="text" id="cf-hp" name="company_url" tabindex="-1" autocomplete="off">
                 </div>
 
-                <!-- Math anti-spam -->
                 <div class="col-md-4">
-                  <label for="cf-math" class="form-label">What is 12 + 6? <span class="text-red">*</span></label>
+                  <label for="cf-math" class="form-label">Combien font 12 + 6? <span class="text-red">*</span></label>
                   <input type="text" class="form-control" id="cf-math" name="math" required inputmode="numeric" autocomplete="off">
                 </div>
 
-                <!-- reCAPTCHA v3 token (populated by JS) -->
                 <input type="hidden" name="g-recaptcha-response" id="recaptcha-token">
 
                 <div class="col-12">
                   <button type="submit" class="btn btn-submit" id="btn-submit">
-                    <i class="bi bi-send me-1"></i> Submit
+                    <i class="bi bi-send me-1"></i> Envoyer
                   </button>
                   <p class="small text-muted mt-2 mb-0">
-                    This site is protected by reCAPTCHA and the Google
-                    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> and
-                    <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms of Service</a> apply.
+                    Ce site est protégé par reCAPTCHA et les
+                    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Règles de confidentialité</a> et
+                    <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Conditions d'utilisation</a> de Google s'appliquent.
                   </p>
                 </div>
               </div>
             </form>
 
-            <!-- reCAPTCHA v3 script -->
             <script src="https://www.google.com/recaptcha/api.js?render=6LcDWbYsAAAAAENEWgYoSbvSV_9ostQGslYW5o9D"></script>
 
-            <!-- Client-side validation + reCAPTCHA token -->
             <script>
               (function(){
-                // Show success/error based on URL params
                 var params = new URLSearchParams(window.location.search);
                 var statusEl = document.getElementById('form-status');
                 if (params.get('status') === 'success') {
-                  statusEl.innerHTML = '<div class="alert alert-success mt-3" role="alert"><strong>Thank you!</strong> Your message has been sent. We will reply as soon as possible.</div>';
+                  statusEl.innerHTML = '<div class="alert alert-success mt-3" role="alert"><strong>Merci!</strong> Votre message a été envoyé. Nous vous répondrons dans les plus brefs délais.</div>';
                 } else if (params.get('status') === 'error') {
                   var reason = params.get('reason');
-                  var msg = 'Something went wrong. Please try again or call us at <a href="tel:6138347325">613-834-7325</a>.';
-                  if (reason === 'math') msg = 'Please answer the math question correctly (12 + 6 = ?).';
-                  if (reason === 'required') msg = 'Please fill in all required fields.';
-                  if (reason === 'email') msg = 'Please enter a valid email address.';
-                  if (reason === 'captcha') msg = 'Security check failed. Please try again.';
+                  var msg = 'Une erreur est survenue. Veuillez réessayer ou appelez-nous au <a href="tel:6138347325">613-834-7325</a>.';
+                  if (reason === 'math') msg = 'Veuillez répondre correctement à la question mathématique (12 + 6 = ?).';
+                  if (reason === 'required') msg = 'Veuillez remplir tous les champs obligatoires.';
+                  if (reason === 'email') msg = 'Veuillez entrer une adresse courriel valide.';
+                  if (reason === 'captcha') msg = 'La vérification de sécurité a échoué. Veuillez réessayer.';
                   statusEl.innerHTML = '<div class="alert alert-danger mt-3" role="alert">' + msg + '</div>';
                 }
 
-                // Form submit: math check + reCAPTCHA token
                 var form = document.getElementById('contact-form');
                 if(!form) return;
                 form.addEventListener('submit', function(e){
                   e.preventDefault();
-
-                  // Math check
                   var math = document.getElementById('cf-math');
                   if(math && parseInt(math.value,10) !== 18){
-                    alert('Please answer the math question correctly.');
+                    alert('Veuillez répondre correctement à la question mathématique.');
                     math.focus();
                     return;
                   }
-
-                  // Get reCAPTCHA token then submit
                   var btn = document.getElementById('btn-submit');
                   btn.disabled = true;
-                  btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Sending...';
-
+                  btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Envoi en cours...';
                   grecaptcha.ready(function(){
                     grecaptcha.execute('6LcDWbYsAAAAAENEWgYoSbvSV_9ostQGslYW5o9D', {action: 'contact'}).then(function(token){
                       document.getElementById('recaptcha-token').value = token;
                       form.submit();
-                    }).catch(function(){
-                      // If reCAPTCHA fails, submit anyway (PHP will handle)
-                      form.submit();
-                    });
+                    }).catch(function(){ form.submit(); });
                   });
                 });
               })();
             </script>
           </div>
 
-          <!-- Location Info -->
           <div class="col-lg-5">
-            <h2 class="h4 mb-4">Our Location</h2>
+            <h2 class="h4 mb-4">Notre emplacement</h2>
 
             <div class="location-card">
               <div class="map-embed">
                 <iframe
-                  data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2798.8!2d-75.53993!3d45.4648295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cce119150707327%3A0x2b35a26698ddde67!2sTire+Plus+Ltd!5e0!3m2!1sen!2sca!4v1700000000000"
-                  title="Tire Plus location on Google Maps"
+                  data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2798.8!2d-75.53993!3d45.4648295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cce119150707327%3A0x2b35a26698ddde67!2sTire+Plus+Ltd!5e0!3m2!1sfr!2sca!4v1700000000000"
+                  title="Emplacement de Tire Plus sur Google Maps"
                   loading="lazy"
                   referrerpolicy="no-referrer-when-downgrade"
                   allowfullscreen
                 ></iframe>
               </div>
               <div class="location-info">
-                <h4>Orleans</h4>
+                <h4>Orléans</h4>
                 <div class="loc-detail">
                   <i class="bi bi-geo-alt-fill"></i>
                   <span>
                     <a href="https://www.google.ca/maps/place/Tire+Plus+Ltd/@45.4648295,-75.53993,17z" target="_blank" rel="noopener" class="text-decoration-none">
-                      2006 St. Joseph Blvd., Orleans, ON
+                      2006, boul. St-Joseph, Orléans, ON
                     </a>
-                    <br><small class="text-muted">at Jeanne D'Arc &amp; St. Joseph</small>
+                    <br><small class="text-muted">à Jeanne D'Arc et St-Joseph</small>
                   </span>
                 </div>
                 <div class="loc-detail">
@@ -218,8 +199,8 @@
                 <div class="loc-detail">
                   <i class="bi bi-clock-fill"></i>
                   <span>
-                    Mon–Fri: 8:00 AM – 5:30 PM<br>
-                    Saturday: 8:00 AM – 4:00 PM
+                    Lun–Ven : 8 h 00 – 17 h 30<br>
+                    Samedi : 8 h 00 – 16 h 00
                   </span>
                 </div>
                 <div class="loc-detail">
@@ -232,11 +213,11 @@
             <div class="mt-4 d-flex flex-wrap gap-2">
               <a href="https://www.google.ca/maps/place/Tire+Plus+Ltd/@45.4648295,-75.53993,17z"
                  class="btn btn-outline-dark">
-                <i class="bi bi-map me-1"></i> Get Directions
+                <i class="bi bi-map me-1"></i> Itinéraire
               </a>
-              <a href="/appointments/"
+              <a href="/fr/rendez-vous/"
                  class="btn btn-cta btn-cta-primary">
-                Book Appointment
+                Prendre rendez-vous
               </a>
             </div>
           </div>
