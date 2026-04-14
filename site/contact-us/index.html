@@ -74,7 +74,7 @@
             <!-- Success / Error messages -->
             <div id="form-status"></div>
 
-            <form class="contact-form" action="/contact-handler.php" method="POST" novalidate>
+            <form class="contact-form" id="contact-form" action="/contact-handler.php" method="POST" novalidate>
               <div class="row g-3">
                 <div class="col-md-6">
                   <label for="cf-name" class="form-label">Name <span class="text-red">*</span></label>
@@ -101,26 +101,38 @@
                   <textarea class="form-control" id="cf-message" name="message" rows="5" required></textarea>
                 </div>
 
-                <!-- Honeypot anti-spam (hidden from humans, bots fill it in) -->
-		<div class="col-12" style="display:none;" aria-hidden="true">
+                <!-- Honeypot anti-spam (hidden from humans) -->
+                <div class="col-12" style="display:none;" aria-hidden="true">
                   <label for="cf-hp">Company</label>
                   <input type="text" id="cf-hp" name="company_url" tabindex="-1" autocomplete="off">
                 </div>
+
                 <!-- Math anti-spam -->
                 <div class="col-md-4">
                   <label for="cf-math" class="form-label">What is 12 + 6? <span class="text-red">*</span></label>
                   <input type="text" class="form-control" id="cf-math" name="math" required inputmode="numeric" autocomplete="off">
                 </div>
 
+                <!-- reCAPTCHA v3 token (populated by JS) -->
+                <input type="hidden" name="g-recaptcha-response" id="recaptcha-token">
+
                 <div class="col-12">
-                  <button type="submit" class="btn btn-submit">
+                  <button type="submit" class="btn btn-submit" id="btn-submit">
                     <i class="bi bi-send me-1"></i> Submit
                   </button>
+                  <p class="small text-muted mt-2 mb-0">
+                    This site is protected by reCAPTCHA and the Google
+                    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> and
+                    <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms of Service</a> apply.
+                  </p>
                 </div>
               </div>
             </form>
 
-            <!-- Client-side validation + status messages -->
+            <!-- reCAPTCHA v3 script -->
+            <script src="https://www.google.com/recaptcha/api.js?render=6LcDWbYsAAAAAENEWgYoSbvSV_9ostQGslYW5o9D"></script>
+
+            <!-- Client-side validation + reCAPTCHA token -->
             <script>
               (function(){
                 // Show success/error based on URL params
@@ -134,19 +146,38 @@
                   if (reason === 'math') msg = 'Please answer the math question correctly (12 + 6 = ?).';
                   if (reason === 'required') msg = 'Please fill in all required fields.';
                   if (reason === 'email') msg = 'Please enter a valid email address.';
+                  if (reason === 'captcha') msg = 'Security check failed. Please try again.';
                   statusEl.innerHTML = '<div class="alert alert-danger mt-3" role="alert">' + msg + '</div>';
                 }
 
-                // Client-side math check before submit
-                var form = document.querySelector('.contact-form');
+                // Form submit: math check + reCAPTCHA token
+                var form = document.getElementById('contact-form');
                 if(!form) return;
                 form.addEventListener('submit', function(e){
+                  e.preventDefault();
+
+                  // Math check
                   var math = document.getElementById('cf-math');
                   if(math && parseInt(math.value,10) !== 18){
-                    e.preventDefault();
                     alert('Please answer the math question correctly.');
                     math.focus();
+                    return;
                   }
+
+                  // Get reCAPTCHA token then submit
+                  var btn = document.getElementById('btn-submit');
+                  btn.disabled = true;
+                  btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Sending...';
+
+                  grecaptcha.ready(function(){
+                    grecaptcha.execute('6LcDWbYsAAAAAENEWgYoSbvSV_9ostQGslYW5o9D', {action: 'contact'}).then(function(token){
+                      document.getElementById('recaptcha-token').value = token;
+                      form.submit();
+                    }).catch(function(){
+                      // If reCAPTCHA fails, submit anyway (PHP will handle)
+                      form.submit();
+                    });
+                  });
                 });
               })();
             </script>
