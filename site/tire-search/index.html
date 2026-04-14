@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tire Search – Tire Plus | Orleans, ON</title>
   <meta name="description" content="Search for tires by vehicle or size. Price includes installation, balancing, and nitrogen.">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
@@ -15,20 +14,16 @@
   <link rel="icon" href="/img/favicon.ico" sizes="any">
 </head>
 <body>
-
   <a class="skip-link" href="#main-content">Skip to main content</a>
 
-  <!-- ===== NAVBAR ===== -->
   <nav class="navbar navbar-expand-lg navbar-tp sticky-top" aria-label="Main navigation">
     <div class="container">
       <a class="navbar-brand" href="/">
         <img src="/img/logo.png" alt="Tire Plus" width="160" height="50">
       </a>
-
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainNav" aria-controls="mainNav" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-
       <div class="offcanvas offcanvas-end" id="mainNav" tabindex="-1" aria-labelledby="mainNavLabel">
         <div class="offcanvas-header">
           <h5 id="mainNavLabel" class="offcanvas-title">Menu</h5>
@@ -56,63 +51,33 @@
   </nav>
 
   <main id="main-content">
-
-    <!-- ===== PAGE HEADER ===== -->
     <section class="page-header">
       <div class="container">
         <h1>Search for Tires</h1>
         <p>Find the perfect tires for your vehicle.</p>
       </div>
     </section>
-
-    <!-- ===== TIRECONNECT WIDGET ===== -->
     <section class="section-padding" aria-label="Tire search widget">
       <div class="container">
         <div class="alert alert-info d-flex align-items-start gap-2 mb-4" role="alert">
           <i class="bi bi-info-circle-fill fs-5 mt-1"></i>
-          <div>
-            <strong>Tip:</strong> Price includes installation, balancing, and nitrogen.
-          </div>
+          <div><strong>Tip:</strong> Price includes installation, balancing, and nitrogen.</div>
         </div>
-
-        <div id="tc-loading" class="alert alert-info" role="status" aria-live="polite">
-          Loading tire search…
-        </div>
-
-        <div id="tc-error" class="alert alert-danger d-none" role="alert">
-          The tire search could not be loaded. Please try again, or call us at
-          <a href="tel:6138347325">613-834-7325</a>.
-        </div>
-
-        <div class="tc-widget-container">
-          <div id="tireconnect"></div>
-        </div>
-
-        <noscript>
-          <div class="alert alert-warning mt-3">
-            JavaScript is required to use the tire search.
-          </div>
-        </noscript>
-
+        <div id="tc-loading" class="alert alert-info" role="status" aria-live="polite">Loading tire search…</div>
+        <div id="tc-error" class="alert alert-danger d-none" role="alert">The tire search could not be loaded. Please try again, or call us at <a href="tel:6138347325">613-834-7325</a>.</div>
+        <div class="tc-widget-container"><div id="tireconnect"></div></div>
+        <noscript><div class="alert alert-warning mt-3">JavaScript is required to use the tire search.</div></noscript>
         <div class="text-center mt-4">
-          <p class="text-muted">
-            Can't find what you're looking for? Feel free to
-            <a href="/contact-us/">contact us</a> by phone or email.
-          </p>
+          <p class="text-muted">Can't find what you're looking for? Feel free to <a href="/contact-us/">contact us</a> by phone or email.</p>
           <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
             <a href="/wheel-search/" class="btn btn-cta btn-cta-primary">Search for Wheels</a>
-            <a href="/appointments/"
-               class="btn btn-outline-dark">
-              Schedule an Appointment
-            </a>
+            <a href="/appointments/" class="btn btn-outline-dark">Schedule an Appointment</a>
           </div>
         </div>
       </div>
     </section>
-
   </main>
 
-  <!-- ===== FOOTER ===== -->
   <footer class="footer" role="contentinfo">
     <div class="container">
       <div class="row gy-4">
@@ -161,19 +126,11 @@
       </div>
     </div>
   </footer>
-
-  <!-- Bootstrap 5 JS bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
-
-  <!-- Site JS -->
   <script src="/js/main.js" defer></script>
-
-  <!-- Elfsight (Reviews + AI Chatbot) -->
   <script src="https://elfsightcdn.com/platform.js" async></script>
   <div class="elfsight-app-31d4c272-4ab2-4e4c-b22e-20b3361a1773" data-elfsight-app-lazy></div>
 
-
-  <!-- TireConnect Tire Search Widget -->
   <script src="/assets/js/tireconnect-config.js"></script>
   <script>window.TC_PAGE = { type: "tires" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>

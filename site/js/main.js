@@ -1,14 +1,9 @@
-/* ==========================================================================
-   TirePlus – Shared Site JavaScript
-   ========================================================================== */
-
 document.addEventListener('DOMContentLoaded', function () {
-
-  /* ---- Dynamic copyright year ---- */
+  /* Dynamic copyright year */
   var yearEl = document.getElementById('copyright-year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* ---- Active nav link highlighting ---- */
+  /* Active nav link highlighting */
   var currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
   document.querySelectorAll('.navbar-tp .nav-link').forEach(function (link) {
     var href = link.getAttribute('href');
@@ -20,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  /* ---- Close offcanvas on nav click (mobile) ---- */
+  /* Close offcanvas on nav click (mobile) */
   var offcanvasEl = document.getElementById('mainNav');
   if (offcanvasEl) {
     var bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl, { backdrop: true });
@@ -31,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* ---- Lazy-load iframes when visible ---- */
+  /* Lazy-load iframes when visible */
   if ('IntersectionObserver' in window) {
     var lazyFrames = document.querySelectorAll('iframe[data-src]');
     var frameObserver = new IntersectionObserver(function (entries) {

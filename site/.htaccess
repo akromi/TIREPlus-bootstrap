@@ -1,62 +1,22 @@
-# ==============================================================================
-# TirePlus Staging – .htaccess
-# ==============================================================================
-# Place this in the staging web root (staging2.tireplus.ca document root).
+# === TirePlus .htaccess ===
 
-# ---------- Disable SiteGround Dynamic Cache ----------
-# SiteGround's nginx reverse-proxy honours Cache-Control: private
-<IfModule mod_headers.c>
-  Header set Cache-Control "no-cache, no-store, must-revalidate, private"
-  Header set Pragma "no-cache"
-  Header set Expires "0"
-  # Tell SG SuperCacher to skip
-  Header set X-Cache-Control "no-cache"
-</IfModule>
+# Disable SiteGround Dynamic Cache on staging
+Header set Cache-Control "private, no-cache, no-store, must-revalidate"
+Header set Pragma "no-cache"
+Header set Expires "0"
 
-# ---------- Password Protection (staging only) ----------
-# Uncomment the lines below and create the .htpasswd file via SiteGround
-# Site Tools → Security → Protected URLs, or with htpasswd CLI.
-# AuthType Basic
-# AuthName "Staging – Authorized Access Only"
-# AuthUserFile /home/customer/.htpasswd
-# Require valid-user
+# Security headers
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"
+Header set Referrer-Policy "strict-origin-when-cross-origin"
 
-# ---------- Clean URLs (trailing-slash / directory index) ----------
-DirectoryIndex index.html
+# Block access to hidden files
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
 
-# Add trailing slash to directories that exist
-<IfModule mod_rewrite.c>
-  RewriteEngine On
+# Default charset
+AddDefaultCharset UTF-8
 
-  # Force trailing slash for directories
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^(.+[^/])$ /$1/ [L,R=301]
-
-  # If /foo/ exists as /foo/index.html, serve it
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
-  RewriteRule ^(.+?)/?$ /$1/index.html [L]
-</IfModule>
-
-# ---------- Security Headers ----------
-<IfModule mod_headers.c>
-  Header set X-Content-Type-Options "nosniff"
-  Header set X-Frame-Options "SAMEORIGIN"
-  Header set Referrer-Policy "strict-origin-when-cross-origin"
-</IfModule>
-
-# ---------- MIME types ----------
-<IfModule mod_mime.c>
-  AddType text/css .css
-  AddType text/javascript .js
-  AddType image/svg+xml .svg
-  AddType image/webp .webp
-</IfModule>
-
-# ---------- Gzip (if not already enabled server-wide) ----------
-<IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/plain text/css
-  AddOutputFilterByType DEFLATE text/javascript application/javascript
-  AddOutputFilterByType DEFLATE application/json image/svg+xml
-</IfModule>
+# Error pages
+ErrorDocument 404 /index.html

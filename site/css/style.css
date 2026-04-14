@@ -21,7 +21,7 @@
 }
 
 /* ---------- Base ---------- */
-html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; font-size: 125%; }
 
 body {
   font-family: 'Source Sans 3', system-ui, -apple-system, sans-serif;
@@ -193,31 +193,6 @@ img { max-width: 100%; height: auto; }
 }
 .bg-light-custom { background: var(--tp-gray-100); }
 
-/* ---------- Brands Strip ---------- */
-.brands-strip {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: .5rem;
-  width: 100%;
-}
-.brands-strip img {
-  height: 32px;
-  width: auto;
-  object-fit: contain;
-  opacity: .75;
-  transition: opacity var(--tp-transition);
-  flex: 0 0 auto;
-}
-.brands-strip img:hover {
-  opacity: 1;
-}
-@media (max-width: 575.98px) {
-  .brands-strip img { height: 24px; }
-  .brands-strip { gap: .35rem; }
-}
-
 /* ---------- Highlights Bar ---------- */
 .highlights-bar {
   background: var(--tp-white);
@@ -237,7 +212,7 @@ img { max-width: 100%; height: auto; }
   justify-content: flex-start;
 }
 .highlight-item img {
-  height: 36px;
+  height: 74px;
   width: auto;
   max-width: 90%;
   object-fit: contain;
@@ -531,7 +506,7 @@ img { max-width: 100%; height: auto; }
   .hero h1 { font-size: 1.75rem; }
   .hero .hero-phone { font-size: 1.3rem; }
   .highlight-item { padding: .65rem .35rem; }
-  .highlight-item img { height: 28px; }
+  .highlight-item img { height: 48px; }
   .highlight-item h6 { font-size: .72rem; }
   .highlight-item p { font-size: .68rem; }
   .tc-widget-container { min-height: 400px; }
@@ -542,3 +517,6 @@ img { max-width: 100%; height: auto; }
   .navbar-tp, .footer, .cta-banner, .btn { display: none !important; }
   body { font-size: 12pt; color: #000; }
 }
+
+/* ---------- reCAPTCHA Badge (hidden, text attribution in form) ---------- */
+.grecaptcha-badge { visibility: hidden; }

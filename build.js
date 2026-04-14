@@ -6,17 +6,15 @@
  * Combines them with shared partials from  src/_partials/
  * Writes assembled HTML to  site/
  *
- * Usage:
- *   node build.js
+ * Usage:   node build.js
  *
- * Each page file uses a simple front-matter block:
+ * Front-matter:
  *   ---
  *   title: Page Title
  *   description: Meta description text
  *   lang: fr                          (optional — uses French partials)
  *   scripts: tireconnect-tires        (optional)
  *   ---
- *   <main id="main-content"> ... </main>
  */
 
 const fs = require("fs");
@@ -27,120 +25,79 @@ const OUT_DIR = path.join(__dirname, "site");
 const PARTIALS_DIR = path.join(SRC_DIR, "_partials");
 const PAGES_DIR = path.join(SRC_DIR, "pages");
 
-// ── Read partials ──────────────────────────────────────────────
 function readPartial(name) {
   return fs.readFileSync(path.join(PARTIALS_DIR, name), "utf-8");
 }
 
-// English partials
 const partials = {
-  en: {
-    head: readPartial("head.html"),
-    nav: readPartial("nav.html"),
-    footer: readPartial("footer.html"),
-  },
-  fr: {
-    head: readPartial("head-fr.html"),
-    nav: readPartial("nav-fr.html"),
-    footer: readPartial("footer-fr.html"),
-  },
+  en: { head: readPartial("head.html"), nav: readPartial("nav.html"), footer: readPartial("footer.html") },
+  fr: { head: readPartial("head-fr.html"), nav: readPartial("nav-fr.html"), footer: readPartial("footer-fr.html") },
 };
 
-// ── Script snippets for pages that need them ───────────────────
 const SCRIPT_BLOCKS = {
   "tireconnect-tires": `
-  <!-- TireConnect Tire Search Widget -->
   <script src="/assets/js/tireconnect-config.js"></script>
   <script>window.TC_PAGE = { type: "tires" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
   <script src="/assets/js/tireconnect-init.js"></script>`,
-
   "tireconnect-wheels": `
-  <!-- TireConnect Wheel Search Widget -->
   <script src="/assets/js/tireconnect-config.js"></script>
   <script>window.TC_PAGE = { type: "wheels" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
   <script src="/assets/js/tireconnect-init.js"></script>`,
-
   "tireconnect-tires-fr": `
-  <!-- TireConnect Tire Search Widget (French) -->
   <script src="/assets/js/tireconnect-config-fr.js"></script>
   <script>window.TC_PAGE = { type: "tires" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
   <script src="/assets/js/tireconnect-init.js"></script>`,
-
   "tireconnect-wheels-fr": `
-  <!-- TireConnect Wheel Search Widget (French) -->
   <script src="/assets/js/tireconnect-config-fr.js"></script>
   <script>window.TC_PAGE = { type: "wheels" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
   <script src="/assets/js/tireconnect-init.js"></script>`,
 };
 
-// ── Parse front-matter ─────────────────────────────────────────
 function parsePage(filePath) {
-  const raw = fs.readFileSync(filePath, "utf-8").replace(/\r\n/g, "\n");
+  // Normalize CRLF → LF so regex works on Windows
+  const raw = fs.readFileSync(filePath, "utf-8").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
   const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!match) {
-    console.error(`  ⚠  No front-matter found in ${filePath}, using raw content`);
+    console.error(`  ⚠  No front-matter in ${filePath}`);
     return { meta: {}, body: raw };
   }
-
   const meta = {};
   match[1].split("\n").forEach((line) => {
     const idx = line.indexOf(":");
     if (idx > 0) {
-      const key = line.slice(0, idx).trim();
-      const val = line.slice(idx + 1).trim();
-      meta[key] = val;
+      meta[line.slice(0, idx).trim()] = line.slice(idx + 1).trim();
     }
   });
-
   return { meta, body: match[2] };
 }
 
-// ── Assemble one page ──────────────────────────────────────────
 function buildPage(pagePath) {
   const { meta, body } = parsePage(pagePath);
-
-  // Determine language from front-matter
   const lang = meta.lang === "fr" ? "fr" : "en";
   const p = partials[lang];
-
-  // Head: replace placeholders
-  let head = p.head
-    .replace("{{TITLE}}", meta.title || "Tire Plus")
-    .replace("{{DESCRIPTION}}", meta.description || "");
-
-  // Footer: inject page-specific scripts (or nothing)
-  const scriptKey = meta.scripts || "";
-  const scriptBlock = SCRIPT_BLOCKS[scriptKey] || "";
+  let head = p.head.replace("{{TITLE}}", meta.title || "Tire Plus").replace("{{DESCRIPTION}}", meta.description || "");
+  const scriptBlock = SCRIPT_BLOCKS[meta.scripts] || "";
   let footer = p.footer.replace("{{SCRIPTS}}", scriptBlock);
-
   return head + "\n" + p.nav + "\n" + body + "\n" + footer;
 }
 
-// ── Walk pages directory ───────────────────────────────────────
 function walkPages(dir, relBase) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   let count = 0;
-
   for (const entry of entries) {
     const srcPath = path.join(dir, entry.name);
     const relPath = path.join(relBase, entry.name);
-
     if (entry.isDirectory()) {
       count += walkPages(srcPath, relPath);
     } else if (entry.name.endsWith(".html")) {
       const outPath = path.join(OUT_DIR, relPath);
       const outDir = path.dirname(outPath);
-
-      if (!fs.existsSync(outDir)) {
-        fs.mkdirSync(outDir, { recursive: true });
-      }
-
-      const html = buildPage(srcPath);
-      fs.writeFileSync(outPath, html, "utf-8");
+      if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+      fs.writeFileSync(outPath, buildPage(srcPath), "utf-8");
       console.log(`  ✓  ${relPath}`);
       count++;
     }
@@ -148,12 +105,8 @@ function walkPages(dir, relBase) {
   return count;
 }
 
-// ── Run ────────────────────────────────────────────────────────
 console.log("Building TirePlus site (EN + FR)...\n");
 console.log(`  Source:  ${PAGES_DIR}`);
 console.log(`  Output:  ${OUT_DIR}\n`);
-
 const total = walkPages(PAGES_DIR, "");
 console.log(`\nDone — ${total} pages built.\n`);
-console.log("Static assets (css/, js/, assets/, img/) are already in site/ and don't need building.");
-console.log("Run a local server to preview:  npx serve site");

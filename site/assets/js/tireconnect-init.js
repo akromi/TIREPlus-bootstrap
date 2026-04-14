@@ -1,54 +1,28 @@
 (function () {
-  const cfg = window.TC_CONFIG || {};
-  const page = window.TC_PAGE || { type: "tires" };
+  var cfg = window.TC_CONFIG || {};
+  var page = window.TC_PAGE || { type: "tires" };
+  var loadingEl = document.getElementById("tc-loading");
+  var errorEl = document.getElementById("tc-error");
 
-  const loadingEl = document.getElementById("tc-loading");
-  const errorEl = document.getElementById("tc-error");
+  function hideLoading() { if (loadingEl) loadingEl.classList.add("d-none"); }
+  function showError() { if (errorEl) errorEl.classList.remove("d-none"); }
 
-  function hideLoading() {
-    if (loadingEl) loadingEl.classList.add("d-none");
-  }
+  if (!window.TCWidget) { hideLoading(); showError(); return; }
 
-  function showError() {
-    if (errorEl) errorEl.classList.remove("d-none");
-  }
+  var params = { apikey: cfg.apiKey, container: "tireconnect" };
+  if (cfg.locale) params.locale = cfg.locale;
+  if (cfg.locationId) params.locationId = cfg.locationId;
+  if (cfg.locationId && typeof cfg.locationLock === "boolean") params.locationLock = cfg.locationLock;
 
-  if (!window.TCWidget) {
-    hideLoading();
-    showError();
-    return;
-  }
-
-  const baseParams = {
-    apikey: cfg.apiKey,
-    container: "tireconnect"
-  };
-
-  // Optional params (only add if set)
-  if (cfg.locale) baseParams.locale = cfg.locale;
-  if (cfg.locationId) baseParams.locationId = cfg.locationId;
-  if (cfg.locationId && typeof cfg.locationLock === "boolean") baseParams.locationLock = cfg.locationLock;
-
-  let initPromise;
-
+  var initPromise;
   try {
-    if (page.type === "wheels") {
-      initPromise = window.TCWidget.initWheels(baseParams);
-    } else {
-      initPromise = window.TCWidget.init(baseParams);
-    }
+    initPromise = page.type === "wheels" ? window.TCWidget.initWheels(params) : window.TCWidget.init(params);
   } catch (e) {
     console.error("TireConnect init threw:", e);
-    hideLoading();
-    showError();
-    return;
+    hideLoading(); showError(); return;
   }
 
   Promise.resolve(initPromise)
-    .then(() => hideLoading())
-    .catch((e) => {
-      console.error("TireConnect init failed:", e);
-      hideLoading();
-      showError();
-    });
+    .then(function() { hideLoading(); })
+    .catch(function(e) { console.error("TireConnect init failed:", e); hideLoading(); showError(); });
 })();
