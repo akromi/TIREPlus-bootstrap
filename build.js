@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build.js — TirePlus static site assembler
+ * build.js — TirePlus static site assembler (bilingual EN/FR)
  *
  * Reads page source files from  src/pages/
  * Combines them with shared partials from  src/_partials/
@@ -13,7 +13,8 @@
  *   ---
  *   title: Page Title
  *   description: Meta description text
- *   scripts: tireconnect-tires    (optional)
+ *   lang: fr                          (optional — uses French partials)
+ *   scripts: tireconnect-tires        (optional)
  *   ---
  *   <main id="main-content"> ... </main>
  */
@@ -31,9 +32,19 @@ function readPartial(name) {
   return fs.readFileSync(path.join(PARTIALS_DIR, name), "utf-8");
 }
 
-const headTpl = readPartial("head.html");
-const navTpl = readPartial("nav.html");
-const footerTpl = readPartial("footer.html");
+// English partials
+const partials = {
+  en: {
+    head: readPartial("head.html"),
+    nav: readPartial("nav.html"),
+    footer: readPartial("footer.html"),
+  },
+  fr: {
+    head: readPartial("head-fr.html"),
+    nav: readPartial("nav-fr.html"),
+    footer: readPartial("footer-fr.html"),
+  },
+};
 
 // ── Script snippets for pages that need them ───────────────────
 const SCRIPT_BLOCKS = {
@@ -47,6 +58,20 @@ const SCRIPT_BLOCKS = {
   "tireconnect-wheels": `
   <!-- TireConnect Wheel Search Widget -->
   <script src="/assets/js/tireconnect-config.js"></script>
+  <script>window.TC_PAGE = { type: "wheels" };</script>
+  <script src="https://app.tireconnect.ca/js/widget.js"></script>
+  <script src="/assets/js/tireconnect-init.js"></script>`,
+
+  "tireconnect-tires-fr": `
+  <!-- TireConnect Tire Search Widget (French) -->
+  <script src="/assets/js/tireconnect-config-fr.js"></script>
+  <script>window.TC_PAGE = { type: "tires" };</script>
+  <script src="https://app.tireconnect.ca/js/widget.js"></script>
+  <script src="/assets/js/tireconnect-init.js"></script>`,
+
+  "tireconnect-wheels-fr": `
+  <!-- TireConnect Wheel Search Widget (French) -->
+  <script src="/assets/js/tireconnect-config-fr.js"></script>
   <script>window.TC_PAGE = { type: "wheels" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
   <script src="/assets/js/tireconnect-init.js"></script>`,
@@ -78,17 +103,21 @@ function parsePage(filePath) {
 function buildPage(pagePath) {
   const { meta, body } = parsePage(pagePath);
 
+  // Determine language from front-matter
+  const lang = meta.lang === "fr" ? "fr" : "en";
+  const p = partials[lang];
+
   // Head: replace placeholders
-  let head = headTpl
+  let head = p.head
     .replace("{{TITLE}}", meta.title || "Tire Plus")
     .replace("{{DESCRIPTION}}", meta.description || "");
 
   // Footer: inject page-specific scripts (or nothing)
   const scriptKey = meta.scripts || "";
   const scriptBlock = SCRIPT_BLOCKS[scriptKey] || "";
-  let footer = footerTpl.replace("{{SCRIPTS}}", scriptBlock);
+  let footer = p.footer.replace("{{SCRIPTS}}", scriptBlock);
 
-  return head + "\n" + navTpl + "\n" + body + "\n" + footer;
+  return head + "\n" + p.nav + "\n" + body + "\n" + footer;
 }
 
 // ── Walk pages directory ───────────────────────────────────────
@@ -120,7 +149,7 @@ function walkPages(dir, relBase) {
 }
 
 // ── Run ────────────────────────────────────────────────────────
-console.log("Building TirePlus site...\n");
+console.log("Building TirePlus site (EN + FR)...\n");
 console.log(`  Source:  ${PAGES_DIR}`);
 console.log(`  Output:  ${OUT_DIR}\n`);
 
