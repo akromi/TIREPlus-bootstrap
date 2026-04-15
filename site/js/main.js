@@ -26,6 +26,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  /* Language toggle — stay on equivalent page */
+  var langMap = {
+    '/': '/fr/',
+    '/tire-search/': '/fr/recherche-pneus/',
+    '/wheel-search/': '/fr/recherche-roues/',
+    '/appointments/': '/fr/rendez-vous/',
+    '/contact-us/': '/fr/contactez-nous/',
+    '/fr/': '/',
+    '/fr/recherche-pneus/': '/tire-search/',
+    '/fr/recherche-roues/': '/wheel-search/',
+    '/fr/rendez-vous/': '/appointments/',
+    '/fr/contactez-nous/': '/contact-us/'
+  };
+  var langToggle = document.querySelector('a[title="Français"], a[title="English"]');
+  if (langToggle) {
+    var path = window.location.pathname.replace(/\/*$/, '/') || '/';
+    if (langMap[path]) langToggle.setAttribute('href', langMap[path]);
+  }
+
   /* Lazy-load iframes when visible */
   if ('IntersectionObserver' in window) {
     var lazyFrames = document.querySelectorAll('iframe[data-src]');
