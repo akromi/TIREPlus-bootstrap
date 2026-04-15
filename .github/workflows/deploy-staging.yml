@@ -1,24 +1,66 @@
-name: Deploy to Staging
+name: Deploy
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      target:
+        description: 'Deploy target'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Build site
         run: node build.js
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: ./site/
 
-      - name: Deploy via FTPS
+  deploy-staging:
+    needs: build
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'staging')
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: ./site/
+      - name: Deploy to Staging
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.tireplus.ca
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          port: 21
+          protocol: ftps
+          local-dir: ./site/
+          server-dir: ${{ secrets.FTP_REMOTE }}
+          dangerous-clean-slate: true
+
+  deploy-production:
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'production'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: ./site/
+      - name: Deploy to Production
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.tireplus.ca
