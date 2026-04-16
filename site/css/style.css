@@ -520,3 +520,36 @@ img { max-width: 100%; height: auto; }
 
 /* ---------- reCAPTCHA Badge (hidden, text attribution in form) ---------- */
 .grecaptcha-badge { visibility: hidden; }
+
+/* ---------- Brands Logo Grid ---------- */
+.brands-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem 2rem;
+  padding: .5rem 0;
+}
+.brands-grid img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  opacity: .8;
+  transition: opacity .2s;
+}
+.brands-grid img:hover {
+  opacity: 1;
+}
+@media (max-width: 767.98px) {
+  .brands-grid {
+    gap: .75rem 1.25rem;
+  }
+  .brands-grid img {
+    height: 28px;
+  }
+}
+@media (max-width: 575.98px) {
+  .brands-grid img {
+    height: 22px;
+  }
+}
