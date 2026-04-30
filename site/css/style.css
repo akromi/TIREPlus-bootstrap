@@ -602,3 +602,61 @@ img { max-width: 100%; height: auto; }
     transform: rotateY(0deg);
   }
 }
+
+/* ---------- Sticky Mobile Call Bar ---------- */
+.mobile-call-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--tp-red);
+  color: #fff;
+  text-align: center;
+  padding: .85rem 1rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+  z-index: 1040;
+  box-shadow: 0 -2px 12px rgba(0,0,0,.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+}
+.mobile-call-bar:hover,
+.mobile-call-bar:focus {
+  background: var(--tp-red-hover);
+  color: #fff;
+}
+.mobile-call-bar i {
+  font-size: 1.1rem;
+}
+@media (max-width: 991.98px) {
+  body {
+    padding-bottom: 60px;
+  }
+}
+
+/* ---------- Highlights Bar Clickable ---------- */
+.highlight-item a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+  padding: .25rem;
+  border-radius: var(--tp-radius);
+  transition: transform var(--tp-transition), background var(--tp-transition);
+}
+.highlight-item a:hover {
+  transform: translateY(-3px);
+  background: var(--tp-gray-100);
+}
+.highlight-item a:hover h6 {
+  color: var(--tp-red);
+}
+.highlight-item a h6,
+.highlight-item a p {
+  color: inherit;
+}
