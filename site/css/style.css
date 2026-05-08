@@ -367,7 +367,7 @@ img { max-width: 100%; height: auto; }
 
 /* ---------- TireConnect Widget Container ---------- */
 .tc-widget-container {
-  min-height: 600px;
+  min-height: 300px;
   position: relative;
   background: var(--tp-gray-100);
   border-radius: var(--tp-radius);
@@ -509,7 +509,7 @@ img { max-width: 100%; height: auto; }
   .highlight-item img { height: 48px; }
   .highlight-item h6 { font-size: .72rem; }
   .highlight-item p { font-size: .68rem; }
-  .tc-widget-container { min-height: 400px; }
+  .tc-widget-container { min-height: 300px; }
 }
 
 /* ---------- Print ---------- */
