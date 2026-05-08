@@ -51,17 +51,21 @@
   </nav>
 
   <main id="main-content">
-    <section class="page-header"><div class="container"><h1>Recherche de roues</h1><p>Trouvez les roues et jantes idéales pour votre véhicule.</p></div></section>
-    <section class="section-padding" aria-label="Outil de recherche de roues">
+    <section class="page-header" style="padding:1.5rem 0 1rem;">
       <div class="container">
-        <div class="alert alert-info d-flex align-items-start gap-2 mb-4" role="alert"><i class="bi bi-info-circle-fill fs-5 mt-1"></i><div><strong>Conseil :</strong> La première option affichée est l'<strong>ajustement direct OE</strong>. Nous recommandons fortement de sélectionner l'option <strong>moyeu OE</strong> dans le menu déroulant <strong>centre d'usinage</strong> sous <em>filtrer les résultats</em> pour le meilleur ajustement.</div></div>
-        <div id="tc-loading" class="alert alert-info" role="status" aria-live="polite">Chargement de la recherche de roues…</div>
-        <div id="tc-error" class="alert alert-danger d-none" role="alert">La recherche de roues n'a pas pu être chargée. Veuillez réessayer ou appelez-nous au <a href="tel:6138347325">613-834-7325</a>.</div>
+        <h1 style="margin-bottom:.25rem;">Recherche de roues</h1>
+        <p class="small mb-0" style="opacity:.9;"><i class="bi bi-info-circle-fill text-gold me-1"></i>Première option : <strong>ajustement direct OE</strong>. Sélectionnez <strong>moyeu OE</strong> dans le filtre <strong>centre d'usinage</strong>.</p>
+      </div>
+    </section>
+    <section style="padding:1rem 0 2rem;" aria-label="Outil de recherche de roues">
+      <div class="container">
+        <div id="tc-loading" class="alert alert-info py-2 mb-2" role="status" aria-live="polite">Chargement…</div>
+        <div id="tc-error" class="alert alert-danger d-none" role="alert">La recherche n'a pas pu être chargée. Appelez-nous au <a href="tel:6138347325">613-834-7325</a>.</div>
         <div class="tc-widget-container"><div id="tireconnect"></div></div>
-        <noscript><div class="alert alert-warning mt-3">JavaScript est requis pour utiliser la recherche de roues.</div></noscript>
+        <noscript><div class="alert alert-warning mt-3">JavaScript est requis.</div></noscript>
         <div class="text-center mt-4">
-          <p class="text-muted">Vous ne trouvez pas ce que vous cherchez? N'hésitez pas à <a href="/fr/contactez-nous/">nous contacter</a>.</p>
-          <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+          <p class="text-muted small mb-2">Vous ne trouvez pas? <a href="/fr/contactez-nous/">Contactez-nous</a>.</p>
+          <div class="d-flex flex-wrap justify-content-center gap-2">
             <a href="/fr/recherche-pneus/" class="btn btn-cta btn-cta-primary">Recherche de pneus</a>
             <a href="/fr/rendez-vous/" class="btn btn-outline-dark">Prendre un rendez-vous</a>
           </div>
@@ -69,7 +73,6 @@
       </div>
     </section>
   </main>
-
   <footer class="footer" role="contentinfo">
     <div class="container">
       <div class="row gy-4">

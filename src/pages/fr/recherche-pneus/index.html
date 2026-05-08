@@ -5,18 +5,24 @@ lang: fr
 scripts: tireconnect-tires-fr
 ---
   <main id="main-content">
-    <section class="page-header"><div class="container"><h1>Recherche de pneus</h1><p>Trouvez les pneus parfaits pour votre véhicule.</p></div></section>
-    <section class="section-padding" aria-label="Outil de recherche de pneus">
+    <section class="page-header" style="padding:1.5rem 0 1rem;">
       <div class="container">
-        <div class="alert alert-warning d-flex align-items-center gap-2 mb-4" role="alert"><i class="bi bi-tag-fill fs-5"></i><div><strong>Promotions :</strong> Consultez nos <a href="https://tirepromos.com/fr/" target="_blank" rel="noopener" class="alert-link">promotions et rabais sur les pneus</a> avant d'acheter!</div></div>
-        <div class="alert alert-info d-flex align-items-start gap-2 mb-4" role="alert"><i class="bi bi-info-circle-fill fs-5 mt-1"></i><div><strong>Conseil :</strong> Le prix inclut l'installation, l'équilibrage et l'azote.</div></div>
-        <div id="tc-loading" class="alert alert-info" role="status" aria-live="polite">Chargement de la recherche de pneus…</div>
-        <div id="tc-error" class="alert alert-danger d-none" role="alert">La recherche de pneus n'a pas pu être chargée. Veuillez réessayer ou appelez-nous au <a href="tel:6138347325">613-834-7325</a>.</div>
+        <h1 style="margin-bottom:.25rem;">Recherche de pneus</h1>
+        <div class="d-flex flex-wrap justify-content-center gap-3 mt-2 small">
+          <span><i class="bi bi-tag-fill text-gold me-1"></i><a href="https://tirepromos.com/fr/" target="_blank" rel="noopener" class="text-white text-decoration-underline">Promotions et rabais</a></span>
+          <span><i class="bi bi-info-circle-fill text-gold me-1"></i>Prix inclut installation, équilibrage et azote</span>
+        </div>
+      </div>
+    </section>
+    <section style="padding:1rem 0 2rem;" aria-label="Outil de recherche de pneus">
+      <div class="container">
+        <div id="tc-loading" class="alert alert-info py-2 mb-2" role="status" aria-live="polite">Chargement…</div>
+        <div id="tc-error" class="alert alert-danger d-none" role="alert">La recherche n'a pas pu être chargée. Appelez-nous au <a href="tel:6138347325">613-834-7325</a>.</div>
         <div class="tc-widget-container"><div id="tireconnect"></div></div>
-        <noscript><div class="alert alert-warning mt-3">JavaScript est requis pour utiliser la recherche de pneus.</div></noscript>
+        <noscript><div class="alert alert-warning mt-3">JavaScript est requis.</div></noscript>
         <div class="text-center mt-4">
-          <p class="text-muted">Vous ne trouvez pas ce que vous cherchez? N'hésitez pas à <a href="/fr/contactez-nous/">nous contacter</a>.</p>
-          <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+          <p class="text-muted small mb-2">Vous ne trouvez pas? <a href="/fr/contactez-nous/">Contactez-nous</a>.</p>
+          <div class="d-flex flex-wrap justify-content-center gap-2">
             <a href="/fr/recherche-roues/" class="btn btn-cta btn-cta-primary">Recherche de roues</a>
             <a href="/fr/rendez-vous/" class="btn btn-outline-dark">Prendre un rendez-vous</a>
           </div>
