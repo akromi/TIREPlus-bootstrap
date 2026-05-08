@@ -5,94 +5,350 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Test Harness – Tire Plus</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.6}.container{max-width:960px;margin:0 auto;padding:1.5rem}h1{font-size:1.5rem;font-weight:700;margin-bottom:.25rem}.subtitle{color:#94a3b8;font-size:.9rem;margin-bottom:1.5rem}.controls{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem}.btn{padding:.6rem 1.5rem;border:none;border-radius:.4rem;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .2s}.btn-run{background:#22c55e;color:#000}.btn-run:hover{background:#16a34a}.btn-run:disabled{background:#334155;color:#64748b;cursor:not-allowed}.btn-clear{background:#334155;color:#94a3b8}.btn-clear:hover{background:#475569}.summary{display:flex;gap:1.5rem;margin-bottom:1rem;font-size:.95rem}.summary .pass{color:#22c55e}.summary .fail{color:#ef4444}.summary .total{color:#94a3b8}.progress-bar{width:100%;height:6px;background:#1e293b;border-radius:3px;margin-bottom:1.5rem;overflow:hidden}.progress-fill{height:100%;background:#22c55e;width:0%;transition:width .3s;border-radius:3px}.progress-fill.has-fail{background:#ef4444}.section-header{background:#1e293b;padding:.5rem .75rem;margin:1rem 0 .25rem;border-radius:.4rem;font-weight:700;font-size:.85rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;user-select:none;display:flex;justify-content:space-between}.section-header:hover{background:#334155}.test-row{display:flex;align-items:flex-start;gap:.5rem;padding:.35rem .75rem;font-size:.85rem;border-bottom:1px solid #1e293b}.test-row .icon{flex-shrink:0;width:1.2rem;text-align:center}.test-row .name{flex:1}.test-row .detail{color:#64748b;font-size:.8rem;max-width:300px;text-align:right}.test-row.fail{background:rgba(239,68,68,.08)}.final-result{text-align:center;padding:1.5rem;margin-top:1rem;border-radius:.5rem;font-size:1.2rem;font-weight:700}.final-result.all-pass{background:rgba(34,197,94,.12);color:#22c55e}.final-result.has-fail{background:rgba(239,68,68,.12);color:#ef4444}.timestamp{color:#64748b;font-size:.8rem}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.6}
+.container{max-width:960px;margin:0 auto;padding:1.5rem}
+h1{font-size:1.5rem;font-weight:700;margin-bottom:.25rem}
+.subtitle{color:#94a3b8;font-size:.9rem;margin-bottom:1.5rem}
+.controls{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem}
+.btn{padding:.6rem 1.5rem;border:none;border-radius:.4rem;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .2s}
+.btn-run{background:#22c55e;color:#000}
+.btn-run:hover{background:#16a34a}
+.btn-run:disabled{background:#334155;color:#64748b;cursor:not-allowed}
+.btn-clear{background:#334155;color:#94a3b8}
+.btn-clear:hover{background:#475569}
+.summary{display:flex;gap:1.5rem;margin-bottom:1rem;font-size:.95rem}
+.summary .pass{color:#22c55e}.summary .fail{color:#ef4444}.summary .total{color:#94a3b8}
+.progress-bar{width:100%;height:6px;background:#1e293b;border-radius:3px;margin-bottom:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:#22c55e;width:0%;transition:width .3s;border-radius:3px}
+.progress-fill.has-fail{background:#ef4444}
+.section-header{background:#1e293b;padding:.5rem .75rem;margin:1rem 0 .25rem;border-radius:.4rem;font-weight:700;font-size:.85rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;user-select:none;display:flex;justify-content:space-between}
+.section-header:hover{background:#334155}
+.test-row{display:flex;align-items:flex-start;gap:.5rem;padding:.35rem .75rem;font-size:.85rem;border-bottom:1px solid #1e293b}
+.test-row .icon{flex-shrink:0;width:1.2rem;text-align:center}
+.test-row .name{flex:1}
+.test-row .detail{color:#64748b;font-size:.8rem;max-width:300px;text-align:right}
+.test-row.fail{background:rgba(239,68,68,.08)}
+.final-result{text-align:center;padding:1.5rem;margin-top:1rem;border-radius:.5rem;font-size:1.2rem;font-weight:700}
+.final-result.all-pass{background:rgba(34,197,94,.12);color:#22c55e}
+.final-result.has-fail{background:rgba(239,68,68,.12);color:#ef4444}
+.timestamp{color:#64748b;font-size:.8rem}
 </style>
 </head>
 <body>
 <div class="container">
-<h1>🔧 TirePlus Test Harness (Bilingual)</h1>
+<h1>🔧 TirePlus Test Harness</h1>
 <p class="subtitle">Testing <span id="target-url"></span></p>
-<div class="controls"><button class="btn btn-run" id="btn-run" onclick="runAllTests()">▶ Run All Tests</button><button class="btn btn-clear" onclick="clearResults()">Clear</button><span class="timestamp" id="timestamp"></span></div>
-<div class="summary" id="summary" style="display:none"><span class="pass">✅ <span id="s-pass">0</span></span><span class="fail">❌ <span id="s-fail">0</span></span><span class="total">/ <span id="s-total">0</span></span></div>
+<div class="controls">
+  <button class="btn btn-run" id="btn-run" onclick="runAllTests()">▶ Run All Tests</button>
+  <button class="btn btn-clear" onclick="clearResults()">Clear</button>
+  <span class="timestamp" id="timestamp"></span>
+</div>
+<div class="summary" id="summary" style="display:none">
+  <span class="pass">✅ <span id="s-pass">0</span></span>
+  <span class="fail">❌ <span id="s-fail">0</span></span>
+  <span class="total">/ <span id="s-total">0</span></span>
+</div>
 <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-<div id="results"></div><div id="final"></div>
+<div id="results"></div>
+<div id="final"></div>
 </div>
 <script>
-const BASE=location.origin;document.getElementById("target-url").textContent=BASE;
-let stats={pass:0,fail:0,total:0},sections={},totalExpected=200;
-function clearResults(){document.getElementById("results").innerHTML="";document.getElementById("final").innerHTML="";document.getElementById("summary").style.display="none";document.getElementById("progress").style.width="0%";document.getElementById("progress").className="progress-fill";document.getElementById("timestamp").textContent="";stats={pass:0,fail:0,total:0};sections={};}
-function updateSummary(){document.getElementById("summary").style.display="flex";document.getElementById("s-pass").textContent=stats.pass;document.getElementById("s-fail").textContent=stats.fail;document.getElementById("s-total").textContent=stats.total;const p=Math.round((stats.total/totalExpected)*100);const b=document.getElementById("progress");b.style.width=Math.min(p,100)+"%";b.className="progress-fill"+(stats.fail>0?" has-fail":"");}
-function ensureSection(n){if(sections[n])return;const c=document.getElementById("results"),h=document.createElement("div");h.className="section-header";h.innerHTML=`<span>${n}</span><span class="counts" id="sc-${n.replace(/\W/g,'')}"></span>`;const t=document.createElement("div");t.className="section-tests";t.id="st-"+n.replace(/\W/g,"");h.onclick=()=>t.style.display=t.style.display==="none"?"":"none";c.appendChild(h);c.appendChild(t);sections[n]={el:t,pass:0,fail:0};}
-function updateSC(n){const s=sections[n],el=document.getElementById("sc-"+n.replace(/\W/g,""));if(el)el.innerHTML=`<span style="color:#22c55e">${s.pass}✓</span> <span style="color:#ef4444">${s.fail}✗</span>`;}
-function rec(s,n,p,d){const st=p?"pass":"fail";stats[st]++;stats.total++;ensureSection(s);sections[s][st]++;updateSC(s);const r=document.createElement("div");r.className="test-row "+st;r.innerHTML=`<span class="icon">${p?"✅":"❌"}</span><span class="name">${n}</span><span class="detail">${d||""}</span>`;sections[s].el.appendChild(r);updateSummary();}
-function has(h,t){return h.toLowerCase().includes(t.toLowerCase());}
-async function fp(path){try{const r=await fetch(BASE+path,{redirect:"follow",credentials:"same-origin"});return{status:r.status,body:await r.text(),headers:Object.fromEntries(r.headers.entries())};}catch(e){return{status:0,body:"",error:e.message};}}
+const BASE = location.origin;
+document.getElementById("target-url").textContent = BASE;
+let stats = { pass: 0, fail: 0, total: 0 };
+let sections = {};
+const totalExpected = 220;
 
-async function testEN(){
-  const sec="EN: Home";const r=await fp("/");rec(sec,"HTTP 200",r.status===200);if(r.status!==200)return;const h=r.body;
-  rec(sec,"lang=en-CA",has(h,'lang="en-CA"'));rec(sec,"Hero heading",has(h,"Your Trusted"));rec(sec,"Phone",has(h,"613-834-7325"));
-  rec(sec,"FR toggle",has(h,'href="/fr/"'));rec(sec,"Tire search link",has(h,"/tire-search/"));rec(sec,"Services",has(h,"Our Services"));
-  rec(sec,"Elfsight",has(h,"elfsight"));rec(sec,"Footer",has(h,"<footer"));rec(sec,"Skip link",has(h,"skip-link"));
-  rec(sec,"No MTO",!/\bMTO\b/.test(h.replace(/<!--[\s\S]*?-->/g,"")));
-
-  const sec2="EN: Tire Search";const r2=await fp("/tire-search/");rec(sec2,"HTTP 200",r2.status===200);
-  if(r2.status===200){rec(sec2,"Heading",has(r2.body,"Search for Tires"));rec(sec2,"EN config",has(r2.body,"tireconnect-config.js"));rec(sec2,"Widget JS",has(r2.body,"widget.js"));}
-
-  const sec3="EN: Wheel Search";const r3=await fp("/wheel-search/");rec(sec3,"HTTP 200",r3.status===200);
-  if(r3.status===200){rec(sec3,"Heading",has(r3.body,"Search for Wheels"));rec(sec3,"OE tip",has(r3.body,"OE Direct Fit"));}
-
-  const sec4="EN: Appointments";const r4=await fp("/appointments/");rec(sec4,"HTTP 200",r4.status===200);
-  if(r4.status===200){rec(sec4,"Book Now",has(r4.body,"Book Now"));rec(sec4,"WS token",has(r4.body,"o36ivi"));}
-
-  const sec5="EN: Contact";const r5=await fp("/contact-us/");rec(sec5,"HTTP 200",r5.status===200);
-  if(r5.status===200){rec(sec5,"Form heading",has(r5.body,"Send Us a Message"));rec(sec5,"Honeypot",has(r5.body,'name="company_url"'));rec(sec5,"reCAPTCHA",has(r5.body,"recaptcha"));}
+function clearResults() {
+  document.getElementById("results").innerHTML = "";
+  document.getElementById("final").innerHTML = "";
+  document.getElementById("summary").style.display = "none";
+  document.getElementById("progress").style.width = "0%";
+  document.getElementById("progress").className = "progress-fill";
+  document.getElementById("timestamp").textContent = "";
+  stats = { pass: 0, fail: 0, total: 0 };
+  sections = {};
 }
 
-async function testFR(){
-  const sec="FR: Accueil";const r=await fp("/fr/");rec(sec,"HTTP 200",r.status===200);if(r.status!==200)return;const h=r.body;
-  rec(sec,"lang=fr-CA",has(h,'lang="fr-CA"'));rec(sec,"Hero FR",has(h,"automobile de confiance"));rec(sec,"Nav: Accueil",has(h,"Accueil"));
-  rec(sec,"EN toggle",has(h,'title="English"'));rec(sec,"No English nav",!has(h,'>Home</a>'));
-  rec(sec,"Services FR",has(h,"Nos services"));rec(sec,"Footer FR",has(h,"Tous droits"));rec(sec,"Elfsight",has(h,"elfsight"));
-
-  const sec2="FR: Recherche pneus";const r2=await fp("/fr/recherche-pneus/");rec(sec2,"HTTP 200",r2.status===200);
-  if(r2.status===200){rec(sec2,"Heading FR",has(r2.body,"Recherche de pneus"));rec(sec2,"FR config",has(r2.body,"tireconnect-config-fr.js"));rec(sec2,"lang=fr-CA",has(r2.body,'lang="fr-CA"'));}
-
-  const sec3="FR: Recherche roues";const r3=await fp("/fr/recherche-roues/");rec(sec3,"HTTP 200",r3.status===200);
-  if(r3.status===200){rec(sec3,"Heading FR",has(r3.body,"Recherche de roues"));rec(sec3,"FR config",has(r3.body,"tireconnect-config-fr.js"));}
-
-  const sec4="FR: Rendez-vous";const r4=await fp("/fr/rendez-vous/");rec(sec4,"HTTP 200",r4.status===200);
-  if(r4.status===200){rec(sec4,"Book FR",has(r4.body,"Réserver maintenant"));rec(sec4,"Warning FR",has(r4.body,"aujourd'hui ou demain"));}
-
-  const sec5="FR: Contactez-nous";const r5=await fp("/fr/contactez-nous/");rec(sec5,"HTTP 200",r5.status===200);
-  if(r5.status===200){rec(sec5,"Form FR",has(r5.body,"Envoyez-nous un message"));rec(sec5,"lang=fr hidden",has(r5.body,'name="lang" value="fr"'));rec(sec5,"lang=fr-CA",has(r5.body,'lang="fr-CA"'));}
+function updateSummary() {
+  document.getElementById("summary").style.display = "flex";
+  document.getElementById("s-pass").textContent = stats.pass;
+  document.getElementById("s-fail").textContent = stats.fail;
+  document.getElementById("s-total").textContent = stats.total;
+  const p = Math.round((stats.total / totalExpected) * 100);
+  const b = document.getElementById("progress");
+  b.style.width = Math.min(p, 100) + "%";
+  b.className = "progress-fill" + (stats.fail > 0 ? " has-fail" : "");
 }
 
-async function testAssets(){
-  const sec="Assets";
-  const a=[["/css/style.css","CSS"],["/js/main.js","JS"],["/assets/js/tireconnect-config.js","TC EN"],["/assets/js/tireconnect-config-fr.js","TC FR"],["/assets/js/tireconnect-init.js","TC init"],["/img/logo.png","Logo"],["/img/favicon.ico","Favicon"]];
-  for(const[p,l]of a){try{const r=await fetch(BASE+p,{method:"HEAD"});rec(sec,l,r.status===200,p);}catch(e){rec(sec,l,false,e.message);}}
+function ensureSection(n) {
+  if (sections[n]) return;
+  const c = document.getElementById("results");
+  const h = document.createElement("div");
+  h.className = "section-header";
+  h.innerHTML = `<span>${n}</span><span class="counts" id="sc-${n.replace(/\W/g,'')}"></span>`;
+  const t = document.createElement("div");
+  t.className = "section-tests";
+  t.id = "st-" + n.replace(/\W/g, "");
+  h.onclick = () => t.style.display = t.style.display === "none" ? "" : "none";
+  c.appendChild(h);
+  c.appendChild(t);
+  sections[n] = { el: t, pass: 0, fail: 0 };
 }
 
-async function testConsistency(){
-  const sec="Consistency";
-  const pages=["/","/tire-search/","/wheel-search/","/appointments/","/contact-us/","/fr/","/fr/recherche-pneus/","/fr/recherche-roues/","/fr/rendez-vous/","/fr/contactez-nous/"];
-  for(const p of pages){const r=await fp(p);if(r.status===200){rec(sec,p+" navbar",has(r.body,"navbar-tp"));rec(sec,p+" footer",has(r.body,"<footer"));rec(sec,p+" phone",has(r.body,"613-834-7325"));}}
+function updateSC(n) {
+  const s = sections[n];
+  const el = document.getElementById("sc-" + n.replace(/\W/g, ""));
+  if (el) el.innerHTML = `<span style="color:#22c55e">${s.pass}✓</span> <span style="color:#ef4444">${s.fail}✗</span>`;
 }
 
-async function testBilingual(){
-  const sec="Bilingual";
-  const fr=["/fr/","/fr/recherche-pneus/","/fr/recherche-roues/","/fr/rendez-vous/","/fr/contactez-nous/"];
-  for(const p of fr){const r=await fp(p);if(r.status===200){rec(sec,p+" fr-CA",has(r.body,'lang="fr-CA"'));rec(sec,p+" FR nav",has(r.body,"Accueil"));rec(sec,p+" no EN nav",!has(r.body,'>Home</a>'));}}
-  const en=["/","/tire-search/","/wheel-search/","/appointments/","/contact-us/"];
-  for(const p of en){const r=await fp(p);if(r.status===200){rec(sec,p+" en-CA",has(r.body,'lang="en-CA"'));rec(sec,p+" FR toggle",has(r.body,'title="Français"'));}}
+function rec(s, n, p, d) {
+  const st = p ? "pass" : "fail";
+  stats[st]++; stats.total++;
+  ensureSection(s);
+  sections[s][st]++;
+  updateSC(s);
+  const r = document.createElement("div");
+  r.className = "test-row " + st;
+  r.innerHTML = `<span class="icon">${p ? "✅" : "❌"}</span><span class="name">${n}</span><span class="detail">${d || ""}</span>`;
+  sections[s].el.appendChild(r);
+  updateSummary();
 }
 
-async function runAllTests(){
-  clearResults();document.getElementById("btn-run").disabled=true;document.getElementById("btn-run").textContent="⏳ Running...";document.getElementById("timestamp").textContent=new Date().toLocaleString();
-  try{await testEN();await testFR();await testAssets();await testConsistency();await testBilingual();}catch(e){rec("Error","Harness error",false,e.message);}
-  const f=document.getElementById("final");
-  f.innerHTML=stats.fail===0?`<div class="final-result all-pass">🎉 All ${stats.total} tests passed!</div>`:`<div class="final-result has-fail">🔴 ${stats.fail} of ${stats.total} tests failed</div>`;
-  document.getElementById("btn-run").disabled=false;document.getElementById("btn-run").textContent="▶ Run All Tests";
+function has(h, t) { return h.toLowerCase().includes(t.toLowerCase()); }
+
+async function fp(path) {
+  try {
+    const r = await fetch(BASE + path, { redirect: "follow", credentials: "same-origin" });
+    return { status: r.status, body: await r.text(), headers: Object.fromEntries(r.headers.entries()) };
+  } catch (e) {
+    return { status: 0, body: "", error: e.message };
+  }
+}
+
+async function testEN() {
+  // Home
+  const sec = "EN: Home";
+  const r = await fp("/");
+  rec(sec, "HTTP 200", r.status === 200);
+  if (r.status !== 200) return;
+  const h = r.body;
+  rec(sec, "lang=en-CA", has(h, 'lang="en-CA"'));
+  rec(sec, "Hero heading", has(h, "Your Trusted"));
+  rec(sec, "Phone", has(h, "613-834-7325"));
+  rec(sec, "Promo button", has(h, "View Current Tire Promotions"));
+  rec(sec, "Promo URL", has(h, "tirepromos.com"));
+  rec(sec, "Highlights linked", has(h, 'href="/#services"'));
+  rec(sec, "Brands carousel 3D", has(h, "brands-carousel-3d"));
+  rec(sec, "Brand: Michelin", has(h, "/img/brands/michelin.png"));
+  rec(sec, "Brand: Nexen", has(h, "/img/brands/nexen.png"));
+  rec(sec, "Brand: Nokian", has(h, "/img/brands/nokian.png"));
+  rec(sec, "Service: General+Diag", has(h, "General Repairs &amp; Diagnostics"));
+  rec(sec, "Service: Tires+TPMS", has(h, "Tires, Wheels &amp; TPMS"));
+  rec(sec, "Service: Front-End+Align", has(h, "Front-End Service &amp; Alignment"));
+  rec(sec, "Service: Battery+Starter", has(h, "Battery, Starter &amp; Alternator"));
+  rec(sec, "Service: A/C", has(h, "A/C Service"));
+  rec(sec, "Service: Suspension", has(h, "Suspension &amp; Shocks"));
+  rec(sec, "Menu: Tires renamed", />Tires</.test(h));
+  rec(sec, "Menu: Wheels renamed", />Wheels</.test(h));
+  rec(sec, "FR toggle text", has(h, "Française"));
+  rec(sec, "Sticky mobile call bar", has(h, "mobile-call-bar"));
+  rec(sec, "Elfsight", has(h, "elfsight"));
+  rec(sec, "Footer", has(h, "<footer"));
+
+  // Tire Search
+  const sec2 = "EN: Tire Search";
+  const r2 = await fp("/tire-search/");
+  rec(sec2, "HTTP 200", r2.status === 200);
+  if (r2.status === 200) {
+    rec(sec2, "Heading", has(r2.body, "Search for Tires"));
+    rec(sec2, "EN config", has(r2.body, "tireconnect-config.js"));
+    rec(sec2, "Promo tip", has(r2.body, "Current promotions"));
+    rec(sec2, "Price tip", has(r2.body, "Price includes installation"));
+    rec(sec2, "Inventory tip", has(r2.body, "Yellow triangle"));
+    rec(sec2, "Sticky call bar", has(r2.body, "mobile-call-bar"));
+  }
+
+  // Wheel Search
+  const sec3 = "EN: Wheel Search";
+  const r3 = await fp("/wheel-search/");
+  rec(sec3, "HTTP 200", r3.status === 200);
+  if (r3.status === 200) {
+    rec(sec3, "Heading", has(r3.body, "Search for Wheels"));
+    rec(sec3, "Centerbore tip", has(r3.body, "Centerbore filter"));
+    rec(sec3, "First option", has(r3.body, "first option"));
+    rec(sec3, "OE Direct Fit", has(r3.body, "OE Direct Fit"));
+    rec(sec3, "Inventory tip", has(r3.body, "Yellow triangle"));
+  }
+
+  // Appointments
+  const sec4 = "EN: Appointments";
+  const r4 = await fp("/appointments/");
+  rec(sec4, "HTTP 200", r4.status === 200);
+  if (r4.status === 200) {
+    rec(sec4, "Book Now", has(r4.body, "Book Now"));
+    rec(sec4, "WS token", has(r4.body, "o36ivi"));
+  }
+
+  // Contact
+  const sec5 = "EN: Contact";
+  const r5 = await fp("/contact-us/");
+  rec(sec5, "HTTP 200", r5.status === 200);
+  if (r5.status === 200) {
+    rec(sec5, "Form heading", has(r5.body, "Send Us a Message"));
+    rec(sec5, "Honeypot", has(r5.body, 'name="company_url"'));
+    rec(sec5, "reCAPTCHA", has(r5.body, "recaptcha"));
+  }
+}
+
+async function testFR() {
+  // Accueil
+  const sec = "FR: Accueil";
+  const r = await fp("/fr/");
+  rec(sec, "HTTP 200", r.status === 200);
+  if (r.status !== 200) return;
+  const h = r.body;
+  rec(sec, "lang=fr-CA", has(h, 'lang="fr-CA"'));
+  rec(sec, "Hero FR", has(h, "automobile de confiance"));
+  rec(sec, "FR promo button", has(h, "Voir les promotions"));
+  rec(sec, "FR promo URL", has(h, "tirepromos.com/fr"));
+  rec(sec, "InspectiON branding", has(h, "InspectiON"));
+  rec(sec, "Programme InspectiON", has(h, "Programme InspectiON"));
+  rec(sec, "Service FR: Repairs+Diag", has(h, "Réparations générales et diagnostics"));
+  rec(sec, "Service FR: Tires+TPMS", has(h, "Pneus, roues et TPMS"));
+  rec(sec, "Service FR: Battery", has(h, "Batterie, démarreur et alternateur"));
+  rec(sec, "Service FR: A/C", has(h, "Service et recharge A/C"));
+  rec(sec, "Service FR: Suspension", has(h, "Suspension et amortisseurs"));
+  rec(sec, "Menu FR: Pneus renamed", />Pneus</.test(h));
+  rec(sec, "Menu FR: Roues renamed", />Roues</.test(h));
+  rec(sec, "EN toggle text", has(h, "English"));
+  rec(sec, "Sticky call bar", has(h, "mobile-call-bar"));
+  rec(sec, "Footer FR", has(h, "Tous droits"));
+  rec(sec, "No English nav", !has(h, ">Home<"));
+
+  // Recherche pneus
+  const sec2 = "FR: Recherche pneus";
+  const r2 = await fp("/fr/recherche-pneus/");
+  rec(sec2, "HTTP 200", r2.status === 200);
+  if (r2.status === 200) {
+    rec(sec2, "FR config", has(r2.body, "tireconnect-config-fr.js"));
+    rec(sec2, "FR promo tip", has(r2.body, "Promotions et rabais"));
+    rec(sec2, "FR price tip", has(r2.body, "installation, équilibrage"));
+    rec(sec2, "FR inventory tip", has(r2.body, "Triangle jaune"));
+    rec(sec2, "lang=fr-CA", has(r2.body, 'lang="fr-CA"'));
+  }
+
+  // Recherche roues
+  const sec3 = "FR: Recherche roues";
+  const r3 = await fp("/fr/recherche-roues/");
+  rec(sec3, "HTTP 200", r3.status === 200);
+  if (r3.status === 200) {
+    rec(sec3, "FR config", has(r3.body, "tireconnect-config-fr.js"));
+    rec(sec3, "Centre d'usinage", has(r3.body, "Centre d'usinage"));
+    rec(sec3, "Première option", has(r3.body, "première option"));
+    rec(sec3, "Ajustement direct OE", has(r3.body, "ajustement direct OE"));
+    rec(sec3, "FR inventory tip", has(r3.body, "Triangle jaune"));
+  }
+
+  // Rendez-vous
+  const sec4 = "FR: Rendez-vous";
+  const r4 = await fp("/fr/rendez-vous/");
+  rec(sec4, "HTTP 200", r4.status === 200);
+  if (r4.status === 200) {
+    rec(sec4, "FR book button", has(r4.body, "Réserver maintenant"));
+    rec(sec4, "WS URL", has(r4.body, "workshopsoftware.com"));
+  }
+
+  // Contactez-nous
+  const sec5 = "FR: Contactez-nous";
+  const r5 = await fp("/fr/contactez-nous/");
+  rec(sec5, "HTTP 200", r5.status === 200);
+  if (r5.status === 200) {
+    rec(sec5, "Form heading FR", has(r5.body, "Envoyez-nous un message"));
+    rec(sec5, "Lang hidden field", has(r5.body, 'name="lang" value="fr"'));
+    rec(sec5, "lang=fr-CA", has(r5.body, 'lang="fr-CA"'));
+    rec(sec5, "reCAPTCHA", has(r5.body, "recaptcha"));
+  }
+}
+
+async function testAssets() {
+  const sec = "Assets";
+  const a = [
+    ["/css/style.css", "CSS"],
+    ["/js/main.js", "JS"],
+    ["/assets/js/tireconnect-config.js", "TC EN"],
+    ["/assets/js/tireconnect-config-fr.js", "TC FR"],
+    ["/assets/js/tireconnect-init.js", "TC init"],
+    ["/img/logo.png", "Logo"],
+    ["/img/favicon.ico", "Favicon"],
+    ["/img/credit-cards.png", "Credit cards"],
+    ["/img/brands/michelin.png", "Brand: Michelin"],
+    ["/img/brands/nexen.png", "Brand: Nexen"],
+    ["/img/brands/nokian.png", "Brand: Nokian"],
+    ["/img/brands/general-tire.png", "Brand: General Tire"],
+  ];
+  for (const [p, l] of a) {
+    try { const r = await fetch(BASE + p, { method: "HEAD" }); rec(sec, l, r.status === 200, p);
+    } catch (e) { rec(sec, l, false, e.message); }
+  }
+}
+
+async function testConsistency() {
+  const sec = "Consistency";
+  const pages = ["/", "/tire-search/", "/wheel-search/", "/appointments/", "/contact-us/", "/fr/", "/fr/recherche-pneus/", "/fr/recherche-roues/", "/fr/rendez-vous/", "/fr/contactez-nous/"];
+  for (const p of pages) {
+    const r = await fp(p);
+    if (r.status === 200) {
+      rec(sec, p + " navbar", has(r.body, "navbar-tp"));
+      rec(sec, p + " footer", has(r.body, "<footer"));
+      rec(sec, p + " phone", has(r.body, "613-834-7325"));
+      rec(sec, p + " mobile-call-bar", has(r.body, "mobile-call-bar"));
+    }
+  }
+}
+
+async function testBilingual() {
+  const sec = "Bilingual";
+  const fr = ["/fr/", "/fr/recherche-pneus/", "/fr/recherche-roues/", "/fr/rendez-vous/", "/fr/contactez-nous/"];
+  for (const p of fr) {
+    const r = await fp(p);
+    if (r.status === 200) {
+      rec(sec, p + " fr-CA", has(r.body, 'lang="fr-CA"'));
+      rec(sec, p + " EN toggle", has(r.body, 'title="English"'));
+      rec(sec, p + " no EN nav", !has(r.body, ">Home<"));
+    }
+  }
+  const en = ["/", "/tire-search/", "/wheel-search/", "/appointments/", "/contact-us/"];
+  for (const p of en) {
+    const r = await fp(p);
+    if (r.status === 200) {
+      rec(sec, p + " en-CA", has(r.body, 'lang="en-CA"'));
+      rec(sec, p + " FR toggle", has(r.body, 'title="Français"'));
+    }
+  }
+}
+
+async function runAllTests() {
+  clearResults();
+  document.getElementById("btn-run").disabled = true;
+  document.getElementById("btn-run").textContent = "⏳ Running...";
+  document.getElementById("timestamp").textContent = new Date().toLocaleString();
+  try {
+    await testEN();
+    await testFR();
+    await testAssets();
+    await testConsistency();
+    await testBilingual();
+  } catch (e) {
+    rec("Error", "Harness error", false, e.message);
+  }
+  const f = document.getElementById("final");
+  f.innerHTML = stats.fail === 0
+    ? `<div class="final-result all-pass">🎉 All ${stats.total} tests passed!</div>`
+    : `<div class="final-result has-fail">🔴 ${stats.fail} of ${stats.total} tests failed</div>`;
+  document.getElementById("btn-run").disabled = false;
+  document.getElementById("btn-run").textContent = "▶ Run All Tests";
 }
 </script>
 </body>

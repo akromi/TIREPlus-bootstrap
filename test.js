@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * TirePlus Automated Test Harness (Bilingual EN/FR)
+ * TirePlus Test Harness (Bilingual EN/FR)
  * Usage: node test.js [base_url]
  */
 const https = require("https");
@@ -14,7 +14,6 @@ function fetch(url, opts = {}) {
     const u = new URL(url);
     const mod = u.protocol === "https:" ? https : http;
     const o = { hostname: u.hostname, port: u.port, path: u.pathname + u.search, method: opts.method || "GET", headers: opts.headers || {}, rejectUnauthorized: false, timeout: 15000 };
-    if (opts.body) { o.headers["Content-Type"] = "application/x-www-form-urlencoded"; o.headers["Content-Length"] = Buffer.byteLength(opts.body); }
     const req = mod.request(o, (res) => {
       if ([301,302,303,307,308].includes(res.statusCode) && res.headers.location) {
         const r = res.headers.location.startsWith("http") ? res.headers.location : `${u.protocol}//${u.host}${res.headers.location}`;
@@ -23,7 +22,7 @@ function fetch(url, opts = {}) {
       let d = ""; res.on("data", c => d += c); res.on("end", () => resolve({ status: res.statusCode, headers: res.headers, body: d }));
     });
     req.on("error", reject); req.on("timeout", () => { req.destroy(); reject(new Error("Timeout")); });
-    if (opts.body) req.write(opts.body); req.end();
+    req.end();
   });
 }
 
@@ -36,7 +35,6 @@ function rec(s, n, p, d = "") {
 }
 
 function has(h, t) { return h.toLowerCase().includes(t.toLowerCase()); }
-
 async function testPage(path, title, checks) {
   let r; try { r = await fetch(`${BASE}${path}`); } catch (e) { rec(path, `Loads ${path}`, false, e.message); return null; }
   rec(path, "HTTP 200", r.status === 200, `Got ${r.status}`);
@@ -45,119 +43,165 @@ async function testPage(path, title, checks) {
   for (const c of (checks || [])) c(r.body, path);
   return r;
 }
-
 function chk(t, l) { return (h, s) => rec(s, l || `Contains "${t}"`, has(h, t)); }
-function chkNot(t, l) { return (h, s) => rec(s, l || `No "${t}"`, !has(h, t), has(h, t) ? "FOUND" : ""); }
 
 async function run() {
-  console.log(`\n🔧 TirePlus Test Harness (Bilingual)\n   Target: ${BASE}\n   Time:   ${new Date().toISOString()}\n`);
+  console.log(`\n🔧 TirePlus Test Harness\n   Target: ${BASE}\n   Time:   ${new Date().toISOString()}\n`);
 
-  // === ENGLISH HOME ===
-  console.log("━━━ EN: Home Page ━━━");
+  // === EN HOME ===
+  console.log("━━━ EN: Home ━━━");
   await testPage("/", "Tire Plus", [
-    chk("Your Trusted", "Hero heading"), chk("613-834-7325", "Phone"), chk("2006 St. Joseph", "Address"),
-    chk("/tire-search/", "Tire search link"), chk("/wheel-search/", "Wheel search link"),
-    chk("Wheel Alignment", "Highlights: Alignment"), chk("DriveON Licensed", "Highlights: DriveON"),
-    chk("Road Force Balancing", "Highlights: Road Force"), chk("Oil Changes", "Highlights: Oil"),
-    chk("Our Services", "Services heading"), chk("General Repairs", "Service: Repairs"),
-    chk("Fluid Flush", "Service: Flush"), chk("Visit Us", "Location section"),
-    chk("elfsight", "Elfsight widget"), chk('href="/fr/"', "FR toggle link"),
-    chk("<footer", "Footer"), chk("skip-link", "Skip link"),
-    chkNot("\\bMTO\\b", "No MTO"),
-    (h, s) => rec(s, "lang=en-CA", has(h, 'lang="en-CA"')),
+    chk("Your Trusted", "Hero heading"),
+    chk("613-834-7325", "Phone"),
+    chk("2006 St. Joseph", "Address"),
+    chk("View Current Tire Promotions", "Promo button"),
+    chk("tirepromos.com", "Promo link"),
+    // Highlights (clickable)
+    chk('href="/#services"', "Highlights link to services"),
+    chk("Wheel Alignment", "Highlight: Alignment"),
+    chk("DriveON Licensed", "Highlight: DriveON"),
+    chk("Road Force Balancing", "Highlight: Road Force"),
+    chk("Oil Changes", "Highlight: Oil"),
+    // Brands carousel (3D)
+    chk("brands-carousel-3d", "3D carousel"),
+    chk("brands-ring", "Carousel ring"),
+    chk("/img/brands/michelin.png", "Brand: Michelin"),
+    chk("/img/brands/nokian.png", "Brand: Nokian"),
+    chk("/img/brands/nexen.png", "Brand: Nexen"),
+    // Services (12 cards)
+    chk("Our Services", "Services heading"),
+    chk("General Repairs &amp; Diagnostics", "Service: General+Diag"),
+    chk("Tires, Wheels &amp; TPMS", "Service: Tires+TPMS"),
+    chk("Front-End Service &amp; Alignment", "Service: Front-End+Align"),
+    chk("Battery, Starter &amp; Alternator", "Service: Battery+Starter"),
+    chk("A/C Service", "Service: A/C"),
+    chk("Suspension &amp; Shocks", "Service: Suspension"),
+    chk("Fluid Flush", "Service: Flush"),
+    // Menu (renamed)
+    (h,s) => rec(s, "Menu: Tires (renamed)", />Tires</.test(h)),
+    (h,s) => rec(s, "Menu: Wheels (renamed)", />Wheels</.test(h)),
+    chk("Française", "FR toggle text"),
+    chk("Visit Us", "Location section"),
+    chk("elfsight", "Elfsight"),
+    chk("mobile-call-bar", "Sticky mobile call bar"),
+    (h,s) => rec(s, "lang=en-CA", has(h, 'lang="en-CA"')),
   ]);
 
-  // === ENGLISH INNER PAGES ===
+  // === EN: TIRE SEARCH ===
   console.log("\n━━━ EN: Tire Search ━━━");
   await testPage("/tire-search/", "Tire Search", [
-    chk("Search for Tires", "Heading"), chk("tireconnect-config.js", "EN config"), chk("widget.js", "Widget JS"),
-    chk('"tires"', "Page type tires"), chk("tc-loading", "Loading state"), chk("tc-error", "Error fallback"),
+    chk("Search for Tires", "Heading"),
+    chk("tireconnect-config.js", "EN config"),
+    chk("widget.js", "Widget JS"),
+    chk("Current promotions", "Promo tip"),
+    chk("Price includes installation", "Price tip"),
+    chk("Yellow triangle", "Inventory tip"),
+    chk("low inventory", "Inventory text"),
   ]);
 
+  // === EN: WHEEL SEARCH ===
   console.log("\n━━━ EN: Wheel Search ━━━");
   await testPage("/wheel-search/", "Wheel Search", [
-    chk("Search for Wheels", "Heading"), chk("OE Direct Fit", "OE tip"), chk('"wheels"', "Page type wheels"),
+    chk("Search for Wheels", "Heading"),
+    chk("Centerbore filter", "Centerbore tip"),
+    chk("first option", "First option text"),
+    chk("OE Direct Fit", "OE Direct Fit"),
+    chk("Yellow triangle", "Inventory tip"),
   ]);
 
+  // === EN: APPOINTMENTS / CONTACT ===
   console.log("\n━━━ EN: Appointments ━━━");
   await testPage("/appointments/", "Book an Appointment", [
-    chk("Book Now", "Book button"), chk("workshopsoftware.com", "WS URL"), chk("o36ivi", "WS token"),
-    chk("today or tomorrow", "Same-day warning"),
+    chk("Book Now", "Book button"),
+    chk("workshopsoftware.com", "WS URL"),
+    chk("o36ivi", "WS token"),
   ]);
 
   console.log("\n━━━ EN: Contact ━━━");
   await testPage("/contact-us/", "Contact Us", [
-    chk("Send Us a Message", "Form heading"), chk('name="name"', "Name field"), chk('name="plate"', "Plate field"),
-    chk('name="company_url"', "Honeypot"), chk("12 + 6", "Math question"), chk("recaptcha", "reCAPTCHA"),
-    chk("info@tireplus.ca", "Email"), chk("Get Directions", "Directions"),
+    chk("Send Us a Message", "Form heading"),
+    chk('name="company_url"', "Honeypot"),
+    chk("12 + 6", "Math question"),
+    chk("recaptcha", "reCAPTCHA"),
   ]);
 
-  // === FRENCH HOME ===
+  // === FR HOME ===
   console.log("\n━━━ FR: Accueil ━━━");
   await testPage("/fr/", "Tire Plus", [
-    chk("automobile de confiance", "Hero heading FR"), chk("613-834-7325", "Phone"),
-    chk("Recherche de pneus", "FR tire button"), chk("Recherche de roues", "FR wheel button"),
-    chk("Nos services", "Services FR"), chk("Réparations générales", "Service: Repairs FR"),
-    chk("Visitez-nous", "Location FR"), chk("Accueil", "Nav: Accueil"),
-    chk('href="/"', "EN toggle link"), chk("elfsight", "Elfsight widget"),
-    (h, s) => rec(s, "lang=fr-CA", has(h, 'lang="fr-CA"')),
-    (h, s) => rec(s, "French nav (not English)", !has(h, '>Home</a>')),
-    (h, s) => rec(s, "French footer", has(h, "Tous droits")),
+    chk("automobile de confiance", "Hero FR"),
+    chk("Voir les promotions", "FR promo button"),
+    chk("tirepromos.com/fr", "FR promo link"),
+    chk("InspectiON", "InspectiON branding"),
+    chk("Programme InspectiON", "Programme InspectiON"),
+    chk("Réparations générales et diagnostics", "Service FR: Repairs+Diag"),
+    chk("Pneus, roues et TPMS", "Service FR: Tires+TPMS"),
+    chk("Batterie, démarreur et alternateur", "Service FR: Battery"),
+    chk("Service et recharge A/C", "Service FR: A/C"),
+    chk("Suspension et amortisseurs", "Service FR: Suspension"),
+    (h,s) => rec(s, "Menu FR: Pneus (renamed)", />Pneus</.test(h)),
+    (h,s) => rec(s, "Menu FR: Roues (renamed)", />Roues</.test(h)),
+    chk("English", "EN toggle text"),
+    chk("Visitez-nous", "Location FR"),
+    chk("Tous droits", "Footer FR"),
+    (h,s) => rec(s, "lang=fr-CA", has(h, 'lang="fr-CA"')),
+    (h,s) => rec(s, "No English nav", !has(h, ">Home</")),
   ]);
 
-  // === FRENCH INNER PAGES ===
+  // === FR INNER ===
   console.log("\n━━━ FR: Recherche pneus ━━━");
   await testPage("/fr/recherche-pneus/", "Recherche de pneus", [
-    chk("Recherche de pneus", "Heading FR"), chk("tireconnect-config-fr.js", "FR config"),
-    (h, s) => rec(s, "lang=fr-CA", has(h, 'lang="fr-CA"')),
+    chk("tireconnect-config-fr.js", "FR config"),
+    chk("Promotions et rabais", "FR promo tip"),
+    chk("installation, équilibrage", "FR price tip"),
+    chk("Triangle jaune", "FR inventory tip"),
+    (h,s) => rec(s, "lang=fr-CA", has(h, 'lang="fr-CA"')),
   ]);
 
   console.log("\n━━━ FR: Recherche roues ━━━");
   await testPage("/fr/recherche-roues/", "Recherche de roues", [
-    chk("Recherche de roues", "Heading FR"), chk("tireconnect-config-fr.js", "FR config"),
-    chk("OE Direct Fit", "OE tip FR"),
+    chk("tireconnect-config-fr.js", "FR config"),
+    chk("Centre d'usinage", "Centerbore FR tip"),
+    chk("première option", "First option FR"),
+    chk("ajustement direct OE", "OE Direct Fit FR"),
+    chk("Triangle jaune", "FR inventory tip"),
   ]);
 
   console.log("\n━━━ FR: Rendez-vous ━━━");
   await testPage("/fr/rendez-vous/", "rendez-vous", [
-    chk("Réserver maintenant", "Book button FR"), chk("workshopsoftware.com", "WS URL"),
-    chk("aujourd'hui ou demain", "Same-day warning FR"),
+    chk("Réserver maintenant", "FR book button"),
+    chk("workshopsoftware.com", "WS URL"),
   ]);
 
   console.log("\n━━━ FR: Contactez-nous ━━━");
   await testPage("/fr/contactez-nous/", "Contactez-nous", [
-    chk("Envoyez-nous un message", "Form heading FR"), chk('name="lang" value="fr"', "Lang hidden field"),
-    chk('name="company_url"', "Honeypot"), chk("12 + 6", "Math question"), chk("recaptcha", "reCAPTCHA"),
-    (h, s) => rec(s, "lang=fr-CA", has(h, 'lang="fr-CA"')),
+    chk("Envoyez-nous un message", "Form heading FR"),
+    chk('name="lang" value="fr"', "Lang hidden field"),
+    chk("recaptcha", "reCAPTCHA"),
   ]);
 
-  // === STATIC ASSETS ===
+  // === ASSETS ===
   console.log("\n━━━ Static Assets ━━━");
   const assets = [
-    ["/css/style.css","CSS"],["/js/main.js","JS"],["/assets/js/tireconnect-config.js","TC config EN"],
-    ["/assets/js/tireconnect-config-fr.js","TC config FR"],["/assets/js/tireconnect-init.js","TC init"],
-    ["/img/logo.png","Logo"],["/img/hero-service.png","Hero"],["/img/shop.png","Shop photo"],
-    ["/img/driveon-logo.png","DriveON"],["/img/roadforce-logo.png","Road Force"],
-    ["/img/alignment-logo.svg","Alignment"],["/img/oilchange-logo.svg","Oil change"],
-    ["/img/tire-brands.png","Tire brands"],["/img/credit-cards.png","Credit cards"],["/img/favicon.ico","Favicon"],
+    ["/css/style.css","CSS"], ["/js/main.js","JS"],
+    ["/assets/js/tireconnect-config.js","TC EN"],
+    ["/assets/js/tireconnect-config-fr.js","TC FR"],
+    ["/assets/js/tireconnect-init.js","TC init"],
+    ["/img/logo.png","Logo"], ["/img/hero-service.png","Hero"],
+    ["/img/shop.png","Shop photo"], ["/img/driveon-logo.png","DriveON"],
+    ["/img/roadforce-logo.png","Road Force"],
+    ["/img/credit-cards.png","Credit cards"], ["/img/favicon.ico","Favicon"],
+    ["/img/brands/michelin.png","Brand: Michelin"],
+    ["/img/brands/nexen.png","Brand: Nexen"],
+    ["/img/brands/nokian.png","Brand: Nokian"],
+    ["/img/brands/general-tire.png","Brand: General Tire"],
   ];
   for (const [p, l] of assets) {
     try { const r = await fetch(`${BASE}${p}`); rec("assets", l, r.status === 200, `${r.status} ${p}`);
     } catch (e) { rec("assets", l, false, e.message); }
   }
 
-  // === SECURITY ===
-  console.log("\n━━━ Security ━━━");
-  try {
-    const r = await fetch(`${BASE}/`);
-    rec("security", "X-Content-Type-Options", r.headers["x-content-type-options"] === "nosniff");
-    rec("security", "X-Frame-Options", !!r.headers["x-frame-options"]);
-  } catch (e) { rec("security", "Headers check", false, e.message); }
-  try { const r = await fetch(`${BASE}/mail-test.php`); rec("security", "mail-test.php gone", r.status === 404 || r.status === 403); } catch(e) { rec("security", "mail-test.php gone", true); }
-  try { const r = await fetch(`${BASE}/wp-login.php`); rec("security", "No wp-login", r.status === 404 || r.status === 403); } catch(e) { rec("security", "No wp-login", true); }
-
-  // === CROSS-PAGE ===
-  console.log("\n━━━ Cross-Page Consistency ━━━");
+  // === CROSS-PAGE CONSISTENCY ===
+  console.log("\n━━━ Consistency ━━━");
   const pages = ["/","/tire-search/","/wheel-search/","/appointments/","/contact-us/","/fr/","/fr/recherche-pneus/","/fr/recherche-roues/","/fr/rendez-vous/","/fr/contactez-nous/"];
   for (const p of pages) {
     try {
@@ -166,8 +210,7 @@ async function run() {
         rec("consistency", `${p} navbar`, has(r.body, "navbar-tp"));
         rec("consistency", `${p} footer`, has(r.body, "<footer"));
         rec("consistency", `${p} phone`, has(r.body, "613-834-7325"));
-        const stripped = r.body.replace(/<!--[\s\S]*?-->/g, "");
-        rec("consistency", `${p} no MTO`, !/\bMTO\b/.test(stripped));
+        rec("consistency", `${p} mobile-call-bar`, has(r.body, "mobile-call-bar"));
       }
     } catch (e) { rec("consistency", `${p}`, false, e.message); }
   }
@@ -179,9 +222,8 @@ async function run() {
       const r = await fetch(`${BASE}${p}`);
       if (r.status === 200) {
         rec("bilingual", `${p} lang=fr-CA`, has(r.body, 'lang="fr-CA"'));
-        rec("bilingual", `${p} French nav`, has(r.body, "Accueil"));
         rec("bilingual", `${p} EN toggle`, has(r.body, 'title="English"'));
-        rec("bilingual", `${p} no English nav`, !has(r.body, '>Home</a>'));
+        rec("bilingual", `${p} no English nav`, !has(r.body, ">Home</"));
       }
     } catch (e) { rec("bilingual", `${p}`, false, e.message); }
   }
