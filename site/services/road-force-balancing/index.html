@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Contact Us – Tire Plus | Orleans, ON</title>
+  <title>Hunter Road Force Balancing in Orleans, ON – Tire Plus</title>
   <meta name="google-site-verification" content="H4Cdv503Ke8Jp_wSJCX90z_ibAi6ChpfdqOt3wcl0_o">
-  <meta name="description" content="Contact Tire Plus in Orleans, Ontario. Call 613-834-7325 or send us a message.">
+  <meta name="description" content="Hunter Road Force Elite balancing in Orleans from $39 per tire. Eliminates vibration that conventional balancing can't fix. The gold standard.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
@@ -123,94 +123,83 @@
   </nav>
 
   <main id="main-content">
-    <section class="page-header">
+    <section class="page-header" style="padding:1.5rem 0 1rem;">
       <div class="container">
-        <h1>Contact Us</h1>
-        <p>Complete the form below and we'll reply as soon as possible.</p>
+        <h1 style="margin-bottom:.25rem;">Hunter Road Force Balancing in Orleans</h1>
+        <p class="small mb-0" style="opacity:.9;">From $39 per tire · Eliminates persistent vibration · The premium balancing standard</p>
       </div>
     </section>
+
     <section class="section-padding">
-      <div class="container">
-        <div class="row gy-5">
-          <div class="col-lg-7">
-            <h2 class="h4 mb-4">Send Us a Message</h2>
-            <div id="form-status"></div>
-            <form class="contact-form" id="contact-form" action="/contact-handler.php" method="POST" novalidate>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label for="cf-name" class="form-label">Name <span class="text-red">*</span></label>
-                  <input type="text" class="form-control" id="cf-name" name="name" required autocomplete="name">
-                </div>
-                <div class="col-md-6">
-                  <label for="cf-email" class="form-label">Email Address <span class="text-red">*</span></label>
-                  <input type="email" class="form-control" id="cf-email" name="email" required autocomplete="email">
-                </div>
-                <div class="col-md-6">
-                  <label for="cf-phone" class="form-label">Phone</label>
-                  <input type="tel" class="form-control" id="cf-phone" name="phone" autocomplete="tel">
-                </div>
-                <div class="col-md-6">
-                  <label for="cf-vehicle" class="form-label">Year, Make &amp; Model</label>
-                  <input type="text" class="form-control" id="cf-vehicle" name="vehicle" placeholder="e.g. 2022 Toyota RAV4">
-                </div>
-                <div class="col-md-6">
-                  <label for="cf-plate" class="form-label">License Plate</label>
-                  <input type="text" class="form-control" id="cf-plate" name="plate" placeholder="e.g. ABCD 123" style="text-transform:uppercase;">
-                </div>
-                <div class="col-12">
-                  <label for="cf-message" class="form-label">What is your question? <span class="text-red">*</span></label>
-                  <textarea class="form-control" id="cf-message" name="message" rows="5" required></textarea>
-                </div>
-                <div class="col-12" style="display:none;" aria-hidden="true">
-                  <label for="cf-hp">Company</label>
-                  <input type="text" id="cf-hp" name="company_url" tabindex="-1" autocomplete="off">
-                </div>
-                <div class="col-md-4">
-                  <label for="cf-math" class="form-label">What is 12 + 6? <span class="text-red">*</span></label>
-                  <input type="text" class="form-control" id="cf-math" name="math" required inputmode="numeric" autocomplete="off">
-                </div>
-                <input type="hidden" name="g-recaptcha-response" id="recaptcha-token">
-                <div class="col-12">
-                  <button type="submit" class="btn btn-submit" id="btn-submit"><i class="bi bi-send me-1"></i> Submit</button>
-                  <p class="small text-muted mt-2 mb-0">This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> and <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms of Service</a> apply.</p>
-                </div>
-              </div>
-            </form>
-            <script src="https://www.google.com/recaptcha/api.js?render=6LcDWbYsAAAAAENEWgYoSbvSV_9ostQGslYW5o9D"></script>
-            <script>
-              (function(){
-                var params=new URLSearchParams(window.location.search),statusEl=document.getElementById('form-status');
-                if(params.get('status')==='success'){statusEl.innerHTML='<div class="alert alert-success mt-3" role="alert"><strong>Thank you!</strong> Your message has been sent. We will reply as soon as possible.</div>';}
-                else if(params.get('status')==='error'){var r=params.get('reason'),m='Something went wrong. Please try again or call us at <a href="tel:6138347325">613-834-7325</a>.';if(r==='math')m='Please answer the math question correctly (12 + 6 = ?).';if(r==='required')m='Please fill in all required fields.';if(r==='email')m='Please enter a valid email address.';if(r==='captcha')m='Security check failed. Please try again.';statusEl.innerHTML='<div class="alert alert-danger mt-3" role="alert">'+m+'</div>';}
-                var form=document.getElementById('contact-form');if(!form)return;
-                form.addEventListener('submit',function(e){e.preventDefault();var math=document.getElementById('cf-math');if(math&&parseInt(math.value,10)!==18){alert('Please answer the math question correctly.');math.focus();return;}var btn=document.getElementById('btn-submit');btn.disabled=true;btn.innerHTML='<i class="bi bi-hourglass-split me-1"></i> Sending...';grecaptcha.ready(function(){grecaptcha.execute('6LcDWbYsAAAAAENEWgYoSbvSV_9ostQGslYW5o9D',{action:'contact'}).then(function(t){document.getElementById('recaptcha-token').value=t;form.submit();}).catch(function(){form.submit();});});});
-              })();
-            </script>
-          </div>
-          <div class="col-lg-5">
-            <h2 class="h4 mb-4">Our Location</h2>
-            <div class="location-card">
-              <div class="map-embed">
-                <iframe data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2798.8!2d-75.53993!3d45.4648295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cce119150707327%3A0x2b35a26698ddde67!2sTire+Plus+Ltd!5e0!3m2!1sen!2sca!4v1700000000000" title="Tire Plus location on Google Maps" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
-              </div>
-              <div class="location-info">
-                <h4>Orleans</h4>
-                <div class="loc-detail"><i class="bi bi-geo-alt-fill"></i><span><a href="https://www.google.ca/maps/place/Tire+Plus+Ltd/@45.4648295,-75.53993,17z" target="_blank" rel="noopener" class="text-decoration-none">2006 St. Joseph Blvd., Orleans, ON</a><br><small class="text-muted">at Jeanne D'Arc &amp; St. Joseph</small></span></div>
-                <div class="loc-detail"><i class="bi bi-telephone-fill"></i><a href="tel:6138347325" class="text-decoration-none">613-834-7325</a></div>
-                <div class="loc-detail"><i class="bi bi-clock-fill"></i><span>Mon–Fri: 8:00 AM – 5:30 PM<br>Saturday: 8:00 AM – 4:00 PM</span></div>
-                <div class="loc-detail"><i class="bi bi-envelope-fill"></i><a href="mailto:info@tireplus.ca" class="text-decoration-none">info@tireplus.ca</a></div>
-              </div>
-            </div>
-            <div class="mt-4 d-flex flex-wrap gap-2">
-              <a href="https://www.google.ca/maps/place/Tire+Plus+Ltd/@45.4648295,-75.53993,17z" class="btn btn-outline-dark"><i class="bi bi-map me-1"></i> Get Directions</a>
-              <a href="/appointments/" class="btn btn-cta btn-cta-primary">Book Appointment</a>
-            </div>
-          </div>
+      <div class="container" style="max-width:880px;">
+
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <a href="/appointments/" class="btn btn-cta btn-cta-primary">Book Road Force Balancing</a>
+          <a href="tel:6138347325" class="btn btn-outline-dark"><i class="bi bi-telephone-fill me-1"></i> Call 613-834-7325</a>
         </div>
+
+        <h2 class="h4 mt-4">What is Road Force balancing?</h2>
+        <p>Standard wheel balancing only measures static and dynamic weight imbalance. It doesn't detect imperfections in the tire's roundness or stiffness — and those are the most common causes of vibrations that won't go away after a regular balance.</p>
+        <p>Hunter Road Force Elite balancers apply a load roller (~600 kg of force) to the tire as it spins, simulating the load of an actual road. This measures <strong>force variation</strong> — tiny inconsistencies in how the tire flexes under load — and tells us exactly how to position the tire on the wheel to minimize vibration.</p>
+
+        <h2 class="h4 mt-4">When you need Road Force balancing</h2>
+        <ul>
+          <li>Steering wheel vibration at highway speeds (90 to 110 km/h) that doesn't go away after standard balancing</li>
+          <li>Just installed expensive tires and want them perfectly smooth</li>
+          <li>Premium, performance, or luxury vehicle where ride quality matters</li>
+          <li>Used or older tires you suspect have minor defects</li>
+          <li>Vibration returned soon after a regular balance</li>
+        </ul>
+
+        <h2 class="h4 mt-4">How is it different from a standard balance?</h2>
+        <table class="table table-sm">
+          <thead><tr><th>Feature</th><th>Standard Balance</th><th>Road Force Balance</th></tr></thead>
+          <tbody>
+            <tr><td>Detects weight imbalance</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>Detects tire force variation</td><td>No</td><td>Yes</td></tr>
+            <tr><td>Detects wheel runout</td><td>Limited</td><td>Yes</td></tr>
+            <tr><td>Recommends optimal tire position on wheel</td><td>No</td><td>Yes</td></tr>
+            <tr><td>Solves persistent vibrations</td><td>Sometimes</td><td>Almost always</td></tr>
+          </tbody>
+        </table>
+
+        <h2 class="h4 mt-4">Cost of Road Force balancing in Orleans</h2>
+        <p>At Tire Plus, Road Force balancing starts at <strong>$39 per tire</strong>. Most customers do all four for the best result. The price is well worth it on a vehicle with persistent vibration — many drivers come to us after another shop couldn't fix it.</p>
+
+        <h2 class="h4 mt-4">How long does it take?</h2>
+        <p>Road Force balancing all four tires takes about 60 to 90 minutes — slightly longer than a standard balance because of the additional measurement and possible tire repositioning on the wheel.</p>
+
+        <h2 class="h4 mt-4">Why Tire Plus for Road Force balancing?</h2>
+        <ul>
+          <li><strong>Hunter Road Force Elite equipment</strong> — the industry's top balancer</li>
+          <li><strong>Trained technicians</strong> who interpret results correctly</li>
+          <li><strong>Honest assessment</strong> — if standard balancing would solve it, we'll tell you</li>
+          <li><strong>Worth the visit</strong> — drivers come from across Ottawa for this service</li>
+        </ul>
+
+        <div class="alert alert-info mt-4">
+          <strong>Learn more:</strong> Read this <a href="https://www.autuning.com/post/wheel-balancing-and-road-force-balancing-explained" target="_blank" rel="noopener">in-depth explainer</a> on the difference between standard and road force balancing.
+        </div>
+
+        <div class="text-center mt-5">
+          <a href="/appointments/" class="btn btn-cta btn-cta-primary">Book Now</a>
+          <a href="/contact-us/" class="btn btn-outline-dark">Ask a Question</a>
+        </div>
+
       </div>
     </section>
   </main>
 
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Road Force Wheel Balancing",
+    "provider": {"@type": "AutoRepair", "name": "Tire Plus", "telephone": "+1-613-834-7325", "address": {"@type": "PostalAddress", "streetAddress": "2006 St. Joseph Blvd", "addressLocality": "Orleans", "addressRegion": "ON", "postalCode": "K1C 1E5", "addressCountry": "CA"}},
+    "areaServed": [{"@type": "City", "name": "Orleans"}, {"@type": "City", "name": "Ottawa"}, {"@type": "City", "name": "Cumberland"}, {"@type": "City", "name": "Rockland"}],
+    "offers": {"@type": "Offer", "price": "39", "priceCurrency": "CAD", "priceSpecification": {"@type": "PriceSpecification", "minPrice": "39", "priceCurrency": "CAD"}}
+  }
+  </script>
   <footer class="footer" role="contentinfo">
     <div class="container">
       <div class="row gy-4">

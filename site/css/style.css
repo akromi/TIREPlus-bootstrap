@@ -660,3 +660,40 @@ img { max-width: 100%; height: auto; }
 .highlight-item a p {
   color: inherit;
 }
+/* ---------- Service Card Links ---------- */
+.service-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+.service-card-link .service-card {
+  position: relative;
+  cursor: pointer;
+}
+.service-card-link .service-card::after {
+  content: "→";
+  position: absolute;
+  bottom: .75rem;
+  right: 1rem;
+  color: var(--tp-red);
+  font-weight: 700;
+  font-size: 1.1rem;
+  opacity: 0;
+  transform: translateX(-5px);
+  transition: opacity .25s, transform .25s;
+}
+.service-card-link:hover .service-card,
+.service-card-link:focus-visible .service-card {
+  border-color: var(--tp-red);
+  transform: translateY(-4px);
+  box-shadow: var(--tp-shadow);
+}
+.service-card-link:hover .service-card::after,
+.service-card-link:focus-visible .service-card::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+.service-card-link:hover h5 {
+  color: var(--tp-red);
+}

@@ -77,4 +77,77 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+<url>
+    <loc>https://tireplus.ca/services/wheel-alignment/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/wheel-alignment/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/alignement-roues/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/services/brakes/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/brakes/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/freins/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/services/oil-change/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/oil-change/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/changement-huile/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/services/driveon-inspection/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/driveon-inspection/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/inspection-driveon/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/services/tires/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/tires/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/pneus/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/services/road-force-balancing/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/road-force-balancing/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/equilibrage-road-force/"/>
+  </url>
+
+  <url>
+    <loc>https://tireplus.ca/fr/services/alignement-roues/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/freins/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/changement-huile/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/inspection-driveon/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/pneus/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/equilibrage-road-force/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
 </urlset>
