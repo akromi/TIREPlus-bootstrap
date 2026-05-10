@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <url>
+    <loc>https://tireplus.ca/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/tire-search/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/tire-search/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/recherche-pneus/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/wheel-search/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/wheel-search/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/recherche-roues/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/appointments/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/appointments/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/rendez-vous/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/contact-us/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/contact-us/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/contactez-nous/"/>
+  </url>
+
+  <url>
+    <loc>https://tireplus.ca/fr/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/recherche-pneus/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/recherche-roues/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/rendez-vous/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/contactez-nous/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>

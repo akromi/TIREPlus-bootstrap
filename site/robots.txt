@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /test-harness.html
+Disallow: /contact-handler.php
+
+Sitemap: https://tireplus.ca/sitemap.xml
