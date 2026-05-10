@@ -150,4 +150,88 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
+<url>
+    <loc>https://tireplus.ca/services/general-repairs/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/general-repairs/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/reparations-generales/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/services/exhaust-repairs/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/exhaust-repairs/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/reparations-echappement/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/services/radiator-coolant/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/radiator-coolant/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/radiateur-refroidissement/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/services/fluid-flush/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/fluid-flush/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/rincage-fluides/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/services/ac-service/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/ac-service/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/service-ac/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/services/suspension/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/suspension/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/suspension/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/services/battery/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/services/battery/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/services/batterie/"/>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/reparations-generales/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/reparations-echappement/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/radiateur-refroidissement/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/rincage-fluides/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/service-ac/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/suspension/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://tireplus.ca/fr/services/batterie/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
 </urlset>
