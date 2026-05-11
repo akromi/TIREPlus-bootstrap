@@ -62,6 +62,9 @@ async function run() {
     chk("DriveON Licensed", "Highlight: DriveON"),
     chk("Road Force Balancing", "Highlight: Road Force"),
     chk("Oil Changes", "Highlight: Oil"),
+    // DriveON + shop image on home (recent additions)
+    chk("/img/driveon-logo.png", "DriveON logo on home"),
+    chk("/img/shop.png", "Shop image (Visit Us)"),
     // Brands carousel (3D)
     chk("brands-carousel-3d", "3D carousel"),
     chk("brands-ring", "Carousel ring"),
@@ -82,7 +85,10 @@ async function run() {
     (h,s) => rec(s, "Menu: Wheels (renamed)", />Wheels</.test(h)),
     chk("Française", "FR toggle text"),
     chk("Visit Us", "Location section"),
-    chk("elfsight", "Elfsight"),
+    // Elfsight Google Reviews (replaced static rplg-badge)
+    chk("elfsightcdn.com/platform.js", "Elfsight platform script"),
+    chk("6977f068-a45d-408b-b12e-132c6c00b6c6", "Elfsight app ID"),
+    (h,s) => rec(s, "No legacy rplg-badge", !has(h, "rplg-badge")),
     chk("mobile-call-bar", "Sticky mobile call bar"),
     (h,s) => rec(s, "lang=en-CA", has(h, 'lang="en-CA"')),
   ]);
@@ -122,6 +128,9 @@ async function run() {
     chk("Send Us a Message", "Form heading"),
     chk('name="company_url"', "Honeypot"),
     chk("12 + 6", "Math question"),
+    chk('name="math"', "Math field name"),
+    chk('name="plate"', "License plate field"),
+    chk('id="cf-plate"', "License plate input id"),
     chk("recaptcha", "reCAPTCHA"),
   ]);
 
@@ -138,6 +147,9 @@ async function run() {
     chk("Batterie, démarreur et alternateur", "Service FR: Battery"),
     chk("Service et recharge A/C", "Service FR: A/C"),
     chk("Suspension et amortisseurs", "Service FR: Suspension"),
+    // DriveON + shop image on FR home (parallel to EN)
+    chk("/img/driveon-logo.png", "DriveON logo on FR home"),
+    chk("/img/shop.png", "Shop image FR (Visitez-nous)"),
     (h,s) => rec(s, "Menu FR: Pneus (renamed)", />Pneus</.test(h)),
     (h,s) => rec(s, "Menu FR: Roues (renamed)", />Roues</.test(h)),
     chk("English", "EN toggle text"),
@@ -176,6 +188,9 @@ async function run() {
   await testPage("/fr/contactez-nous/", "Contactez-nous", [
     chk("Envoyez-nous un message", "Form heading FR"),
     chk('name="lang" value="fr"', "Lang hidden field"),
+    chk('name="company_url"', "Honeypot FR"),
+    chk('name="math"', "Math field name FR"),
+    chk('name="plate"', "License plate field FR"),
     chk("recaptcha", "reCAPTCHA"),
   ]);
 
@@ -236,6 +251,26 @@ async function run() {
       }
     } catch (e) { rec("bilingual", `${p}`, false, e.message); }
   }
+
+  // === CSS & SECURITY ===
+  console.log("\n━━━ CSS & Security ━━━");
+  // mail-test.php should NOT be reachable (diagnostic file should be removed)
+  try {
+    const r = await fetch(`${BASE}/mail-test.php`);
+    rec("security", "mail-test.php removed (not 200)", r.status !== 200, `Got ${r.status}`);
+  } catch (e) { rec("security", "mail-test.php removed (not 200)", true, "Network error = good"); }
+
+  // CSS rules: font-size boost + reCAPTCHA badge hidden
+  try {
+    const r = await fetch(`${BASE}/css/style.css`);
+    if (r.status === 200) {
+      const css = r.body.replace(/\s+/g, " ");
+      rec("css", "Root font-size: 125% (25% boost)", /font-size:\s*125%/.test(css));
+      rec("css", "reCAPTCHA badge hidden", /\.grecaptcha-badge[^}]*visibility\s*:\s*hidden/i.test(css));
+    } else {
+      rec("css", "Fetch style.css", false, `Got ${r.status}`);
+    }
+  } catch (e) { rec("css", "Fetch style.css", false, e.message); }
 
   // === SUMMARY ===
   console.log("\n" + "═".repeat(50));

@@ -58,7 +58,7 @@ const BASE = location.origin;
 document.getElementById("target-url").textContent = BASE;
 let stats = { pass: 0, fail: 0, total: 0 };
 let sections = {};
-const totalExpected = 220;
+const totalExpected = 165;
 
 function clearResults() {
   document.getElementById("results").innerHTML = "";
@@ -154,7 +154,11 @@ async function testEN() {
   rec(sec, "Menu: Wheels renamed", />Wheels</.test(h));
   rec(sec, "FR toggle text", has(h, "Française"));
   rec(sec, "Sticky mobile call bar", has(h, "mobile-call-bar"));
-  rec(sec, "Elfsight", has(h, "elfsight"));
+  rec(sec, "Elfsight platform script", has(h, "elfsightcdn.com/platform.js"));
+  rec(sec, "Elfsight app ID", has(h, "6977f068-a45d-408b-b12e-132c6c00b6c6"));
+  rec(sec, "No legacy rplg-badge", !has(h, "rplg-badge"));
+  rec(sec, "DriveON logo on home", has(h, "/img/driveon-logo.png"));
+  rec(sec, "Shop image (Visit Us)", has(h, "/img/shop.png"));
   rec(sec, "Footer", has(h, "<footer"));
 
   // Tire Search
@@ -198,6 +202,10 @@ async function testEN() {
   if (r5.status === 200) {
     rec(sec5, "Form heading", has(r5.body, "Send Us a Message"));
     rec(sec5, "Honeypot", has(r5.body, 'name="company_url"'));
+    rec(sec5, "Math field name", has(r5.body, 'name="math"'));
+    rec(sec5, "Math question (12 + 6)", has(r5.body, "12 + 6"));
+    rec(sec5, "License plate field", has(r5.body, 'name="plate"'));
+    rec(sec5, "License plate input id", has(r5.body, 'id="cf-plate"'));
     rec(sec5, "reCAPTCHA", has(r5.body, "recaptcha"));
   }
 }
@@ -220,6 +228,8 @@ async function testFR() {
   rec(sec, "Service FR: Battery", has(h, "Batterie, démarreur et alternateur"));
   rec(sec, "Service FR: A/C", has(h, "Service et recharge A/C"));
   rec(sec, "Service FR: Suspension", has(h, "Suspension et amortisseurs"));
+  rec(sec, "DriveON logo on FR home", has(h, "/img/driveon-logo.png"));
+  rec(sec, "Shop image FR (Visitez-nous)", has(h, "/img/shop.png"));
   rec(sec, "Menu FR: Pneus renamed", />Pneus</.test(h));
   rec(sec, "Menu FR: Roues renamed", />Roues</.test(h));
   rec(sec, "EN toggle text", has(h, "English"));
@@ -268,6 +278,9 @@ async function testFR() {
     rec(sec5, "Form heading FR", has(r5.body, "Envoyez-nous un message"));
     rec(sec5, "Lang hidden field", has(r5.body, 'name="lang" value="fr"'));
     rec(sec5, "lang=fr-CA", has(r5.body, 'lang="fr-CA"'));
+    rec(sec5, "Honeypot FR", has(r5.body, 'name="company_url"'));
+    rec(sec5, "Math field name FR", has(r5.body, 'name="math"'));
+    rec(sec5, "License plate field FR", has(r5.body, 'name="plate"'));
     rec(sec5, "reCAPTCHA", has(r5.body, "recaptcha"));
   }
 }
@@ -329,6 +342,22 @@ async function testBilingual() {
   }
 }
 
+async function testCssSecurity() {
+  // mail-test.php should NOT be reachable (diagnostic file should be removed)
+  const m = await fp("/mail-test.php");
+  rec("Security", "mail-test.php removed (not 200)", m.status !== 200, "Got " + m.status);
+
+  // CSS rules: font-size boost + reCAPTCHA badge hidden
+  const c = await fp("/css/style.css");
+  if (c.status === 200) {
+    const css = c.body.replace(/\s+/g, " ");
+    rec("Security", "Root font-size: 125% (25% boost)", /font-size:\s*125%/.test(css));
+    rec("Security", "reCAPTCHA badge hidden", /\.grecaptcha-badge[^}]*visibility\s*:\s*hidden/i.test(css));
+  } else {
+    rec("Security", "Fetch style.css", false, "Got " + c.status);
+  }
+}
+
 async function runAllTests() {
   clearResults();
   document.getElementById("btn-run").disabled = true;
@@ -340,6 +369,7 @@ async function runAllTests() {
     await testAssets();
     await testConsistency();
     await testBilingual();
+    await testCssSecurity();
   } catch (e) {
     rec("Error", "Harness error", false, e.message);
   }
