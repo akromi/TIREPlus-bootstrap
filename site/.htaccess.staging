@@ -1,0 +1,27 @@
+# === TirePlus Staging .htaccess ===
+# Goal: always serve fresh content; no SiteGround Dynamic Cache, no browser cache
+
+<IfModule mod_headers.c>
+  # Tell SiteGround Dynamic Cache + browsers: never cache
+  Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0, private"
+  Header set Pragma "no-cache"
+  Header set Expires "0"
+  # Keep staging out of Google
+  Header set X-Robots-Tag "noindex, nofollow"
+
+  # Security headers
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Block access to hidden files
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# Default charset
+AddDefaultCharset UTF-8
+
+# Error pages
+ErrorDocument 404 /index.html

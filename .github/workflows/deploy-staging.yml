@@ -38,6 +38,10 @@ jobs:
         with:
           name: site
           path: ./site/
+      - name: Select staging .htaccess
+        run: |
+          cp site/.htaccess.staging site/.htaccess
+          rm site/.htaccess.staging site/.htaccess.production
       - name: Deploy to Staging
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -60,6 +64,10 @@ jobs:
         with:
           name: site
           path: ./site/
+      - name: Select production .htaccess
+        run: |
+          cp site/.htaccess.production site/.htaccess
+          rm site/.htaccess.staging site/.htaccess.production
       - name: Deploy to Production
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
