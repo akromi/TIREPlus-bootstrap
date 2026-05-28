@@ -102,7 +102,9 @@ but can hold different values (different remote dirs, etc.).
 1. Create `src/pages/my-page/index.html` using an existing page as a template
    (e.g. `src/pages/about/index.html` or `src/pages/faq/index.html`).
 2. Add a matching French page at `src/pages/fr/my-page/index.html` (or a
-   translated slug, e.g. `fr/a-propos/`).
+   translated slug, e.g. `fr/a-propos/`). **Include `lang: fr` in the
+   front-matter** — without it, `build.js` uses the English head/nav/footer
+   partials.
 3. Add nav links in `src/_partials/nav.html` and `src/_partials/nav-fr.html`.
 4. (Optional) Add footer Quick Links in `src/_partials/footer.html` and
    `src/_partials/footer-fr.html`.
