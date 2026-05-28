@@ -27,6 +27,7 @@ jobs:
         with:
           name: site
           path: ./site/
+          include-hidden-files: true
 
   deploy-staging:
     needs: build
