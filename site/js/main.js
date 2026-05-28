@@ -29,11 +29,13 @@ document.addEventListener('DOMContentLoaded', function () {
   /* Language toggle — stay on equivalent page */
   var langMap = {
     '/': '/fr/',
+    '/about/': '/fr/a-propos/',
     '/tire-search/': '/fr/recherche-pneus/',
     '/wheel-search/': '/fr/recherche-roues/',
     '/appointments/': '/fr/rendez-vous/',
     '/contact-us/': '/fr/contactez-nous/',
     '/fr/': '/',
+    '/fr/a-propos/': '/about/',
     '/fr/recherche-pneus/': '/tire-search/',
     '/fr/recherche-roues/': '/wheel-search/',
     '/fr/rendez-vous/': '/appointments/',
@@ -59,4 +61,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { rootMargin: '200px' });
     lazyFrames.forEach(function (f) { frameObserver.observe(f); });
   }
+
+  /* Conversion event tracking (no-op if gtag not loaded, e.g. on staging) */
+  function trackEvent(name, params) {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', name, params || {});
+    }
+  }
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a');
+    if (!link) return;
+    var href = link.getAttribute('href') || '';
+    if (href.indexOf('tel:') === 0) {
+      trackEvent('phone_call', { phone_number: href.replace('tel:', '') });
+    } else if (link.classList.contains('btn-cta')) {
+      trackEvent('cta_click', {
+        cta_label: (link.textContent || '').trim().slice(0, 50),
+        cta_destination: href
+      });
+    }
+  });
 });

@@ -84,6 +84,22 @@
     }
   }
   </script>
+
+  <!-- Google Analytics 4 (production only) -->
+  <script>
+    (function () {
+      var h = location.hostname;
+      if (h !== 'tireplus.ca' && h !== 'www.tireplus.ca') return;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-6WE1MYK226';
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { dataLayer.push(arguments); };
+      gtag('js', new Date());
+      gtag('config', 'G-6WE1MYK226');
+    })();
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
