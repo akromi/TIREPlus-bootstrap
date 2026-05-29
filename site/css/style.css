@@ -550,7 +550,7 @@ img { max-width: 100%; height: auto; }
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: rotateY(calc(var(--i) * 21.176deg)) translateZ(420px);
+  transform: rotateY(calc(var(--i) * 13.333deg)) translateZ(420px);
   backface-visibility: hidden;
 }
 .brand-item img {
@@ -574,7 +574,7 @@ img { max-width: 100%; height: auto; }
     height: 120px;
   }
   .brand-item {
-    transform: rotateY(calc(var(--i) * 21.176deg)) translateZ(320px);
+    transform: rotateY(calc(var(--i) * 13.333deg)) translateZ(320px);
   }
   .brand-item img {
     height: 32px;
@@ -586,7 +586,7 @@ img { max-width: 100%; height: auto; }
     height: 100px;
   }
   .brand-item {
-    transform: rotateY(calc(var(--i) * 21.176deg)) translateZ(220px);
+    transform: rotateY(calc(var(--i) * 13.333deg)) translateZ(220px);
   }
   .brand-item img {
     height: 24px;
