@@ -556,7 +556,7 @@ img { max-width: 100%; height: auto; }
 .brand-item img {
   height: 40px;
   width: auto;
-  max-width: 160px;
+  max-width: 90px;
   object-fit: contain;
   filter: grayscale(30%);
   transition: filter .3s, transform .3s;
@@ -578,7 +578,7 @@ img { max-width: 100%; height: auto; }
   }
   .brand-item img {
     height: 32px;
-    max-width: 120px;
+    max-width: 65px;
   }
 }
 @media (max-width: 575.98px) {
@@ -590,7 +590,7 @@ img { max-width: 100%; height: auto; }
   }
   .brand-item img {
     height: 24px;
-    max-width: 90px;
+    max-width: 45px;
   }
   .brands-ring {
     animation-duration: 30s;
