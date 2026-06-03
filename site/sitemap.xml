@@ -10,18 +10,11 @@
     <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/"/>
   </url>
   <url>
-    <loc>https://tireplus.ca/tire-search/</loc>
+    <loc>https://tireplus.ca/search/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/tire-search/"/>
-    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/recherche-pneus/"/>
-  </url>
-  <url>
-    <loc>https://tireplus.ca/wheel-search/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/wheel-search/"/>
-    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/recherche-roues/"/>
+    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/search/"/>
+    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/recherche/"/>
   </url>
   <url>
     <loc>https://tireplus.ca/appointments/</loc>
@@ -46,12 +39,7 @@
     <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/"/>
   </url>
   <url>
-    <loc>https://tireplus.ca/fr/recherche-pneus/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://tireplus.ca/fr/recherche-roues/</loc>
+    <loc>https://tireplus.ca/fr/recherche/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>

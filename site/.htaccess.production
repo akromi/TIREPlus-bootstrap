@@ -1,5 +1,14 @@
 # === TirePlus Production .htaccess ===
 
+# Permanent redirects for retired URLs (tire-search + wheel-search merged into search)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^tire-search/?$ /search/ [R=301,L]
+  RewriteRule ^wheel-search/?$ /search/ [R=301,L]
+  RewriteRule ^fr/recherche-pneus/?$ /fr/recherche/ [R=301,L]
+  RewriteRule ^fr/recherche-roues/?$ /fr/recherche/ [R=301,L]
+</IfModule>
+
 # Enable browser caching
 <IfModule mod_expires.c>
   ExpiresActive On
