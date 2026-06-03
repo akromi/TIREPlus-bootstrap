@@ -93,26 +93,17 @@ async function run() {
     (h,s) => rec(s, "lang=en-CA", has(h, 'lang="en-CA"')),
   ]);
 
-  // === EN: TIRE SEARCH ===
-  console.log("\n━━━ EN: Tire Search ━━━");
-  await testPage("/tire-search/", "Tire Search", [
-    chk("Search for Tires", "Heading"),
+  // === EN: SEARCH (unified tires + wheels) ===
+  console.log("\n━━━ EN: Tires & Wheels Search ━━━");
+  await testPage("/search/", "Tires & Wheels", [
+    chk("Tires &amp; Wheels", "Heading"),
     chk("tireconnect-config.js", "EN config"),
     chk("widget.js", "Widget JS"),
     chk("Current promotions", "Promo tip"),
-    chk("Price includes installation", "Price tip"),
+    chk("installation, balancing", "Price tip"),
     chk("Yellow triangle", "Inventory tip"),
-    chk("low inventory", "Inventory text"),
-  ]);
-
-  // === EN: WHEEL SEARCH ===
-  console.log("\n━━━ EN: Wheel Search ━━━");
-  await testPage("/wheel-search/", "Wheel Search", [
-    chk("Search for Wheels", "Heading"),
-    chk("Centerbore filter", "Centerbore tip"),
-    chk("first option", "First option text"),
+    chk("Centerbore filter", "Wheels-tab Centerbore tip"),
     chk("OE Direct Fit", "OE Direct Fit"),
-    chk("Yellow triangle", "Inventory tip"),
   ]);
 
   // === EN: APPOINTMENTS / CONTACT ===
@@ -150,8 +141,7 @@ async function run() {
     // DriveON + shop image on FR home (parallel to EN)
     chk("/img/driveon-logo.png", "DriveON logo on FR home"),
     chk("/img/shop.png", "Shop image FR (Visitez-nous)"),
-    (h,s) => rec(s, "Menu FR: Pneus (renamed)", />Pneus</.test(h)),
-    (h,s) => rec(s, "Menu FR: Roues (renamed)", />Roues</.test(h)),
+    (h,s) => rec(s, "Menu FR: Pneus et Roues", />Pneus et Roues</.test(h)),
     chk("English", "EN toggle text"),
     chk("Visitez-nous", "Location FR"),
     chk("Tous droits", "Footer FR"),
@@ -160,22 +150,16 @@ async function run() {
   ]);
 
   // === FR INNER ===
-  console.log("\n━━━ FR: Recherche pneus ━━━");
-  await testPage("/fr/recherche-pneus/", "Recherche de pneus", [
+  console.log("\n━━━ FR: Pneus et Roues ━━━");
+  await testPage("/fr/recherche/", "Pneus et Roues", [
     chk("tireconnect-config-fr.js", "FR config"),
     chk("Promotions et rabais", "FR promo tip"),
-    chk("installation, équilibrage", "FR price tip"),
+    chk("installation, l'équilibrage", "FR price tip"),
     chk("Triangle jaune", "FR inventory tip"),
-    (h,s) => rec(s, "lang=fr-CA", has(h, 'lang="fr-CA"')),
-  ]);
-
-  console.log("\n━━━ FR: Recherche roues ━━━");
-  await testPage("/fr/recherche-roues/", "Recherche de roues", [
-    chk("tireconnect-config-fr.js", "FR config"),
     chk("Centre d'usinage", "Centerbore FR tip"),
-    chk("première option", "First option FR"),
+    chk("première valeur", "First valeur FR"),
     chk("ajustement direct OE", "OE Direct Fit FR"),
-    chk("Triangle jaune", "FR inventory tip"),
+    (h,s) => rec(s, "lang=fr-CA", has(h, 'lang="fr-CA"')),
   ]);
 
   console.log("\n━━━ FR: Rendez-vous ━━━");
@@ -201,14 +185,14 @@ async function run() {
     ["/assets/js/tireconnect-config.js","TC EN"],
     ["/assets/js/tireconnect-config-fr.js","TC FR"],
     ["/assets/js/tireconnect-init.js","TC init"],
-    ["/img/logo.png","Logo"], ["/img/hero-service.png","Hero"],
+    ["/img/logo.png","Logo"], ["/img/hero-service.webp","Hero (WebP)"],
     ["/img/shop.png","Shop photo"], ["/img/driveon-logo.png","DriveON"],
     ["/img/roadforce-logo.png","Road Force"],
     ["/img/credit-cards.png","Credit cards"], ["/img/favicon.ico","Favicon"],
-    ["/img/brands/michelin.png","Brand: Michelin"],
-    ["/img/brands/nexen.png","Brand: Nexen"],
+    ["/img/brands/michelin.webp","Brand: Michelin"],
+    ["/img/brands/nexen.webp","Brand: Nexen"],
     ["/img/brands/nokian.png","Brand: Nokian"],
-    ["/img/brands/general-tire.png","Brand: General Tire"],
+    ["/img/brands/general.webp","Brand: General Tire"],
   ];
   for (const [p, l] of assets) {
     try { const r = await fetch(`${BASE}${p}`); rec("assets", l, r.status === 200, `${r.status} ${p}`);
@@ -217,7 +201,7 @@ async function run() {
 
   // === CROSS-PAGE CONSISTENCY ===
   console.log("\n━━━ Consistency ━━━");
-  const pages = ["/","/tire-search/","/wheel-search/","/appointments/","/contact-us/","/fr/","/fr/recherche-pneus/","/fr/recherche-roues/","/fr/rendez-vous/","/fr/contactez-nous/"];
+  const pages = ["/","/search/","/appointments/","/contact-us/","/fr/","/fr/recherche/","/fr/rendez-vous/","/fr/contactez-nous/"];
   for (const p of pages) {
     try {
       const r = await fetch(`${BASE}${p}`);
@@ -232,7 +216,7 @@ async function run() {
 
   // === BILINGUAL INTEGRITY ===
   console.log("\n━━━ Bilingual Integrity ━━━");
-  for (const p of ["/fr/","/fr/recherche-pneus/","/fr/recherche-roues/","/fr/rendez-vous/","/fr/contactez-nous/"]) {
+  for (const p of ["/fr/","/fr/recherche/","/fr/rendez-vous/","/fr/contactez-nous/"]) {
     try {
       const r = await fetch(`${BASE}${p}`);
       if (r.status === 200) {
@@ -242,7 +226,7 @@ async function run() {
       }
     } catch (e) { rec("bilingual", `${p}`, false, e.message); }
   }
-  for (const p of ["/","/tire-search/","/wheel-search/","/appointments/","/contact-us/"]) {
+  for (const p of ["/","/search/","/appointments/","/contact-us/"]) {
     try {
       const r = await fetch(`${BASE}${p}`);
       if (r.status === 200) {

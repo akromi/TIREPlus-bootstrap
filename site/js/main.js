@@ -30,14 +30,12 @@ document.addEventListener('DOMContentLoaded', function () {
   var langMap = {
     '/': '/fr/',
     '/about/': '/fr/a-propos/',
-    '/tire-search/': '/fr/recherche-pneus/',
-    '/wheel-search/': '/fr/recherche-roues/',
+    '/search/': '/fr/recherche/',
     '/appointments/': '/fr/rendez-vous/',
     '/contact-us/': '/fr/contactez-nous/',
     '/fr/': '/',
     '/fr/a-propos/': '/about/',
-    '/fr/recherche-pneus/': '/tire-search/',
-    '/fr/recherche-roues/': '/wheel-search/',
+    '/fr/recherche/': '/search/',
     '/fr/rendez-vous/': '/appointments/',
     '/fr/contactez-nous/': '/contact-us/'
   };

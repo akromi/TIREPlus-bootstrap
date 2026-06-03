@@ -1,6 +1,15 @@
 # === TirePlus Staging .htaccess ===
 # Goal: always serve fresh content; no SiteGround Dynamic Cache, no browser cache
 
+# Permanent redirects for retired URLs (tire-search + wheel-search merged into search)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^tire-search/?$ /search/ [R=301,L]
+  RewriteRule ^wheel-search/?$ /search/ [R=301,L]
+  RewriteRule ^fr/recherche-pneus/?$ /fr/recherche/ [R=301,L]
+  RewriteRule ^fr/recherche-roues/?$ /fr/recherche/ [R=301,L]
+</IfModule>
+
 <IfModule mod_headers.c>
   # Tell SiteGround Dynamic Cache + browsers: never cache
   Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0, private"
