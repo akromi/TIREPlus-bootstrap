@@ -40,6 +40,11 @@ a:hover { color: var(--tp-red-hover); }
 
 img { max-width: 100%; height: auto; }
 
+/* Override Bootstrap .lead font-weight 300 -> 500.
+   Source Sans 3 weight 500 is loaded via head.html so this renders
+   crisply (avoids browser font synthesis or system fallback). */
+.lead { font-weight: 500; }
+
 /* ---------- Skip Link ---------- */
 .skip-link {
   position: absolute;
