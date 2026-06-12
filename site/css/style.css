@@ -40,6 +40,12 @@ a:hover { color: var(--tp-red-hover); }
 
 img { max-width: 100%; height: auto; }
 
+/* Override Bootstrap .lead font-weight 300 -> 400.
+   Google Fonts only loads Source Sans 3 at weights 400/600/700;
+   the default weight 300 caused the lead paragraph to fall back to a
+   synthesized thin or system font, looking different from surrounding text. */
+.lead { font-weight: 400; }
+
 /* ---------- Skip Link ---------- */
 .skip-link {
   position: absolute;
