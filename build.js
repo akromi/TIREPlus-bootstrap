@@ -55,6 +55,15 @@ const SCRIPT_BLOCKS = {
   <script>window.TC_PAGE = { type: "wheels" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
   <script src="/assets/js/tireconnect-init.js"></script>`,
+  "tireconnect-services": `
+  <script src="https://app.tireconnect.ca/js/widget.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (typeof TCWidget !== 'undefined' && TCWidget.initServices) {
+        TCWidget.initServices({ apikey: "165d92b73544d5ec4caf11c14e194648", container: "tireconnect" });
+      }
+    });
+  </script>`,
 };
 
 function parsePage(filePath) {

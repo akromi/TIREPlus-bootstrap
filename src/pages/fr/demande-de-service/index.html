@@ -1,0 +1,42 @@
+---
+title: Demande de service – Tire Plus | Orléans, ON
+description: Demandez un service automobile chez Tire Plus à Orléans. Sélectionnez votre véhicule et le service, choisissez une date et une heure, et nous confirmerons.
+lang: fr
+scripts: tireconnect-services
+---
+  <main id="main-content">
+    <section class="page-header" style="padding:1.5rem 0 1rem;">
+      <div class="container">
+        <h1 style="margin-bottom:.25rem;">Demande de service</h1>
+        <p class="small mb-0" style="opacity:.9;">Sélectionnez votre véhicule et le service, choisissez une date et une heure, et nous confirmerons.</p>
+      </div>
+    </section>
+    <section style="padding:1rem 0 2rem;" aria-label="Outil de demande de service">
+      <div class="container">
+        <div class="alert alert-warning d-flex align-items-start gap-2 mb-3" role="alert">
+          <i class="bi bi-exclamation-triangle-fill fs-5 mt-1"></i>
+          <div><strong>Besoin d'un service aujourd'hui ou demain?</strong> Appelez-nous directement au <a href="tel:6138347325" class="fw-bold">613-834-7325</a> pour qu'on puisse vous accommoder. Les demandes en ligne nécessitent un préavis d'au moins 2 jours ouvrables.</div>
+        </div>
+        <div id="tc-loading" class="alert alert-info py-2 mb-2" role="status" aria-live="polite">Chargement de la demande de service…</div>
+        <div class="tc-widget-container"><div id="tireconnect"></div></div>
+        <noscript><div class="alert alert-warning mt-3">JavaScript est requis pour faire une demande en ligne. Appelez le <a href="tel:6138347325">613-834-7325</a>.</div></noscript>
+        <div class="row g-3 mt-4">
+          <div class="col-md-6">
+            <div class="d-flex align-items-start gap-2">
+              <i class="bi bi-telephone-fill text-red fs-5"></i>
+              <div><h3 class="h6 mb-0">Préférez appeler?</h3><p class="text-muted mb-0 small"><a href="tel:6138347325">613-834-7325</a></p></div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-start gap-2">
+              <i class="bi bi-clock-fill text-red fs-5"></i>
+              <div><h3 class="h6 mb-0">Sans rendez-vous bienvenu</h3><p class="text-muted mb-0 small">Lun–Ven : 8 h–17 h 30 &bull; Sam : 8 h–16 h</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Accueil","item":"https://tireplus.ca/fr/"},{"@type":"ListItem","position":2,"name":"Demande de service","item":"https://tireplus.ca/fr/demande-de-service/"}]}
+  </script>

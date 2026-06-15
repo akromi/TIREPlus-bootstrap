@@ -8,6 +8,8 @@
   RewriteRule ^wheel-search/?$ /search/ [R=301,L]
   RewriteRule ^fr/recherche-pneus/?$ /fr/recherche/ [R=301,L]
   RewriteRule ^fr/recherche-roues/?$ /fr/recherche/ [R=301,L]
+  RewriteRule ^appointments/?$ /request-service/ [R=301,L]
+  RewriteRule ^fr/rendez-vous/?$ /fr/demande-de-service/ [R=301,L]
 </IfModule>
 
 <IfModule mod_headers.c>
