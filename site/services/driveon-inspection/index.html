@@ -128,25 +128,7 @@
         "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
         "reviewBody": "Visiting a friend and got caught with a puncture late Friday afternoon. They sorted me out quickly so I would be able to get home. Not only good work but friendly gang too."
       }
-    ],
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Auto Services",
-      "itemListElement": [
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Tire Installation"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Wheel Alignment"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Road Force Balancing"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "DriveON Safety Inspection"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Brake Service"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Oil Change"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "A/C Service and Recharge"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Suspension and Shocks"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Battery, Starter and Alternator"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Exhaust Repair"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "TPMS Service"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Fluid Flush Service"}}
-      ]
-    }
+    ]
   }
   </script>
 
@@ -185,7 +167,7 @@
           <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
             <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="/search/">Tires &amp; Wheels</a></li>
-            <li class="nav-item"><a class="nav-link" href="/appointments/">Appointments</a></li>
+            <li class="nav-item"><a class="nav-link" href="/request-service/">Request a Service</a></li>
             <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
             <li class="nav-item"><a class="nav-link" href="/faq/">FAQ</a></li>
             <li class="nav-item"><a class="nav-link" href="/contact-us/">Contact Us</a></li>
@@ -215,7 +197,7 @@
       <div class="container" style="max-width:880px;">
 
         <div class="d-flex flex-wrap gap-2 mb-4">
-          <a href="/appointments/" class="btn btn-cta btn-cta-primary">Book an Inspection</a>
+          <a href="/request-service/" class="btn btn-cta btn-cta-primary">Request a Service</a>
           <a href="tel:6138347325" class="btn btn-outline-dark"><i class="bi bi-telephone-fill me-1"></i> Call 613-834-7325</a>
         </div>
 
@@ -247,28 +229,18 @@
           </div>
           <p>Your trusted auto service centre in Orleans, Ontario. Fast, friendly and honest service since day one.</p>
         </div>
-        <div class="col-6 col-lg-2">
+        <div class="col-md-4 col-lg-4">
           <h6>Quick Links</h6>
           <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/search/">Tires &amp; Wheels</a></li>
-            <li><a href="/appointments/">Appointments</a></li>
+            <li><a href="/request-service/">Request a Service</a></li>
             <li><a href="/about/">About</a></li>
             <li><a href="/faq/">FAQ</a></li>
             <li><a href="/contact-us/">Contact Us</a></li>
           </ul>
         </div>
-        <div class="col-6 col-lg-3">
-          <h6>Services</h6>
-          <ul>
-            <li><a href="/services/tires/">Tires</a></li>
-            <li><a href="/services/wheel-alignment/">Wheel Alignment</a></li>
-            <li><a href="/services/brakes/">Brakes</a></li>
-            <li><a href="/services/oil-change/">Oil Changes</a></li>
-            <li><a href="/services/driveon-inspection/">DriveON Inspection</a></li>
-            <li><a href="/services/road-force-balancing/">Road Force Balancing</a></li>
-          </ul>
-        </div>        <div class="col-lg-3">
+        <div class="col-md-8 col-lg-4">
           <h6>Contact</h6>
           <p>
             2006 St. Joseph Blvd.<br>
@@ -299,6 +271,8 @@
   <script src="/js/main.js" defer></script>
   <script src="https://elfsightcdn.com/platform.js" async></script>
   <div class="elfsight-app-31d4c272-4ab2-4e4c-b22e-20b3361a1773" data-elfsight-app-lazy></div>
+  <!-- Mxpert AI Chat (TireConnect) -->
+  <script defer src="https://cdn.jsdelivr.net/gh/MechMonkey/Mxpert-Chat@latest/index.js" api="https://api-new.getmxpert.com/assistant/customer"></script>
 
 </body>
 </html>

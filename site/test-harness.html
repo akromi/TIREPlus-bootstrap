@@ -163,7 +163,7 @@ async function testEN() {
 
   // Tire Search
   const sec2 = "EN: Tire Search";
-  const r2 = await fp("/tire-search/");
+  const r2 = await fp("/search/");
   rec(sec2, "HTTP 200", r2.status === 200);
   if (r2.status === 200) {
     rec(sec2, "Heading", has(r2.body, "Search for Tires"));
@@ -176,7 +176,7 @@ async function testEN() {
 
   // Wheel Search
   const sec3 = "EN: Wheel Search";
-  const r3 = await fp("/wheel-search/");
+  const r3 = await fp("/search/");
   rec(sec3, "HTTP 200", r3.status === 200);
   if (r3.status === 200) {
     rec(sec3, "Heading", has(r3.body, "Search for Wheels"));
@@ -188,7 +188,7 @@ async function testEN() {
 
   // Appointments
   const sec4 = "EN: Appointments";
-  const r4 = await fp("/appointments/");
+  const r4 = await fp("/request-service/");
   rec(sec4, "HTTP 200", r4.status === 200);
   if (r4.status === 200) {
     rec(sec4, "Book Now", has(r4.body, "Book Now"));
@@ -239,7 +239,7 @@ async function testFR() {
 
   // Recherche pneus
   const sec2 = "FR: Recherche pneus";
-  const r2 = await fp("/fr/recherche-pneus/");
+  const r2 = await fp("/fr/recherche/");
   rec(sec2, "HTTP 200", r2.status === 200);
   if (r2.status === 200) {
     rec(sec2, "FR config", has(r2.body, "tireconnect-config-fr.js"));
@@ -251,7 +251,7 @@ async function testFR() {
 
   // Recherche roues
   const sec3 = "FR: Recherche roues";
-  const r3 = await fp("/fr/recherche-roues/");
+  const r3 = await fp("/fr/recherche/");
   rec(sec3, "HTTP 200", r3.status === 200);
   if (r3.status === 200) {
     rec(sec3, "FR config", has(r3.body, "tireconnect-config-fr.js"));
@@ -263,7 +263,7 @@ async function testFR() {
 
   // Rendez-vous
   const sec4 = "FR: Rendez-vous";
-  const r4 = await fp("/fr/rendez-vous/");
+  const r4 = await fp("/fr/demande-de-service/");
   rec(sec4, "HTTP 200", r4.status === 200);
   if (r4.status === 200) {
     rec(sec4, "FR book button", has(r4.body, "Réserver maintenant"));
@@ -309,7 +309,7 @@ async function testAssets() {
 
 async function testConsistency() {
   const sec = "Consistency";
-  const pages = ["/", "/tire-search/", "/wheel-search/", "/appointments/", "/contact-us/", "/fr/", "/fr/recherche-pneus/", "/fr/recherche-roues/", "/fr/rendez-vous/", "/fr/contactez-nous/"];
+  const pages = ["/", "/search/", "/search/", "/request-service/", "/contact-us/", "/fr/", "/fr/recherche/", "/fr/recherche/", "/fr/demande-de-service/", "/fr/contactez-nous/"];
   for (const p of pages) {
     const r = await fp(p);
     if (r.status === 200) {
@@ -323,7 +323,7 @@ async function testConsistency() {
 
 async function testBilingual() {
   const sec = "Bilingual";
-  const fr = ["/fr/", "/fr/recherche-pneus/", "/fr/recherche-roues/", "/fr/rendez-vous/", "/fr/contactez-nous/"];
+  const fr = ["/fr/", "/fr/recherche/", "/fr/recherche/", "/fr/demande-de-service/", "/fr/contactez-nous/"];
   for (const p of fr) {
     const r = await fp(p);
     if (r.status === 200) {
@@ -332,7 +332,7 @@ async function testBilingual() {
       rec(sec, p + " no EN nav", !has(r.body, ">Home<"));
     }
   }
-  const en = ["/", "/tire-search/", "/wheel-search/", "/appointments/", "/contact-us/"];
+  const en = ["/", "/search/", "/search/", "/request-service/", "/contact-us/"];
   for (const p of en) {
     const r = await fp(p);
     if (r.status === 200) {

@@ -56,33 +56,19 @@ async function run() {
     chk("2006 St. Joseph", "Address"),
     chk("View Current Tire Promotions", "Promo button"),
     chk("tirepromos.com", "Promo link"),
-    // Highlights (clickable)
-    chk('href="/#services"', "Highlights link to services"),
-    chk("Wheel Alignment", "Highlight: Alignment"),
-    chk("DriveON Licensed", "Highlight: DriveON"),
-    chk("Road Force Balancing", "Highlight: Road Force"),
-    chk("Oil Changes", "Highlight: Oil"),
-    // DriveON + shop image on home (recent additions)
-    chk("/img/driveon-logo.png", "DriveON logo on home"),
+    // Shop image
     chk("/img/shop.png", "Shop image (Visit Us)"),
     // Brands carousel (3D)
     chk("brands-carousel-3d", "3D carousel"),
     chk("brands-ring", "Carousel ring"),
-    chk("/img/brands/michelin.png", "Brand: Michelin"),
+    chk("/img/brands/michelin.webp", "Brand: Michelin"),
     chk("/img/brands/nokian.png", "Brand: Nokian"),
-    chk("/img/brands/nexen.png", "Brand: Nexen"),
-    // Services (12 cards)
-    chk("Our Services", "Services heading"),
-    chk("General Repairs &amp; Diagnostics", "Service: General+Diag"),
-    chk("Tires, Wheels &amp; TPMS", "Service: Tires+TPMS"),
-    chk("Front-End Service &amp; Alignment", "Service: Front-End+Align"),
-    chk("Battery, Starter &amp; Alternator", "Service: Battery+Starter"),
-    chk("A/C Service", "Service: A/C"),
-    chk("Suspension &amp; Shocks", "Service: Suspension"),
-    chk("Fluid Flush", "Service: Flush"),
-    // Menu (renamed)
-    (h,s) => rec(s, "Menu: Tires (renamed)", />Tires</.test(h)),
-    (h,s) => rec(s, "Menu: Wheels (renamed)", />Wheels</.test(h)),
+    chk("/img/brands/nexen.webp", "Brand: Nexen"),
+    // Unified menu (Tires & Wheels merged)
+    (h,s) => rec(s, "Menu: Tires & Wheels", />Tires &amp; Wheels</.test(h)),
+    (h,s) => rec(s, "Menu: Request a Service", />Request a Service</.test(h)),
+    // Mxpert AI Chat embed
+    chk("Mxpert-Chat", "Mxpert AI chat script"),
     chk("Française", "FR toggle text"),
     chk("Visit Us", "Location section"),
     // Elfsight Google Reviews (replaced static rplg-badge)
@@ -106,12 +92,14 @@ async function run() {
     chk("OE Direct Fit", "OE Direct Fit"),
   ]);
 
-  // === EN: APPOINTMENTS / CONTACT ===
-  console.log("\n━━━ EN: Appointments ━━━");
-  await testPage("/appointments/", "Book an Appointment", [
-    chk("Book Now", "Book button"),
-    chk("workshopsoftware.com", "WS URL"),
-    chk("o36ivi", "WS token"),
+  // === EN: REQUEST A SERVICE ===
+  console.log("\n━━━ EN: Request a Service ━━━");
+  await testPage("/request-service/", "Request a Service", [
+    chk("Request a Service", "Heading"),
+    chk("app.tireconnect.ca/js/widget.js", "TireConnect widget script"),
+    chk("165d92b73544d5ec4caf11c14e194648", "TireConnect AutoService API key"),
+    chk("TCWidget.initServices", "AutoService init call"),
+    chk('id="tireconnect"', "Widget container"),
   ]);
 
   console.log("\n━━━ EN: Contact ━━━");
@@ -131,16 +119,9 @@ async function run() {
     chk("automobile de confiance", "Hero FR"),
     chk("Voir les promotions", "FR promo button"),
     chk("tirepromos.com/fr", "FR promo link"),
-    chk("InspectiON", "InspectiON branding"),
-    chk("Programme InspectiON", "Programme InspectiON"),
-    chk("Réparations générales et diagnostics", "Service FR: Repairs+Diag"),
-    chk("Pneus, roues et TPMS", "Service FR: Tires+TPMS"),
-    chk("Batterie, démarreur et alternateur", "Service FR: Battery"),
-    chk("Service et recharge A/C", "Service FR: A/C"),
-    chk("Suspension et amortisseurs", "Service FR: Suspension"),
-    // DriveON + shop image on FR home (parallel to EN)
-    chk("/img/driveon-logo.png", "DriveON logo on FR home"),
+    // Shop image on FR home (parallel to EN)
     chk("/img/shop.png", "Shop image FR (Visitez-nous)"),
+    chk("Mxpert-Chat", "Mxpert AI chat script (FR)"),
     (h,s) => rec(s, "Menu FR: Pneus et Roues", />Pneus et Roues</.test(h)),
     chk("English", "EN toggle text"),
     chk("Visitez-nous", "Location FR"),
@@ -162,10 +143,12 @@ async function run() {
     (h,s) => rec(s, "lang=fr-CA", has(h, 'lang="fr-CA"')),
   ]);
 
-  console.log("\n━━━ FR: Rendez-vous ━━━");
-  await testPage("/fr/rendez-vous/", "rendez-vous", [
-    chk("Réserver maintenant", "FR book button"),
-    chk("workshopsoftware.com", "WS URL"),
+  console.log("\n━━━ FR: Demande de service ━━━");
+  await testPage("/fr/demande-de-service/", "Demande de service", [
+    chk("Demande de service", "Heading FR"),
+    chk("app.tireconnect.ca/js/widget.js", "TireConnect widget script"),
+    chk("165d92b73544d5ec4caf11c14e194648", "TireConnect AutoService API key"),
+    chk("TCWidget.initServices", "AutoService init call"),
   ]);
 
   console.log("\n━━━ FR: Contactez-nous ━━━");
@@ -186,8 +169,7 @@ async function run() {
     ["/assets/js/tireconnect-config-fr.js","TC FR"],
     ["/assets/js/tireconnect-init.js","TC init"],
     ["/img/logo.png","Logo"], ["/img/hero-service.webp","Hero (WebP)"],
-    ["/img/shop.png","Shop photo"], ["/img/driveon-logo.png","DriveON"],
-    ["/img/roadforce-logo.png","Road Force"],
+    ["/img/shop.png","Shop photo"],
     ["/img/credit-cards.png","Credit cards"], ["/img/favicon.ico","Favicon"],
     ["/img/brands/michelin.webp","Brand: Michelin"],
     ["/img/brands/nexen.webp","Brand: Nexen"],
@@ -201,7 +183,7 @@ async function run() {
 
   // === CROSS-PAGE CONSISTENCY ===
   console.log("\n━━━ Consistency ━━━");
-  const pages = ["/","/search/","/appointments/","/contact-us/","/fr/","/fr/recherche/","/fr/rendez-vous/","/fr/contactez-nous/"];
+  const pages = ["/","/search/","/request-service/","/contact-us/","/fr/","/fr/recherche/","/fr/demande-de-service/","/fr/contactez-nous/"];
   for (const p of pages) {
     try {
       const r = await fetch(`${BASE}${p}`);
@@ -216,7 +198,7 @@ async function run() {
 
   // === BILINGUAL INTEGRITY ===
   console.log("\n━━━ Bilingual Integrity ━━━");
-  for (const p of ["/fr/","/fr/recherche/","/fr/rendez-vous/","/fr/contactez-nous/"]) {
+  for (const p of ["/fr/","/fr/recherche/","/fr/demande-de-service/","/fr/contactez-nous/"]) {
     try {
       const r = await fetch(`${BASE}${p}`);
       if (r.status === 200) {
@@ -226,7 +208,7 @@ async function run() {
       }
     } catch (e) { rec("bilingual", `${p}`, false, e.message); }
   }
-  for (const p of ["/","/search/","/appointments/","/contact-us/"]) {
+  for (const p of ["/","/search/","/request-service/","/contact-us/"]) {
     try {
       const r = await fetch(`${BASE}${p}`);
       if (r.status === 200) {
