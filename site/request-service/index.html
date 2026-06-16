@@ -279,9 +279,13 @@
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      if (typeof TCWidget !== 'undefined' && TCWidget.initServices) {
-        TCWidget.initServices({ apikey: "165d92b73544d5ec4caf11c14e194648", container: "tireconnect" });
-      }
+      var loadingEl = document.getElementById('tc-loading');
+      function hideLoading() { if (loadingEl) loadingEl.classList.add('d-none'); }
+      if (typeof TCWidget === 'undefined' || !TCWidget.initServices) { hideLoading(); return; }
+      var p;
+      try { p = TCWidget.initServices({ apikey: "165d92b73544d5ec4caf11c14e194648", container: "tireconnect" }); }
+      catch (e) { console.error('TireConnect AutoService init threw:', e); hideLoading(); return; }
+      Promise.resolve(p).then(hideLoading).catch(function (e) { console.error('TireConnect AutoService init failed:', e); hideLoading(); });
     });
   </script>
 </body>
