@@ -16,7 +16,11 @@
 
   var initPromise;
   try {
-    initPromise = page.type === "wheels" ? window.TCWidget.initWheels(params) : window.TCWidget.init(params);
+    initPromise = page.type === "wheels"
+      ? window.TCWidget.initWheels(params)
+      : page.type === "services"
+      ? window.TCWidget.initServices(params)
+      : window.TCWidget.init(params);
   } catch (e) {
     console.error("TireConnect init threw:", e);
     hideLoading(); showError(); return;
