@@ -288,8 +288,9 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="/js/main.js" defer></script>
   <script src="https://elfsightcdn.com/platform.js" async></script>
-  <!-- Mxpert AI Chat (TireConnect) -->
-  <script src="https://cdn.jsdelivr.net/gh/MechMonkey/Mxpert-Chat@latest/index.js" api="https://api-new.getmxpert.com/assistant/customer"></script>
 
+  <!-- Mxpert AI Chat (TireConnect) — loaded last so page-specific widgets (TireConnect) start first.
+       No 'defer': Mxpert reads its 'api' attribute via document.currentScript, which is null when deferred. -->
+  <script src="https://cdn.jsdelivr.net/gh/MechMonkey/Mxpert-Chat@latest/index.js" api="https://api-new.getmxpert.com/assistant/customer"></script>
 </body>
 </html>
