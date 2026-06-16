@@ -55,6 +55,11 @@ const SCRIPT_BLOCKS = {
   <script>window.TC_PAGE = { type: "wheels" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
   <script src="/assets/js/tireconnect-init.js"></script>`,
+  // NOTE: Unlike init()/initWheels() (see tireconnect-init.js), TCWidget.initServices()
+  // returns a long-lived promise that never settles, so a Promise.then(hideLoading)
+  // pattern leaves the banner stuck on "Loading…" forever (confirmed in production).
+  // We hide our outer banner immediately after kicking off init; the AutoService widget
+  // renders its own internal loading state inside #tireconnect.
   "tireconnect-services": `
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
   <script>
