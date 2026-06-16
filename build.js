@@ -62,9 +62,12 @@ const SCRIPT_BLOCKS = {
       var loadingEl = document.getElementById('tc-loading');
       function hideLoading() { if (loadingEl) loadingEl.classList.add('d-none'); }
       if (typeof TCWidget === 'undefined' || !TCWidget.initServices) { hideLoading(); return; }
-      try { TCWidget.initServices({ apikey: "165d92b73544d5ec4caf11c14e194648", container: "tireconnect" }); }
-      catch (e) { console.error('TireConnect AutoService init threw:', e); }
-      hideLoading();
+      var initPromise;
+      try { initPromise = TCWidget.initServices({ apikey: "165d92b73544d5ec4caf11c14e194648", container: "tireconnect" }); }
+      catch (e) { console.error('TireConnect AutoService init threw:', e); hideLoading(); return; }
+      Promise.resolve(initPromise)
+        .then(function() { hideLoading(); })
+        .catch(function(e) { console.error('TireConnect AutoService init failed:', e); hideLoading(); });
     });
   </script>`,
   "tireconnect-services-fr": `
@@ -74,9 +77,12 @@ const SCRIPT_BLOCKS = {
       var loadingEl = document.getElementById('tc-loading');
       function hideLoading() { if (loadingEl) loadingEl.classList.add('d-none'); }
       if (typeof TCWidget === 'undefined' || !TCWidget.initServices) { hideLoading(); return; }
-      try { TCWidget.initServices({ apikey: "165d92b73544d5ec4caf11c14e194648", container: "tireconnect", locale: "fr_CA" }); }
-      catch (e) { console.error('TireConnect AutoService init threw:', e); }
-      hideLoading();
+      var initPromise;
+      try { initPromise = TCWidget.initServices({ apikey: "165d92b73544d5ec4caf11c14e194648", container: "tireconnect", locale: "fr_CA" }); }
+      catch (e) { console.error('TireConnect AutoService init threw:', e); hideLoading(); return; }
+      Promise.resolve(initPromise)
+        .then(function() { hideLoading(); })
+        .catch(function(e) { console.error('TireConnect AutoService init failed:', e); hideLoading(); });
     });
   </script>`,
 };
