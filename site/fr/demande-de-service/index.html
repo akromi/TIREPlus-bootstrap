@@ -275,12 +275,11 @@
       hideLoading();
     });
   </script>
-  <!-- Mxpert AI Chat (TireConnect) — TEMPORARILY DISABLED 2026-06-18 pending malware-flag verification.
-       SiteGround SiteScanner flagged cdn.jsdelivr.net/gh/MechMonkey/Mxpert-Chat@latest/index.js
-       (signature: fakecss_phpcode). Likely a false positive on minified JS, but disabled until
-       TireConnect confirms it's clean and provides a pinned/SRI-verified version. To restore,
-       uncomment the script tag below.
-       No 'defer': Mxpert reads its 'api' attribute via document.currentScript, which is null when deferred. -->
-  <!-- <script src="https://cdn.jsdelivr.net/gh/MechMonkey/Mxpert-Chat@latest/index.js" api="https://api-new.getmxpert.com/assistant/customer"></script> -->
+  <!-- Mxpert AI Chat (TireConnect) — loaded last so page-specific widgets (TireConnect) start first.
+       No 'defer': Mxpert reads its 'api' attribute via document.currentScript, which is null when deferred.
+       History: SiteGround SiteScanner flagged this URL on 2026-06-18 (signature: fakecss_phpcode);
+       VirusTotal confirmed false positive (1/94 engines). Re-enabled. Keep an eye out and consider
+       asking TireConnect for a pinned version + SRI hash to replace @latest. -->
+  <script src="https://cdn.jsdelivr.net/gh/MechMonkey/Mxpert-Chat@latest/index.js" api="https://api-new.getmxpert.com/assistant/customer"></script>
 </body>
 </html>
