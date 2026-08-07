@@ -1,0 +1,140 @@
+name: CI
+
+# Pull requests had NO checks at all before this file — the only workflow was
+# Deploy, which fires on push to `main`, i.e. after the decision. So every
+# check here is new, and each one was run against the tree before it landed:
+# all three were green on arrival, because a gate that starts red is a gate
+# everyone learns to ignore.
+#
+# `test.js` is deliberately NOT here. It asserts against a LIVE URL
+# (staging2.tireplus.ca by default), so on a pull request it would test
+# whatever is currently deployed — not the change under review. It would pass
+# for a broken PR and fail for a good one during an unrelated outage. That is
+# a test that cannot fail for the right reason, which is worse than no test.
+# Keep running it by hand against staging after a deploy, as the README says.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # `site/` is BUILD OUTPUT that is committed to git, and the deploy
+      # uploads `site/` — not `src/`. So a PR that edits `src/` and forgets
+      # `node build.js` looks complete, merges clean, and deploys the OLD
+      # page. Nothing else in this repo would catch it.
+      #
+      # Rebuild and require no diff. `build.js` uses only Node built-ins, so
+      # this needs no install and takes seconds.
+      - name: site/ is in sync with src/
+        run: |
+          node build.js
+          if ! git diff --quiet -- site/; then
+            echo "::error::site/ is stale — src/ was edited without running 'node build.js'. The deploy uploads site/, so this would ship the old page."
+            git --no-pager diff --stat -- site/
+            exit 1
+          fi
+
+      # The deploy renames `.htaccess.staging` or `.htaccess.production` into
+      # place per environment. A committed `site/.htaccess` would be uploaded
+      # as-is and silently win, applying one environment's caching and
+      # noindex rules to the other.
+      - name: no committed site/.htaccess
+        run: |
+          if [ -e site/.htaccess ]; then
+            echo "::error::site/.htaccess is committed. It is generated at deploy time from the .staging/.production variant — committing one applies the wrong environment's rules."
+            exit 1
+          fi
+
+      # This site is bilingual by construction: every page exists in both
+      # languages, and the language toggle depends on the pair. The README's
+      # own "Add a new English page" recipe is six steps across five files,
+      # so a half-added page is the likeliest defect here.
+      #
+      # Counts only — whether the RIGHT pages pair up is judgement, and that
+      # is what the reviewer below is for.
+      - name: EN/FR page parity
+        run: |
+          en=$(find src/pages -name index.html -not -path 'src/pages/fr/*' | wc -l)
+          fr=$(find src/pages/fr -name index.html | wc -l)
+          echo "EN pages: $en, FR pages: $fr"
+          if [ "$en" -ne "$fr" ]; then
+            echo "::error::EN/FR page count mismatch ($en vs $fr) — a page was added or removed in one language only."
+            exit 1
+          fi
+
+  # The AI reviewer runs LAST and only when the build is green. It is the one
+  # job here that costs money per run, so it is the one job gated.
+  #
+  # `needs` does that: a job whose dependency failed never starts, so a PR
+  # with a stale site/ spends nothing. `action == 'opened'` is the other
+  # half — `pull_request` fires on opened/synchronize/reopened, and without
+  # the check this would bill again for every commit pushed to an open PR.
+  #
+  # A "review" check shows as SKIPPED on pushes to an open PR. Cosmetic. Do
+  # not make it a required check: required checks decide whether a change may
+  # merge, and a review is advice.
+  review:
+    needs: [build]
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'opened' &&
+      github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      # The action exchanges an OIDC token; without this it fails
+      # before it ever reaches the model.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # EITHER credential works, and they bill differently: an API key is
+      # pay-as-you-go Console usage, an OAuth token draws on a Pro/Max
+      # subscription. Accept both so the choice is a secret, not an edit.
+      # Absent both, warn and skip rather than fail — a red X for a missing
+      # key on an unrelated change teaches everyone to ignore the check.
+      - id: key
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ] || [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No credential set, so no review ran. Add ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN under Settings -> Secrets and variables -> Actions."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ONE copy of the prompt, read by both workflows. Two copies drift, and
+      # the drift is invisible until a review is quietly worse than it was.
+      - id: prompt
+        if: steps.key.outputs.present == 'true'
+        run: |
+          {
+            echo 'text<<REVIEW_PROMPT_EOF'
+            cat .github/review-prompt.md
+            echo REVIEW_PROMPT_EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - if: steps.key.outputs.present == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          use_sticky_comment: true
+          prompt: ${{ steps.prompt.outputs.text }}
