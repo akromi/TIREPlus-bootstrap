@@ -17,6 +17,9 @@ permissions:
   contents: read
   pull-requests: write
   issues: write
+  # The action exchanges an OIDC token; without this it fails
+  # before it ever reaches the model.
+  id-token: write
 
 # Asking twice supersedes the first request rather than paying for both.
 concurrency:
