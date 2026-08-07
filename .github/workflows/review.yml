@@ -1,0 +1,70 @@
+name: Review on request
+
+# ON DEMAND ONLY. The automatic review lives in `ci.yml`, where `needs` can
+# gate it behind the build — a job in this file could not, because `needs`
+# does not reach across workflows, and a reviewer that runs while the build
+# is red bills for a verdict the next push supersedes.
+#
+# What is left here is the path a human asks for by name: write `@claude` in
+# a comment on the pull request, or dispatch it manually. There is no
+# automatic trigger, so this file cannot spend anything on its own.
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+# Asking twice supersedes the first request rather than paying for both.
+concurrency:
+  group: review-${{ github.event.issue.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  claude:
+    # `issue_comment` fires on EVERY comment in the repository, including
+    # ones on issues that are not pull requests. Gate here so a runner is not
+    # started merely to discover that.
+    if: >-
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       contains(github.event.comment.body, '@claude')) ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: key
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY" ] || [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No credential set, so no review ran. Add ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN under Settings -> Secrets and variables -> Actions."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The SAME prompt file `ci.yml` reads. Two copies would drift.
+      - id: prompt
+        if: steps.key.outputs.present == 'true'
+        run: |
+          {
+            echo 'text<<REVIEW_PROMPT_EOF'
+            cat .github/review-prompt.md
+            echo REVIEW_PROMPT_EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - if: steps.key.outputs.present == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          use_sticky_comment: true
+          prompt: ${{ steps.prompt.outputs.text }}
