@@ -110,6 +110,7 @@ async function run() {
     chk("booking.tekmetric.com/iframe/modal.css", "Tekmetric modal stylesheet"),
     chk("onShowBooking('c4cd3a3d-f612-4b8d-84be-df5f941b9e55')", "Booking button + shop id"),
     chk("613-834-7325", "Phone fallback"),
+    chk('data-ga-event="booking_start"', "GA booking_start hook"),
     // The iframe embed was refused by the scheduler (X-Frame-Options); the modal
     // replaced it. Assert the dead URL never comes back.
     (h, s) => rec(s, "No legacy myworkshop.site iframe", !has(h, "myworkshop.site")),
@@ -170,6 +171,7 @@ async function run() {
     chk("booking.tekmetric.com/iframe/modal.js", "Tekmetric modal loader"),
     chk("onShowBooking('c4cd3a3d-f612-4b8d-84be-df5f941b9e55')", "Booking button + shop id"),
     chk("613-834-7325", "Phone fallback FR"),
+    chk('data-ga-event="booking_start"', "GA booking_start hook"),
     (h, s) => rec(s, "No legacy myworkshop.site iframe", !has(h, "myworkshop.site")),
   ]);
 

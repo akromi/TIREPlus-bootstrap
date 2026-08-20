@@ -146,7 +146,8 @@ Google Analytics 4 is wired into `src/_partials/head.html` and
 | Event | Fires when | Parameters |
 |---|---|---|
 | `phone_call` | A `tel:` link is clicked | `phone_number` |
-| `cta_click` | A `.btn-cta` button is clicked | `cta_label`, `cta_destination` |
+| `cta_click` | A `.btn-cta` link or button is clicked | `cta_label`, `cta_destination` |
+| `booking_start` | The Tekmetric booking button is clicked (opens the scheduler) | `cta_label` |
 
 Standard GA4 enhanced measurement also captures `page_view`, `scroll`,
 outbound `click`, `file_download`, and form events automatically.
@@ -210,9 +211,11 @@ path. The embed code comes from Tekmetric -> Marketing -> Online Booking ->
 "Add to your website"; if it is ever regenerated, both the loader in `build.js`
 and the shop id on the two booking pages must be updated together.
 
-Note the button is a `<button>`, not an `<a>`, so the `cta_click` GA event in
-`site/js/main.js` (which matches anchors) does not fire for it. Booking clicks
-are currently untracked.
+The button is a `<button>`, not an `<a>`, because it opens a modal rather than
+navigating. It reports to GA via `data-ga-event="booking_start"` — see the
+click handler in `site/js/main.js`, which matches `a, button` and lets any
+element name its own event. Remove that attribute and booking clicks go
+silent.
 
 **TireConnect widget doesn't load**
 Check browser console for blocked third-party requests. The widget is
