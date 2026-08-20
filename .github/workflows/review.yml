@@ -71,3 +71,24 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           use_sticky_comment: true
           prompt: ${{ steps.prompt.outputs.text }}
+          # TEMPORARY, and the same flag `ci.yml` now carries — see the long
+          # note there for what it is diagnosing and why the output being
+          # public matters. Set in both files for the reason the prompt is
+          # read from one file: two copies drift, and a diagnostic that is on
+          # in one path and off in the other reads as "already checked that"
+          # when it has not been.
+          #
+          # NOT testable from a branch, which cost a run to learn. The action
+          # validates its own workflow file against the DEFAULT BRANCH and
+          # skips itself when the two differ:
+          #
+          #   Skipping action due to workflow validation: Workflow validation
+          #   failed. The workflow file must exist and have identical content
+          #   to the version on the repository's default branch.
+          #
+          # So editing this file is precisely what stops it running. Dispatched
+          # against this branch it skipped in 18s and reported SUCCESS — a skip
+          # is not a failure — which is the worst shape a check can have: green,
+          # instant, and having done nothing. Any future change here is unproven
+          # until it is on `main`, and a green run on the branch is not evidence.
+          show_full_output: true
