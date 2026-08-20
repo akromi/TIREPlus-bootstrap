@@ -71,3 +71,15 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           use_sticky_comment: true
           prompt: ${{ steps.prompt.outputs.text }}
+          # TEMPORARY, and the same flag `ci.yml` now carries — see the long
+          # note there for what it is diagnosing and why the output being
+          # public matters. Set in both files for the reason the prompt is
+          # read from one file: two copies drift, and a diagnostic that is on
+          # in one path and off in the other reads as "already checked that"
+          # when it has not been.
+          #
+          # This is also the CHEAPER path to an answer. `ci.yml`'s reviewer is
+          # gated on `action == 'opened'`, so re-testing it costs a whole new
+          # pull request; this file answers to `workflow_dispatch`, so it can
+          # be fired against a branch from the Actions tab as often as needed.
+          show_full_output: true
