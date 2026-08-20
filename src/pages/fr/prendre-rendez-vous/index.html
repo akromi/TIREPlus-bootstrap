@@ -2,6 +2,7 @@
 title: Prendre rendez-vous – Tire Plus | Orléans, ON
 description: Prenez rendez-vous en ligne chez Tire Plus à Orléans. Choisissez votre service, la date et l'heure, et réservez votre place — pneus, changement d'huile, freins, alignement et plus.
 lang: fr
+scripts: tekmetric-booking
 ---
   <main id="main-content">
     <section class="page-header" style="padding:1.5rem 0 1rem;">
@@ -12,13 +13,30 @@ lang: fr
     </section>
     <section style="padding:1rem 0 2rem;" aria-label="Prise de rendez-vous en ligne">
       <div class="container">
-        <div class="booking-frame-container">
-          <iframe class="booking-frame"
-                  src="https://myworkshop.site/mechanic/orleans-on/tireplus-orleans/book/"
-                  title="Prise de rendez-vous en ligne Tire Plus"
-                  referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <div class="booking-frame-container text-center p-4 p-md-5">
+          <i class="bi bi-calendar2-check text-red" style="font-size:2.5rem;" aria-hidden="true"></i>
+          <h2 class="h4 mt-3 mb-2">Réservez en ligne, à toute heure</h2>
+          <p class="text-muted mb-4 mx-auto" style="max-width:34rem;">
+            Choisissez votre service, la date et l'heure qui vous conviennent, et nous
+            confirmerons. Cela prend quelques minutes et l'outil s'ouvre directement sur cette page.
+          </p>
+          <!-- Même bouton que la page anglaise : voir le commentaire dans
+               src/pages/book-appointment/index.html. Tekmetric ne fournit qu'un seul
+               identifiant de boutique, donc l'outil s'affiche dans la langue que
+               Tekmetric choisit — à vérifier une fois en ligne. -->
+          <button type="button" class="btn btn-lg btn-cta btn-cta-primary"
+                  data-ga-event="booking_start"
+                  onclick="onShowBooking('c4cd3a3d-f612-4b8d-84be-df5f941b9e55')">
+            <i class="bi bi-calendar-plus me-2" aria-hidden="true"></i>Prendre rendez-vous
+          </button>
+          <p class="small text-muted mt-3 mb-0">
+            La réservation ne s'ouvre pas? Appelez-nous au <a href="tel:6138347325">613-834-7325</a>
+            et nous vous trouverons une place.
+          </p>
         </div>
-        <p class="small text-muted mt-2 mb-0">L'outil de réservation ne se charge pas? <a href="https://myworkshop.site/mechanic/orleans-on/tireplus-orleans/book/" target="_blank" rel="noopener">Ouvrez-le dans un nouvel onglet</a> ou appelez le <a href="tel:6138347325">613-834-7325</a>.</p>
+        <noscript>
+          <div class="alert alert-warning mt-3">JavaScript est requis pour réserver en ligne. Appelez le <a href="tel:6138347325">613-834-7325</a>.</div>
+        </noscript>
         <div class="row g-3 mt-4">
           <div class="col-md-6">
             <div class="d-flex align-items-start gap-2">

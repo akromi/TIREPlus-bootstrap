@@ -146,7 +146,8 @@ Google Analytics 4 is wired into `src/_partials/head.html` and
 | Event | Fires when | Parameters |
 |---|---|---|
 | `phone_call` | A `tel:` link is clicked | `phone_number` |
-| `cta_click` | A `.btn-cta` button is clicked | `cta_label`, `cta_destination` |
+| `cta_click` | A `.btn-cta` link or button is clicked | `cta_label`, `cta_destination` |
+| `booking_start` | The Tekmetric booking button is clicked (opens the scheduler) | `cta_label` |
 
 Standard GA4 enhanced measurement also captures `page_view`, `scroll`,
 outbound `click`, `file_download`, and form events automatically.
@@ -193,6 +194,28 @@ header `x-proxy-cache`. Should read `MISS`. If it reads `HIT`, the
 Usually means `site/.htaccess.staging` or `site/.htaccess.production`
 didn't make it into the build artifact. Confirm `include-hidden-files: true`
 is set on the `actions/upload-artifact` step in the workflow.
+
+**Booking modal doesn't open**
+The "Book Your Appointment" button calls `onShowBooking('<shop-id>')`, a global
+defined by Tekmetric's `modal.js`. That script is injected by the
+`tekmetric-booking` block in `build.js` on the window `load` event, so the button
+is inert until the page has fully loaded, and stays inert if
+`booking.tekmetric.com` is unreachable or the shop id is wrong. Check the console
+for a failed request to `booking.tekmetric.com/iframe/modal.js`.
+
+Do NOT "fix" this by iframing the booking URL directly. That was the first
+attempt and the browser refuses it outright — the scheduler sends
+`X-Frame-Options`/`frame-ancestors` headers that forbid embedding, so the page
+renders nothing but "refused to connect". The modal is Tekmetric's supported
+path. The embed code comes from Tekmetric -> Marketing -> Online Booking ->
+"Add to your website"; if it is ever regenerated, both the loader in `build.js`
+and the shop id on the two booking pages must be updated together.
+
+The button is a `<button>`, not an `<a>`, because it opens a modal rather than
+navigating. It reports to GA via `data-ga-event="booking_start"` — see the
+click handler in `site/js/main.js`, which matches `a, button` and lets any
+element name its own event. Remove that attribute and booking clicks go
+silent.
 
 **TireConnect widget doesn't load**
 Check browser console for blocked third-party requests. The widget is

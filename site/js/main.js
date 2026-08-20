@@ -97,14 +97,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
   document.addEventListener('click', function (e) {
-    var link = e.target.closest('a');
-    if (!link) return;
-    var href = link.getAttribute('href') || '';
+    /* Buttons as well as anchors. The booking CTA opens a modal instead of
+       navigating, so it is a <button>, and closest('a') never saw it — the
+       highest-value click on the site was the one going unreported. No
+       existing button carries btn-cta or data-ga-event, so widening this
+       selector does not make anything that was silent before start firing. */
+    var el = e.target.closest('a, button');
+    if (!el) return;
+
+    /* An explicit data-ga-event wins. A conversion worth marking as a key
+       event in GA4 needs its own name, not to be pooled into cta_click with
+       every other button on the site. */
+    var named = el.getAttribute('data-ga-event');
+    if (named) {
+      trackEvent(named, { cta_label: (el.textContent || '').trim().slice(0, 50) });
+      return;
+    }
+
+    var href = el.getAttribute('href') || '';
     if (href.indexOf('tel:') === 0) {
       trackEvent('phone_call', { phone_number: href.replace('tel:', '') });
-    } else if (link.classList.contains('btn-cta')) {
+    } else if (el.classList.contains('btn-cta')) {
       trackEvent('cta_click', {
-        cta_label: (link.textContent || '').trim().slice(0, 50),
+        cta_label: (el.textContent || '').trim().slice(0, 50),
         cta_destination: href
       });
     }
