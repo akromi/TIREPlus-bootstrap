@@ -194,6 +194,26 @@ Usually means `site/.htaccess.staging` or `site/.htaccess.production`
 didn't make it into the build artifact. Confirm `include-hidden-files: true`
 is set on the `actions/upload-artifact` step in the workflow.
 
+**Booking modal doesn't open**
+The "Book Your Appointment" button calls `onShowBooking('<shop-id>')`, a global
+defined by Tekmetric's `modal.js`. That script is injected by the
+`tekmetric-booking` block in `build.js` on the window `load` event, so the button
+is inert until the page has fully loaded, and stays inert if
+`booking.tekmetric.com` is unreachable or the shop id is wrong. Check the console
+for a failed request to `booking.tekmetric.com/iframe/modal.js`.
+
+Do NOT "fix" this by iframing the booking URL directly. That was the first
+attempt and the browser refuses it outright — the scheduler sends
+`X-Frame-Options`/`frame-ancestors` headers that forbid embedding, so the page
+renders nothing but "refused to connect". The modal is Tekmetric's supported
+path. The embed code comes from Tekmetric -> Marketing -> Online Booking ->
+"Add to your website"; if it is ever regenerated, both the loader in `build.js`
+and the shop id on the two booking pages must be updated together.
+
+Note the button is a `<button>`, not an `<a>`, so the `cta_click` GA event in
+`site/js/main.js` (which matches anchors) does not fire for it. Booking clicks
+are currently untracked.
+
 **TireConnect widget doesn't load**
 Check browser console for blocked third-party requests. The widget is
 initialized lazily via IntersectionObserver in `site/js/main.js`; if the

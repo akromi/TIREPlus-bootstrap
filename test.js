@@ -106,9 +106,13 @@ async function run() {
   console.log("\n━━━ EN: Book an Appointment ━━━");
   await testPage("/book-appointment/", "Book an Appointment", [
     chk("Book an Appointment", "Heading"),
-    chk("myworkshop.site/mechanic/orleans-on/tireplus-orleans/book", "Tekmetric booking iframe URL"),
-    chk('class="booking-frame"', "Booking iframe class"),
-    chk("Open it in a new tab", "New-tab fallback link"),
+    chk("booking.tekmetric.com/iframe/modal.js", "Tekmetric modal loader"),
+    chk("booking.tekmetric.com/iframe/modal.css", "Tekmetric modal stylesheet"),
+    chk("onShowBooking('c4cd3a3d-f612-4b8d-84be-df5f941b9e55')", "Booking button + shop id"),
+    chk("613-834-7325", "Phone fallback"),
+    // The iframe embed was refused by the scheduler (X-Frame-Options); the modal
+    // replaced it. Assert the dead URL never comes back.
+    (h, s) => rec(s, "No legacy myworkshop.site iframe", !has(h, "myworkshop.site")),
   ]);
 
   console.log("\n━━━ EN: Contact ━━━");
@@ -163,9 +167,10 @@ async function run() {
   console.log("\n━━━ FR: Prendre rendez-vous ━━━");
   await testPage("/fr/prendre-rendez-vous/", "Prendre rendez-vous", [
     chk("Prendre rendez-vous", "Heading FR"),
-    chk("myworkshop.site/mechanic/orleans-on/tireplus-orleans/book", "Tekmetric booking iframe URL"),
-    chk('class="booking-frame"', "Booking iframe class"),
-    chk("Ouvrez-le dans un nouvel onglet", "New-tab fallback link FR"),
+    chk("booking.tekmetric.com/iframe/modal.js", "Tekmetric modal loader"),
+    chk("onShowBooking('c4cd3a3d-f612-4b8d-84be-df5f941b9e55')", "Booking button + shop id"),
+    chk("613-834-7325", "Phone fallback FR"),
+    (h, s) => rec(s, "No legacy myworkshop.site iframe", !has(h, "myworkshop.site")),
   ]);
 
   console.log("\n━━━ FR: Contactez-nous ━━━");

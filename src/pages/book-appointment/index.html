@@ -1,6 +1,7 @@
 ---
 title: Book an Appointment – Tire Plus | Orleans, ON
 description: Book your auto service appointment online at Tire Plus in Orleans. Choose your service, pick a date and time, and reserve your spot — tires, oil change, brakes, alignment and more.
+scripts: tekmetric-booking
 ---
   <main id="main-content">
     <section class="page-header" style="padding:1.5rem 0 1rem;">
@@ -11,13 +12,29 @@ description: Book your auto service appointment online at Tire Plus in Orleans. 
     </section>
     <section style="padding:1rem 0 2rem;" aria-label="Online appointment booking">
       <div class="container">
-        <div class="booking-frame-container">
-          <iframe class="booking-frame"
-                  src="https://myworkshop.site/mechanic/orleans-on/tireplus-orleans/book/"
-                  title="Tire Plus online appointment booking"
-                  referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <div class="booking-frame-container text-center p-4 p-md-5">
+          <i class="bi bi-calendar2-check text-red" style="font-size:2.5rem;" aria-hidden="true"></i>
+          <h2 class="h4 mt-3 mb-2">Book online, any time</h2>
+          <p class="text-muted mb-4 mx-auto" style="max-width:34rem;">
+            Pick your service, choose a date and time that suits you, and we'll confirm.
+            It takes a couple of minutes and the scheduler opens right here on this page.
+          </p>
+          <!-- Button hook from Tekmetric -> Marketing -> Online Booking -> "Add to your
+               website", code (2). onShowBooking is defined by the modal.js loaded via the
+               `tekmetric-booking` script block (see build.js). The UUID is this shop's
+               public Tekmetric booking id, which is what that panel tells you to paste. -->
+          <button type="button" class="btn btn-lg btn-cta btn-cta-primary"
+                  onclick="onShowBooking('c4cd3a3d-f612-4b8d-84be-df5f941b9e55')">
+            <i class="bi bi-calendar-plus me-2" aria-hidden="true"></i>Book Your Appointment
+          </button>
+          <p class="small text-muted mt-3 mb-0">
+            Booking not opening? Call us at <a href="tel:6138347325">613-834-7325</a> and
+            we'll get you in.
+          </p>
         </div>
-        <p class="small text-muted mt-2 mb-0">Trouble loading the booking tool? <a href="https://myworkshop.site/mechanic/orleans-on/tireplus-orleans/book/" target="_blank" rel="noopener">Open it in a new tab</a> or call <a href="tel:6138347325">613-834-7325</a>.</p>
+        <noscript>
+          <div class="alert alert-warning mt-3">JavaScript is required to book online. Please call <a href="tel:6138347325">613-834-7325</a>.</div>
+        </noscript>
         <div class="row g-3 mt-4">
           <div class="col-md-6">
             <div class="d-flex align-items-start gap-2">

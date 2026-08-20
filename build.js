@@ -84,6 +84,40 @@ const SCRIPT_BLOCKS = {
       hideLoading();
     });
   </script>`,
+  // Tekmetric Online Booking. Source: Tekmetric -> Marketing -> Online Booking ->
+  // "Add to your website", code (1). It loads Tekmetric's modal.js + modal.css,
+  // which define the global onShowBooking(shopId) that the page's button calls.
+  //
+  // ONE deviation from what Tekmetric ships. Theirs opens with
+  //   window.onload = function () { ... }
+  // a bare assignment that REPLACES any other window.onload handler on the page,
+  // and is itself replaced by the next script that does the same. Nothing else
+  // here uses window.onload today, so it would work — and would break silently
+  // the day something else did, with booking as the casualty. addEventListener
+  // has identical timing (both fire on the load event) and cannot clobber.
+  //
+  // The ?time= cache-buster is Tekmetric's own, kept as shipped: it refetches
+  // both files on every page load, which costs a round trip but means their
+  // fixes land without a deploy here.
+  //
+  // Do NOT iframe the booking URL directly instead of this. That was tried
+  // (site/test-booking-iframe.html, since removed) and the browser refuses it:
+  // the scheduler sends frame-ancestors/X-Frame-Options that forbid embedding,
+  // so the page renders "refused to connect". This modal is the supported path.
+  "tekmetric-booking": `
+  <script>
+    window.addEventListener('load', function () {
+      var script = document.createElement('script');
+      script.src = 'https://booking.tekmetric.com/iframe/modal.js?time=' + new Date().getTime();
+      script.defer = true;
+      document.body.appendChild(script);
+
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://booking.tekmetric.com/iframe/modal.css?time=' + new Date().getTime();
+      document.head.appendChild(link);
+    });
+  </script>`,
 };
 
 function parsePage(filePath) {
