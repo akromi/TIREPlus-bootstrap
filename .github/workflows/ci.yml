@@ -158,6 +158,14 @@ jobs:
           # to learn whether it is auth, the [1m] context beta, credit balance,
           # or a network stall.
           #
+          # It only takes effect once this file is ON `main`. The action
+          # validates its own workflow against the default branch and skips
+          # itself when they differ, so the edit that would reveal the error is
+          # the edit that prevents the run — see the note in `review.yml`, where
+          # a dispatch against the branch skipped in 18s and reported SUCCESS.
+          # This flag is therefore unproven until merged, and merging it is the
+          # only way to prove it.
+          #
           # THIS REPO IS PUBLIC. With this on, the reviewer's unredacted output
           # lands in an Actions log anyone can read. GitHub masks registered
           # secrets, but that masks known strings — it is not a guarantee about

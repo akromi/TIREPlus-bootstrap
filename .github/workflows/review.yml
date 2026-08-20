@@ -78,8 +78,17 @@ jobs:
           # in one path and off in the other reads as "already checked that"
           # when it has not been.
           #
-          # This is also the CHEAPER path to an answer. `ci.yml`'s reviewer is
-          # gated on `action == 'opened'`, so re-testing it costs a whole new
-          # pull request; this file answers to `workflow_dispatch`, so it can
-          # be fired against a branch from the Actions tab as often as needed.
+          # NOT testable from a branch, which cost a run to learn. The action
+          # validates its own workflow file against the DEFAULT BRANCH and
+          # skips itself when the two differ:
+          #
+          #   Skipping action due to workflow validation: Workflow validation
+          #   failed. The workflow file must exist and have identical content
+          #   to the version on the repository's default branch.
+          #
+          # So editing this file is precisely what stops it running. Dispatched
+          # against this branch it skipped in 18s and reported SUCCESS — a skip
+          # is not a failure — which is the worst shape a check can have: green,
+          # instant, and having done nothing. Any future change here is unproven
+          # until it is on `main`, and a green run on the branch is not evidence.
           show_full_output: true
