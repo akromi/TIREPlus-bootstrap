@@ -34,6 +34,19 @@ const partials = {
   fr: { head: readPartial("head-fr.html"), nav: readPartial("nav-fr.html"), footer: readPartial("footer-fr.html") },
 };
 
+// The Tekmetric shop this site books into. Declared ONCE and substituted into
+// pages as {{TEKMETRIC_SHOP_ID}}, because it appeared in two page sources before
+// and a swap that updated one and missed the other would leave that language
+// silently booking into the wrong shop — a failure with no visible symptom on
+// the page that broke.
+//
+// !!! THIS IS TEKMETRIC'S SANDBOX SHOP, NOT TIRE PLUS ORLEANS !!!
+// Bookings made against it do not reach the shop. Replace it with the real id
+// from Tekmetric -> Marketing -> Online Booking -> "Add to your website" in the
+// PRODUCTION Tekmetric account before any deploy to tireplus.ca. test.js warns
+// while this value is still in place.
+const TEKMETRIC_SHOP_ID = "c4cd3a3d-f612-4b8d-84be-df5f941b9e55";
+
 const SCRIPT_BLOCKS = {
   "tireconnect-tires": `
   <script src="/assets/js/tireconnect-config.js"></script>
@@ -145,7 +158,8 @@ function buildPage(pagePath) {
   let head = p.head.replace("{{TITLE}}", meta.title || "Tire Plus").replace("{{DESCRIPTION}}", meta.description || "");
   const scriptBlock = SCRIPT_BLOCKS[meta.scripts] || "";
   let footer = p.footer.replace("{{SCRIPTS}}", scriptBlock);
-  return head + "\n" + p.nav + "\n" + body + "\n" + footer;
+  const pageBody = body.split("{{TEKMETRIC_SHOP_ID}}").join(TEKMETRIC_SHOP_ID);
+  return head + "\n" + p.nav + "\n" + pageBody + "\n" + footer;
 }
 
 function walkPages(dir, relBase) {

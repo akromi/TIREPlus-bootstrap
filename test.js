@@ -45,6 +45,23 @@ async function testPage(path, title, checks) {
 }
 function chk(t, l) { return (h, s) => rec(s, l || `Contains "${t}"`, has(h, t)); }
 
+// Tekmetric's sandbox shop. Bookings made against it never reach Tire Plus, and
+// nothing on the page looks wrong when it happens: the button opens, the
+// scheduler renders, the customer believes they have an appointment. The only
+// place that discrepancy is visible is here.
+//
+// WARN, not FAIL, until the real id lands: the pages themselves are correct and
+// a suite that is red for a known pending swap is a suite people stop reading.
+const SANDBOX_SHOP_ID = "c4cd3a3d-f612-4b8d-84be-df5f941b9e55";
+function bookingShopId(h, s) {
+  const m = h.match(/onShowBooking\('([0-9a-fA-F-]{36})'\)/);
+  rec(s, "Booking button carries a shop id", !!m, m ? m[1] : "no onShowBooking(uuid) found");
+  if (!m) return;
+  const isSandbox = m[1].toLowerCase() === SANDBOX_SHOP_ID;
+  rec(s, "Shop id is not Tekmetric's sandbox", isSandbox ? "warn" : true,
+      isSandbox ? "STILL THE SANDBOX SHOP — bookings do not reach Tire Plus" : m[1]);
+}
+
 async function run() {
   console.log(`\n🔧 TirePlus Test Harness\n   Target: ${BASE}\n   Time:   ${new Date().toISOString()}\n`);
 
@@ -108,7 +125,7 @@ async function run() {
     chk("Book an Appointment", "Heading"),
     chk("booking.tekmetric.com/iframe/modal.js", "Tekmetric modal loader"),
     chk("booking.tekmetric.com/iframe/modal.css", "Tekmetric modal stylesheet"),
-    chk("onShowBooking('c4cd3a3d-f612-4b8d-84be-df5f941b9e55')", "Booking button + shop id"),
+    bookingShopId,
     chk("613-834-7325", "Phone fallback"),
     chk('data-ga-event="booking_start"', "GA booking_start hook"),
     // The iframe embed was refused by the scheduler (X-Frame-Options); the modal
@@ -169,7 +186,7 @@ async function run() {
   await testPage("/fr/prendre-rendez-vous/", "Prendre rendez-vous", [
     chk("Prendre rendez-vous", "Heading FR"),
     chk("booking.tekmetric.com/iframe/modal.js", "Tekmetric modal loader"),
-    chk("onShowBooking('c4cd3a3d-f612-4b8d-84be-df5f941b9e55')", "Booking button + shop id"),
+    bookingShopId,
     chk("613-834-7325", "Phone fallback FR"),
     chk('data-ga-event="booking_start"', "GA booking_start hook"),
     (h, s) => rec(s, "No legacy myworkshop.site iframe", !has(h, "myworkshop.site")),
