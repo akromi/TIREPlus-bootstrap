@@ -102,6 +102,15 @@ async function run() {
     chk('id="tireconnect"', "Widget container"),
   ]);
 
+  // === EN: BOOK AN APPOINTMENT (Tekmetric online booking) ===
+  console.log("\n━━━ EN: Book an Appointment ━━━");
+  await testPage("/book-appointment/", "Book an Appointment", [
+    chk("Book an Appointment", "Heading"),
+    chk("myworkshop.site/mechanic/orleans-on/tireplus-orleans/book", "Tekmetric booking iframe URL"),
+    chk('class="booking-frame"', "Booking iframe class"),
+    chk("Open it in a new tab", "New-tab fallback link"),
+  ]);
+
   console.log("\n━━━ EN: Contact ━━━");
   await testPage("/contact-us/", "Contact Us", [
     chk("Send Us a Message", "Form heading"),
@@ -151,6 +160,14 @@ async function run() {
     chk("TCWidget.initServices", "AutoService init call"),
   ]);
 
+  console.log("\n━━━ FR: Prendre rendez-vous ━━━");
+  await testPage("/fr/prendre-rendez-vous/", "Prendre rendez-vous", [
+    chk("Prendre rendez-vous", "Heading FR"),
+    chk("myworkshop.site/mechanic/orleans-on/tireplus-orleans/book", "Tekmetric booking iframe URL"),
+    chk('class="booking-frame"', "Booking iframe class"),
+    chk("Ouvrez-le dans un nouvel onglet", "New-tab fallback link FR"),
+  ]);
+
   console.log("\n━━━ FR: Contactez-nous ━━━");
   await testPage("/fr/contactez-nous/", "Contactez-nous", [
     chk("Envoyez-nous un message", "Form heading FR"),
@@ -183,7 +200,7 @@ async function run() {
 
   // === CROSS-PAGE CONSISTENCY ===
   console.log("\n━━━ Consistency ━━━");
-  const pages = ["/","/search/","/request-service/","/contact-us/","/fr/","/fr/recherche/","/fr/demande-de-service/","/fr/contactez-nous/"];
+  const pages = ["/","/search/","/request-service/","/book-appointment/","/contact-us/","/fr/","/fr/recherche/","/fr/demande-de-service/","/fr/prendre-rendez-vous/","/fr/contactez-nous/"];
   for (const p of pages) {
     try {
       const r = await fetch(`${BASE}${p}`);
@@ -198,7 +215,7 @@ async function run() {
 
   // === BILINGUAL INTEGRITY ===
   console.log("\n━━━ Bilingual Integrity ━━━");
-  for (const p of ["/fr/","/fr/recherche/","/fr/demande-de-service/","/fr/contactez-nous/"]) {
+  for (const p of ["/fr/","/fr/recherche/","/fr/demande-de-service/","/fr/prendre-rendez-vous/","/fr/contactez-nous/"]) {
     try {
       const r = await fetch(`${BASE}${p}`);
       if (r.status === 200) {
@@ -208,7 +225,7 @@ async function run() {
       }
     } catch (e) { rec("bilingual", `${p}`, false, e.message); }
   }
-  for (const p of ["/","/search/","/request-service/","/contact-us/"]) {
+  for (const p of ["/","/search/","/request-service/","/book-appointment/","/contact-us/"]) {
     try {
       const r = await fetch(`${BASE}${p}`);
       if (r.status === 200) {
@@ -225,6 +242,12 @@ async function run() {
     const r = await fetch(`${BASE}/mail-test.php`);
     rec("security", "mail-test.php removed (not 200)", r.status !== 200, `Got ${r.status}`);
   } catch (e) { rec("security", "mail-test.php removed (not 200)", true, "Network error = good"); }
+
+  // test-booking-iframe.html was a scratch file superseded by /book-appointment/
+  try {
+    const r = await fetch(`${BASE}/test-booking-iframe.html`);
+    rec("security", "test-booking-iframe.html removed (not 200)", r.status !== 200, `Got ${r.status}`);
+  } catch (e) { rec("security", "test-booking-iframe.html removed (not 200)", true, "Network error = good"); }
 
   // CSS rules: font-size boost + reCAPTCHA badge hidden
   try {

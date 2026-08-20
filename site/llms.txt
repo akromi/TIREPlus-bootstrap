@@ -30,6 +30,7 @@ Atturo, BFGoodrich, Bridgestone, Continental, Cooper, Dunlop, Falken, Firestone,
 - Brand voice: honest assessments, transparent pricing, free walk-in brake and tire inspections, open Saturdays
 
 ## Contact and booking
+- [Book an appointment](https://tireplus.ca/book-appointment/) — choose a service and time slot online ([Français](https://tireplus.ca/fr/prendre-rendez-vous/))
 - [Contact page](https://tireplus.ca/contact-us/) — send a message
 - [Request a service](https://tireplus.ca/request-service/)
 - [Français](https://tireplus.ca/fr/)
