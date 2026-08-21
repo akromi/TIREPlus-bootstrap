@@ -81,7 +81,7 @@ async function run() {
 
   // === EN: SEARCH (unified tires + wheels) ===
   console.log("\n━━━ EN: Tires & Wheels Search ━━━");
-  await testPage("/search/", "Tires & Wheels", [
+  await testPage("/search/", "Tires &amp; Wheels", [
     chk("Tires &amp; Wheels", "Heading"),
     chk("tireconnect-config.js", "EN config"),
     chk("widget.js", "Widget JS"),
