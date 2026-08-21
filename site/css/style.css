@@ -400,43 +400,6 @@ img { max-width: 100%; height: auto; }
   .booking-frame { height: 600px; }
 }
 
-/* ---------- Tekmetric Booking Modal ---------- */
-/* Tekmetric ships the scheduler at a flat 400px, which reads as a phone-width
-   column on a desktop screen and scrolls far more than it needs to.
-
-   The DOM their modal.js builds, all of it inside OUR page:
-
-     #tekmetricBookingModal.tekmetric-overlay   full-screen backdrop
-       -> .tekmetric-booking-modal              the dialog, position:fixed, 400px
-            -> #tekmetricBookingIframe          the scheduler, 400px, max-width:100%
-
-   Only the iframe's CONTENT is cross-origin, so the boxes around it are ours to
-   size. Both need widening: the iframe is 400px with max-width:100%, so a wider
-   dialog alone would leave it stuck at 400px inside the extra space.
-
-   Their modal.css is appended to <head> at runtime — AFTER this file — so it
-   wins on source order at equal specificity. Scoping through the overlay's id
-   beats that on specificity alone; !important additionally covers the case
-   where their own rules carry it. Both are deliberate, not cargo cult.
-
-   If Tekmetric renames these classes the override stops matching and the dialog
-   simply returns to 400px: visibly narrow, nothing broken.
-
-   min() rather than a flat width so this also covers phones, where Tekmetric's
-   400px against max-width:none would otherwise overflow a 375px screen. */
-#tekmetricBookingModal .tekmetric-booking-modal {
-  width: min(820px, 94vw) !important;
-}
-#tekmetricBookingModal .tekmetric-booking-iframe {
-  width: 100% !important;
-  /* An iframe carries a 2px border by default, so width:100% resolves to
-     100% + 4px and the scheduler overflows the dialog it sits in. Measured:
-     an 820px dialog held an 824px iframe. border-box folds the border back
-     into the width; border:0 is the belt to that braces. */
-  box-sizing: border-box !important;
-  border: 0;
-}
-
 /* ---------- Contact Form ---------- */
 .contact-form .form-label {
   font-weight: 600;
