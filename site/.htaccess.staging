@@ -24,6 +24,13 @@
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Content-Security-Policy — same two headers as production, kept in sync so
+  # staging is where the report-only allowlist gets validated before being
+  # promoted to enforced. See .htaccess.production for the full rationale and
+  # the promotion procedure.
+  Header set Content-Security-Policy "frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+  Header set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://elfsightcdn.com https://app.tireconnect.ca https://booking.tekmetric.com https://www.googletagmanager.com https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://booking.tekmetric.com https://elfsightcdn.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https:; connect-src 'self' https://api-new.getmxpert.com https://app.tireconnect.ca https://booking.tekmetric.com https://cdn.jsdelivr.net https://elfsightcdn.com https://*.elfsight.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src 'self' https://www.google.com https://booking.tekmetric.com https://app.tireconnect.ca https://*.elfsight.com https://td.doubleclick.net; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
 </IfModule>
 
 # Block access to hidden files

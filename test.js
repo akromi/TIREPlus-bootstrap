@@ -77,11 +77,15 @@ async function run() {
     (h,s) => rec(s, "No legacy rplg-badge", !has(h, "rplg-badge")),
     chk("mobile-call-bar", "Sticky mobile call bar"),
     (h,s) => rec(s, "lang=en-CA", has(h, 'lang="en-CA"')),
+    // SRI on the pinned jsdelivr assets. Count, not just presence: Bootstrap
+    // CSS, icons CSS (preload + noscript) and bundle JS = 4 integrity attrs.
+    // A partial regression (one reference edited without its hash) still fails.
+    (h,s) => rec(s, "SRI on all 4 pinned CDN refs", (h.match(/integrity="sha384-/g) || []).length >= 4),
   ]);
 
   // === EN: SEARCH (unified tires + wheels) ===
   console.log("\n━━━ EN: Tires & Wheels Search ━━━");
-  await testPage("/search/", "Tires & Wheels", [
+  await testPage("/search/", "Tires &amp; Wheels", [
     chk("Tires &amp; Wheels", "Heading"),
     chk("tireconnect-config.js", "EN config"),
     chk("widget.js", "Widget JS"),
@@ -267,6 +271,31 @@ async function run() {
       rec("css", "Fetch style.css", false, `Got ${r.status}`);
     }
   } catch (e) { rec("css", "Fetch style.css", false, e.message); }
+
+  // === SEO ===
+  console.log("\n━━━ SEO ━━━");
+  try {
+    const r = await fetch(`${BASE}/sitemap.xml`);
+    rec("seo", "sitemap.xml loads", r.status === 200, `Got ${r.status}`);
+    if (r.status === 200) {
+      // /about/ + /fr/a-propos/ shipped missing from the sitemap once; pin them.
+      rec("seo", "sitemap lists /about/", has(r.body, "<loc>https://tireplus.ca/about/</loc>"));
+      rec("seo", "sitemap lists /fr/a-propos/", has(r.body, "<loc>https://tireplus.ca/fr/a-propos/</loc>"));
+    }
+  } catch (e) { rec("seo", "sitemap.xml loads", false, e.message); }
+  try {
+    const r = await fetch(`${BASE}/robots.txt`);
+    rec("seo", "robots.txt loads", r.status === 200, `Got ${r.status}`);
+    if (r.status === 200) rec("seo", "robots.txt names the sitemap", has(r.body, "Sitemap: https://tireplus.ca/sitemap.xml"));
+  } catch (e) { rec("seo", "robots.txt loads", false, e.message); }
+
+  // CSP headers come from .htaccess, which staging/production apply but a bare
+  // local static server does not — so absence is a warning, not a failure.
+  try {
+    const r = await fetch(`${BASE}/`);
+    rec("security", "CSP header (enforced)", r.headers["content-security-policy"] ? true : "warn", r.headers["content-security-policy"] ? "" : "absent — expected only for local servers without .htaccess");
+    rec("security", "CSP header (report-only)", r.headers["content-security-policy-report-only"] ? true : "warn", r.headers["content-security-policy-report-only"] ? "" : "absent — expected only for local servers without .htaccess");
+  } catch (e) { rec("security", "CSP headers", false, e.message); }
 
   // === SUMMARY ===
   console.log("\n" + "═".repeat(50));

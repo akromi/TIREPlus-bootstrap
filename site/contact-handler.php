@@ -2,7 +2,21 @@
 /**
  * TirePlus Contact Form Handler (Bilingual EN/FR)
  */
-$recaptcha_secret = '6LcDWbYsAAAAAGIfYLAZXWbAYGaOlIPKohUxhaTA';
+// The reCAPTCHA SECRET key must never live in this file: site/ is committed
+// to a GitHub repo, and a secret in git history stays leaked even after the
+// line is deleted. (The SITE key in the contact pages is public by design.)
+//
+// It is read from tireplus-config.php ONE LEVEL ABOVE the webroot:
+//   - above the webroot, so the web server can never serve it, and
+//   - outside the deploy dir, so `dangerous-clean-slate: true` (which wipes
+//     the webroot on every FTP deploy) never deletes it.
+// Upload it once via SiteGround File Tools — see README "Contact form
+// reCAPTCHA secret". If the file is missing, reCAPTCHA verification is
+// skipped and the math question + honeypot below still gate the form —
+// the same fail-open the handler already used when Google was unreachable.
+$recaptcha_secret = '';
+$tp_config = dirname(__DIR__) . '/tireplus-config.php';
+if (is_readable($tp_config)) { include $tp_config; }
 $recaptcha_threshold = 0.5;
 
 $lang = ($_POST['lang'] ?? '') === 'fr' ? 'fr' : 'en';
@@ -13,7 +27,7 @@ if (!isset($_POST['math']) || intval($_POST['math']) !== 18) { header("Location:
 if (!empty($_POST['company_url'])) { header("Location: {$contact_path}?status=success"); exit; }
 
 $recaptcha_token = $_POST['g-recaptcha-response'] ?? '';
-if (!empty($recaptcha_token)) {
+if (!empty($recaptcha_token) && $recaptcha_secret !== '') {
     $verify_data = http_build_query(['secret'=>$recaptcha_secret,'response'=>$recaptcha_token,'remoteip'=>$_SERVER['REMOTE_ADDR']??'']);
     $ctx = stream_context_create(['http'=>['method'=>'POST','header'=>'Content-Type: application/x-www-form-urlencoded','content'=>$verify_data,'timeout'=>5]]);
     $res = @file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, $ctx);

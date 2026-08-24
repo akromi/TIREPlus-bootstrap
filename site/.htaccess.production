@@ -21,12 +21,54 @@
   ExpiresByType image/jpeg "access plus 1 year"
   ExpiresByType image/svg+xml "access plus 1 year"
   ExpiresByType image/x-icon "access plus 1 year"
+  # Nearly every image on this site is .webp (see site/img/). Without this line
+  # the site's dominant image format was the one format getting no cache header.
+  ExpiresByType image/webp "access plus 1 year"
 </IfModule>
 
-# Security headers
-Header set X-Content-Type-Options "nosniff"
-Header set X-Frame-Options "SAMEORIGIN"
-Header set Referrer-Policy "strict-origin-when-cross-origin"
+# Security headers.
+#
+# Wrapped in mod_headers, matching .htaccess.staging. Unwrapped `Header` on a
+# host without mod_headers is a 500 on every page, not a skipped header.
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # --- Content-Security-Policy, in two parts ---
+  #
+  # ENFORCED: only directives that cannot break a page that renders today.
+  # None of them govern loading a subresource, so no widget can be starved by
+  # them. frame-ancestors 'self' is the modern spelling of the X-Frame-Options
+  # line above (kept for pre-CSP browsers); the rest close off injection
+  # vectors nothing here uses.
+  Header set Content-Security-Policy "frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+
+  # REPORT-ONLY: the resource allowlist. Violations are logged to the browser
+  # console and nothing is blocked.
+  #
+  # This is deliberately not enforced yet. Four third parties inject their own
+  # subresources at runtime — TireConnect, Tekmetric, Elfsight, and Mxpert —
+  # and their origins can only be confirmed by watching real traffic, not by
+  # reading this repo. Enforcing an incomplete allowlist would silently kill
+  # the tire quote widget, which is the site's main conversion path.
+  #
+  # Note both 'unsafe-inline's are load-bearing: the GA4 snippet, the JSON-LD
+  # block, the TireConnect/Tekmetric init blocks and the <style> block in
+  # head.html are all inline, as are the styles these widgets inject. So this
+  # policy buys origin restriction, NOT XSS immunity — an injected inline
+  # <script> would still run. Removing 'unsafe-inline' means moving every
+  # inline block to a file or hashing each one per build; worth doing, but a
+  # bigger change than this.
+  #
+  # To promote to enforced (see README "Content-Security-Policy"):
+  #   1. Browse staging with DevTools open — every page, both languages, and
+  #      exercise tire search, booking, chat and the contact form.
+  #   2. Add any origin the console reports to the matching directive here.
+  #   3. Once a full pass is clean, merge these directives into the enforced
+  #      header above and delete this one.
+  Header set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://elfsightcdn.com https://app.tireconnect.ca https://booking.tekmetric.com https://www.googletagmanager.com https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://booking.tekmetric.com https://elfsightcdn.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https:; connect-src 'self' https://api-new.getmxpert.com https://app.tireconnect.ca https://booking.tekmetric.com https://cdn.jsdelivr.net https://elfsightcdn.com https://*.elfsight.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src 'self' https://www.google.com https://booking.tekmetric.com https://app.tireconnect.ca https://*.elfsight.com https://td.doubleclick.net; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+</IfModule>
 
 # Block access to hidden files
 <FilesMatch "^\.">
