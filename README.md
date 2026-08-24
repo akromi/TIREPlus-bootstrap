@@ -131,6 +131,66 @@ Service pages are independent — no shared service template.
 - Never commit a file literally named `site/.htaccess` — it's gitignored
   and the workflow generates it at deploy time.
 
+## Contact form reCAPTCHA secret
+
+`site/contact-handler.php` verifies reCAPTCHA v3 tokens server-side. The
+SECRET key is **not** in this repo — an earlier version committed it, and a
+secret in a git repo is leaked for good, so that key must be treated as
+burned. Setup:
+
+1. **Rotate the key**: https://www.google.com/recaptcha/admin → the
+   tireplus.ca site → settings → regenerate the secret key. (The SITE key in
+   the contact pages is public by design and does not change.)
+2. Create `tireplus-config.php` containing:
+
+   ```php
+   <?php
+   $recaptcha_secret = 'PASTE-NEW-SECRET-HERE';
+   ```
+
+3. Upload it via SiteGround Site Tools → File Manager to the directory
+   **one level above** the webroot (e.g. next to `public_html/`, not inside
+   it). Above the webroot it can never be served, and the FTP deploy's
+   `dangerous-clean-slate` wipe only touches the webroot, so it survives
+   every deploy. Do this once per environment (staging and production).
+
+If the file is missing the handler skips reCAPTCHA verification and relies
+on the math question + honeypot — the form keeps working, just with weaker
+spam protection, so a missing config fails soft rather than eating
+customer messages.
+
+## Content-Security-Policy
+
+Both `.htaccess` variants send two CSP headers:
+
+- **`Content-Security-Policy` (enforced)** — only directives that cannot
+  break rendering: `frame-ancestors 'self'; base-uri 'self';
+  object-src 'none'`. Nothing here governs loading a subresource.
+- **`Content-Security-Policy-Report-Only`** — the full resource allowlist.
+  Violations show up in the browser console; nothing is blocked.
+
+The allowlist is report-only because four third parties (TireConnect,
+Tekmetric, Elfsight, Mxpert) inject their own subresources at runtime, and
+their full origin set can only be confirmed by watching real traffic.
+Enforcing an incomplete list would silently kill the tire-quote widget.
+
+To promote the allowlist to enforced:
+
+1. Browse **staging** with DevTools open — every page, both languages;
+   exercise tire search, booking modal, chat, reviews widget and the
+   contact form.
+2. Add any origin the console reports (look for
+   `[Report Only]` violations) to the matching directive in **both**
+   `.htaccess.staging` and `.htaccess.production`.
+3. When a full pass is clean, merge the report-only directives into the
+   enforced header and delete the report-only one.
+
+Note the policy carries `'unsafe-inline'` for scripts and styles — the GA4
+snippet, JSON-LD and the widget init blocks are all inline. So the CSP
+restricts *where code loads from*, but is not yet XSS-proof against
+injected inline scripts. Hashing the inline blocks per-build in `build.js`
+is the eventual fix if that matters.
+
 ## Analytics
 
 Google Analytics 4 is wired into `src/_partials/head.html` and

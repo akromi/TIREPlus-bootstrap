@@ -56,6 +56,23 @@ jobs:
             exit 1
           fi
 
+      # sitemap.xml is hand-maintained (priorities and hreflang pairs are
+      # judgement calls build.js shouldn't guess at), which means adding a page
+      # without adding its sitemap entry fails silently — /about/ and
+      # /fr/a-propos/ shipped unlisted for exactly this reason. Search engines
+      # never complain; the page just underperforms quietly.
+      - name: every page is in sitemap.xml
+        run: |
+          missing=0
+          for f in $(find site -name index.html); do
+            path="${f#site}"; path="${path%index.html}"
+            if ! grep -q "<loc>https://tireplus.ca${path}</loc>" site/sitemap.xml; then
+              echo "::error::${path} is built but missing from site/sitemap.xml"
+              missing=1
+            fi
+          done
+          exit $missing
+
       # This site is bilingual by construction: every page exists in both
       # languages, and the language toggle depends on the pair. The README's
       # own "Add a new English page" recipe is six steps across five files,
