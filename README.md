@@ -27,6 +27,9 @@ site/           Build output — committed to git and uploaded via FTP
   .htaccess.production   Cache-friendly variant (browser cache, security headers)
 build.js        Compiles src/ → site/
 test.js         Smoke tests run against a URL
+tools/
+  tire-inventory/   Local tire inventory viewer — internal, never deployed
+                    (see tools/tire-inventory/README.md)
 .github/workflows/deploy-staging.yml   CI deploy to SiteGround
 ```
 

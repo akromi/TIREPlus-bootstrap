@@ -1,2 +1,4 @@
 node_modules/
 site/.htaccess
+# Inventory exports hold wholesale cost data — never commit them.
+tools/tire-inventory/data/

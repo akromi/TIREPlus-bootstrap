@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>TIREPlus — Tire Inventory</title>
+<style>
+  :root {
+    --ink: #1c2430;
+    --muted: #64748b;
+    --line: #dbe2ea;
+    --bg: #f4f6f9;
+    --card: #ffffff;
+    --accent: #c8102e;      /* TIREPlus red */
+    --accent-ink: #ffffff;
+    --chip: #eef2f6;
+    --ok: #0a7d33;
+    --warn: #b45309;
+    --bad: #b91c1c;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 16px; }
+
+  /* ---------- header / toolbar ---------- */
+  header.app { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .brand { display: flex; align-items: baseline; gap: 10px; margin-right: auto; }
+  .brand h1 { font-size: 20px; margin: 0; letter-spacing: .2px; }
+  .brand h1 .plus { color: var(--accent); }
+  .brand .sub { color: var(--muted); font-size: 13px; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button, .btn {
+    font: inherit; border: 1px solid var(--line); background: var(--card); color: var(--ink);
+    padding: 7px 12px; border-radius: 8px; cursor: pointer;
+  }
+  button:hover { border-color: #b8c2cf; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  button.primary:hover { filter: brightness(1.06); }
+  button:disabled { opacity: .45; cursor: default; }
+  #fileStatus { color: var(--muted); font-size: 12.5px; width: 100%; }
+  #fileStatus strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- filter panel ---------- */
+  .panel {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px; margin-top: 12px;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    border: 1px solid var(--line); background: var(--chip); border-radius: 999px;
+    padding: 5px 12px; cursor: pointer; font-size: 13px; user-select: none;
+  }
+  .chip .n { color: var(--muted); font-size: 12px; margin-left: 4px; }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip.active .n { color: #ffd9de; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-top: 10px; }
+  .filters label { color: var(--muted); font-size: 13px; display: inline-flex; gap: 6px; align-items: center; }
+  input[type=search], select {
+    font: inherit; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  }
+  input[type=search] { min-width: 260px; flex: 1 1 260px; }
+  .filters .grow { flex: 1 1 auto; }
+  .stats { color: var(--muted); font-size: 13px; margin-top: 10px; }
+  .stats b { color: var(--ink); }
+
+  /* ---------- table ---------- */
+  .tablecard { padding: 0; overflow: hidden; }
+  .scroller { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; }
+  thead th {
+    text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .4px;
+    color: var(--muted); background: #f8fafc; border-bottom: 1px solid var(--line);
+    padding: 9px 10px; white-space: nowrap; cursor: pointer; user-select: none;
+    position: sticky; top: 0;
+  }
+  thead th .dir { color: var(--accent); }
+  tbody td { padding: 7px 10px; border-bottom: 1px solid #edf1f5; vertical-align: top; }
+  tbody tr:hover { background: #f8fafc; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.tag { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12.5px; white-space: nowrap; }
+  td.code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12.5px; }
+  td.size { white-space: nowrap; }
+  .qty-pos { color: var(--ok); font-weight: 600; }
+  .qty-neg { color: var(--bad); }
+  .qty-zero { color: var(--muted); }
+  .inactive-row td { color: #9aa5b1; text-decoration: line-through; }
+  tr.section th {
+    background: #eef2f6; color: var(--ink); font-size: 13px; text-transform: none;
+    letter-spacing: 0; cursor: default; position: static; border-top: 1px solid var(--line);
+  }
+  tr.section .n { color: var(--muted); font-weight: 400; }
+  .empty { padding: 40px; text-align: center; color: var(--muted); }
+  .empty .big { font-size: 16px; margin-bottom: 6px; color: var(--ink); }
+
+  footer.app { color: var(--muted); font-size: 12px; margin: 14px 0 30px; display: flex; gap: 14px; flex-wrap: wrap; }
+  footer.app a { color: var(--muted); }
+
+  /* ---------- drag & drop overlay ---------- */
+  #dropzone {
+    position: fixed; inset: 0; display: none; z-index: 50;
+    background: rgba(200,16,46,.08); border: 3px dashed var(--accent);
+    align-items: center; justify-content: center;
+  }
+  #dropzone.on { display: flex; }
+  #dropzone .msg {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px 26px; font-size: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.12);
+  }
+
+  /* ---------- print ---------- */
+  #printHeader { display: none; }
+  @media print {
+    body { background: #fff; font-size: 11px; }
+    .wrap { max-width: none; padding: 0; }
+    header.app, .panel.controls, footer.app, .stats .screen-only { display: none !important; }
+    #printHeader { display: block; margin-bottom: 8px; }
+    #printHeader h1 { font-size: 16px; margin: 0; }
+    #printHeader .meta { color: #444; font-size: 11px; margin-top: 2px; }
+    .panel { border: none; border-radius: 0; padding: 0; margin: 0; }
+    .scroller { overflow: visible; }
+    thead th { position: static; background: #fff; color: #000; border-bottom: 1.5px solid #000; cursor: default; }
+    thead { display: table-header-group; }
+    tbody td { border-bottom: .5px solid #bbb; padding: 3px 6px; }
+    tr { break-inside: avoid; }
+    tr.section th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body.page-per-type tr.section { break-before: page; }
+    body.page-per-type tr.section.first { break-before: auto; }
+    a { text-decoration: none; color: inherit; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="printHeader">
+    <h1>TIREPlus Orléans — Tire Inventory</h1>
+    <div class="meta" id="printMeta"></div>
+  </div>
+
+  <header class="app">
+    <div class="brand">
+      <h1>TIRE<span class="plus">PLUS</span> Tire Inventory</h1>
+      <span class="sub">local viewer — data never leaves this browser</span>
+    </div>
+    <div class="toolbar">
+      <input type="file" id="fileInput" accept=".csv,text/csv" hidden>
+      <button class="primary" id="btnLoad">Load CSV…</button>
+      <button id="btnExport" disabled>Export CSV</button>
+      <button id="btnCopy" disabled>Copy</button>
+      <button id="btnPrint" disabled>Print</button>
+    </div>
+    <div id="fileStatus">No inventory loaded yet — click <strong>Load CSV…</strong> or drop a TIREPlus product export anywhere on this page.</div>
+  </header>
+
+  <div class="panel controls">
+    <div class="chips" id="chips"></div>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Search tag, size, brand, item code… e.g. w2055516, as225, 205/55R16, blizzak">
+      <label>Width <select id="fWidth"><option value="">any</option></select></label>
+      <label>Aspect <select id="fAspect"><option value="">any</option></select></label>
+      <label>Rim <select id="fRim"><option value="">any</option></select></label>
+      <label>Brand <select id="fBrand"><option value="">any</option></select></label>
+      <span class="grow"></span>
+      <label><input type="checkbox" id="fStock"> In stock only</label>
+      <label><input type="checkbox" id="fInactive"> Show inactive</label>
+      <label><input type="checkbox" id="fCost"> Show cost</label>
+      <label title="When printing the All view, start each tire type on a new page"><input type="checkbox" id="fPagePerType"> Page per type (print)</label>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <div class="panel tablecard">
+    <div class="scroller">
+      <table id="grid">
+        <thead>
+          <tr>
+            <th data-k="tag">Tag <span class="dir"></span></th>
+            <th data-k="size">Size <span class="dir"></span></th>
+            <th data-k="code">Item code <span class="dir"></span></th>
+            <th data-k="desc">Description <span class="dir"></span></th>
+            <th data-k="brand">Brand <span class="dir"></span></th>
+            <th data-k="qty" class="num">Qty <span class="dir"></span></th>
+            <th data-k="retail" class="num">Retail <span class="dir"></span></th>
+            <th data-k="cost" class="num cost-col">Cost <span class="dir"></span></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty">
+      <div class="big">No data loaded</div>
+      Drop the product export CSV here (the file TIREPlus/Tekmetric gives you, e.g.
+      <code>product…TIREPlus_Orleans….csv</code>), or click “Load CSV…”.<br>
+      It is remembered in this browser, so next time the list appears immediately.
+    </div>
+  </div>
+
+  <footer class="app">
+    <span>Tip: type the shop search tag exactly as usual — <code>w2055516</code>, <code>as2255017</code>, <code>u…</code>, <code>aw…</code>, <code>lt…</code>, <code>st…</code></span>
+    <span class="grow"></span>
+    <a href="#" id="btnClear">Forget saved data</a>
+  </footer>
+</div>
+
+<div id="dropzone"><div class="msg">Drop the product export CSV to load it</div></div>
+
+<script>
+'use strict';
+
+/* ============================================================
+ * Tire type taxonomy.
+ * The shop tags every tire in `searchable_tags` with a prefix +
+ * 7-digit size:  w2055516  = Winter    205/55R16
+ *                as2255017 = All Season 225/50R17
+ * Prefixes seen in real exports: as, w, u (used), aw, lt, st, rf, s.
+ * `st` must be tested before `s`, and `as`/`aw` before lone letters.
+ * ============================================================ */
+const TYPE_ORDER = ['as', 'w', 'aw', 's', 'u', 'lt', 'st', 'rf', 'other'];
+const TYPES = {
+  as:    { label: 'All Season' },
+  w:     { label: 'Winter' },
+  aw:    { label: 'All Weather' },
+  s:     { label: 'Summer' },
+  u:     { label: 'Used' },
+  lt:    { label: 'Light Truck (LT)' },
+  st:    { label: 'Trailer (ST)' },
+  rf:    { label: 'Run Flat' },
+  other: { label: 'Other / untagged' },
+};
+const TAG_RE = /^(as|aw|lt|st|rf|w|u|s)(\d{6,8})$/;
+const GROUP_TYPE = [
+  [/all\s*season/i, 'as'], [/winter/i, 'w'], [/all\s*weather/i, 'aw'],
+  [/summer/i, 's'], [/use[rd]/i, 'u'], [/truck/i, 'lt'], [/trailer/i, 'st'],
+];
+
+const STORAGE_KEY = 'tireplus-tire-inventory-v1';
+
+/* ---------- CSV parsing (quote-aware, handles CRLF and "" escapes) ---------- */
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += c;
+    } else if (c === '"') inQuotes = true;
+    else if (c === ',') { row.push(field); field = ''; }
+    else if (c === '\n') {
+      row.push(field); field = '';
+      if (row.length > 1 || row[0] !== '') rows.push(row);
+      row = [];
+    } else if (c !== '\r') field += c;
+  }
+  if (field !== '' || row.length) { row.push(field); rows.push(row); }
+  return rows;
+}
+
+/* ---------- size decoding ---------- */
+// 7 digits WWWAARR -> 205/55R16; 8 digits DDWWWWRR -> 35x12.50R18 (flotation).
+function sizeFromDigits(d) {
+  if (d.length === 7) {
+    const w = +d.slice(0, 3), a = +d.slice(3, 5), r = +d.slice(5, 7);
+    if (w >= 100 && w <= 445 && a >= 20 && a <= 95 && r >= 10 && r <= 26)
+      return { w, a, r, disp: `${w}/${a}R${r}` };
+  }
+  if (d.length === 8) {
+    const dia = +d.slice(0, 2), sec = +d.slice(2, 6) / 100, r = +d.slice(6, 8);
+    if (dia >= 27 && dia <= 44 && sec >= 6 && sec <= 18 && r >= 14 && r <= 24)
+      return { w: null, a: null, r, disp: `${dia}x${sec.toFixed(2)}R${r}` };
+  }
+  return null;
+}
+const DESC_METRIC = /(\d{3})\s*\/\s*(\d{2})\s*Z?R\s*(\d{2})(?!\d)/;
+const DESC_FLOAT  = /(\d{2})\s*[xX]\s*(\d{1,2}(?:\.\d{1,2})?)\s*Z?R?\s*(\d{2})(?!\d)/;
+function sizeFromText(s) {
+  let m = DESC_METRIC.exec(s);
+  if (m) {
+    const w = +m[1], a = +m[2], r = +m[3];
+    if (w >= 100 && w <= 445 && a >= 20 && a <= 95 && r >= 10 && r <= 26)
+      return { w, a, r, disp: `${w}/${a}R${r}` };
+  }
+  m = DESC_FLOAT.exec(s);
+  if (m) return { w: null, a: null, r: +m[3], disp: `${+m[1]}x${(+m[2]).toFixed(2)}R${+m[3]}` };
+  return null;
+}
+
+/* ---------- build tire records from a raw product export ---------- */
+function buildRecords(csvRows) {
+  const header = csvRows[0].map(h => h.trim().toLowerCase());
+  const col = {};
+  header.forEach((h, i) => { col[h] = i; });
+  const need = ['item_code', 'description', 'searchable_tags'];
+  for (const n of need) if (!(n in col)) throw new Error(`This does not look like a product export — missing column "${n}".`);
+  const get = (r, name) => (name in col ? (r[col[name]] || '').trim() : '');
+
+  const records = [];
+  for (let i = 1; i < csvRows.length; i++) {
+    const r = csvRows[i];
+    const group = get(r, 'product_group_name');
+    const rawTags = get(r, 'searchable_tags');
+    const tags = rawTags.split(/[,\s]+/).filter(Boolean);
+
+    const types = new Set();
+    let size = null, primaryTag = '';
+    for (const t of tags) {
+      const norm = t.toLowerCase().replace(/[\/-]/g, '');  // "A/S2256017" -> "as2256017"
+      const m = TAG_RE.exec(norm);
+      if (m) {
+        types.add(m[1]);
+        if (!primaryTag) primaryTag = norm;
+        if (!size) size = sizeFromDigits(m[2]);
+      }
+    }
+    const desc = get(r, 'description');
+    if (!size) size = sizeFromText(rawTags) || sizeFromText(desc);
+
+    // A row is a tire if the export types it T, or it carries a tire tag,
+    // or it sits in a "... Tires" product group.
+    const isTire = get(r, 'product_type') === 'T' || types.size > 0 || /tire/i.test(group);
+    if (!isTire) continue;
+
+    if (!types.size) {
+      for (const [re, ty] of GROUP_TYPE) if (re.test(group)) { types.add(ty); break; }
+    }
+    if (!types.size) types.add('other');
+
+    records.push(makeRecord({
+      code: get(r, 'item_code'),
+      desc,
+      brand: get(r, 'brand'),
+      group,
+      tagsStr: tags.join(' '),
+      primaryTag,
+      qty: parseFloat(get(r, 'quantity_on_hand')),
+      retail: parseFloat(get(r, 'retail_price')),
+      cost: parseFloat(get(r, 'cost')),
+      inactive: /^(true|1|y|yes)$/i.test(get(r, 'inactive')),
+      types: [...types],
+      size,
+    }));
+  }
+  return records;
+}
+
+// Derived fields shared by fresh parses and localStorage restores.
+function makeRecord(o) {
+  o.tag = o.primaryTag || (o.tagsStr.split(' ')[0] || '');
+  o.sizeDisp = o.size ? o.size.disp : '';
+  o.sizeKey = o.size ? ((o.size.w || 0) * 100000 + (o.size.a || 0) * 1000 + (o.size.r || 0)) : -1;
+  const hay = [o.code, o.desc, o.brand, o.group, o.tagsStr, o.sizeDisp].join(' ').toLowerCase();
+  o.search = hay;
+  o.searchNorm = hay.replace(/[^a-z0-9]+/g, '');
+  return o;
+}
+
+/* ---------- persistence (compact arrays; tires only) ---------- */
+function save(fileName, records) {
+  const payload = {
+    v: 1, fileName, loadedAt: new Date().toISOString(),
+    rows: records.map(o => [o.code, o.desc, o.brand, o.group, o.tagsStr, o.primaryTag,
+      o.qty, o.retail, o.cost, o.inactive ? 1 : 0, o.types,
+      o.size ? [o.size.w, o.size.a, o.size.r, o.size.disp] : 0]),
+  };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch (e) { /* quota — viewer still works */ }
+}
+function restore() {
+  try {
+    const p = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!p || p.v !== 1) return null;
+    const records = p.rows.map(a => makeRecord({
+      code: a[0], desc: a[1], brand: a[2], group: a[3], tagsStr: a[4], primaryTag: a[5],
+      qty: a[6], retail: a[7], cost: a[8], inactive: !!a[9], types: a[10],
+      size: a[11] ? { w: a[11][0], a: a[11][1], r: a[11][2], disp: a[11][3] } : null,
+    }));
+    return { fileName: p.fileName, loadedAt: p.loadedAt, records };
+  } catch (e) { return null; }
+}
+
+/* ---------- state ---------- */
+const state = {
+  records: [],
+  fileName: '', loadedAt: '',
+  type: 'all',
+  q: '', width: '', aspect: '', rim: '', brand: '',
+  stockOnly: false, showInactive: false, showCost: false,
+  sort: { key: null, dir: 1 },   // null = default type/size ordering
+};
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' });
+const fmtMoney = v => Number.isFinite(v) ? money.format(v) : '—';
+const fmtQty = v => Number.isFinite(v) ? (Number.isInteger(v) ? String(v) : v.toFixed(1)) : '—';
+const fmtInt = new Intl.NumberFormat('en-CA');
+
+/* ---------- filtering ---------- */
+function baseFiltered() {   // every filter except the type chip (chip counts use this)
+  const q = state.q.trim().toLowerCase();
+  const qn = q.replace(/[^a-z0-9]+/g, '');
+  return state.records.filter(o => {
+    if (!state.showInactive && o.inactive) return false;
+    if (state.stockOnly && !(o.qty > 0)) return false;
+    if (state.width && (!o.size || String(o.size.w) !== state.width)) return false;
+    if (state.aspect && (!o.size || String(o.size.a) !== state.aspect)) return false;
+    if (state.rim && (!o.size || String(o.size.r) !== state.rim)) return false;
+    if (state.brand && o.brand !== state.brand) return false;
+    if (q && !(o.search.includes(q) || (qn && o.searchNorm.includes(qn)))) return false;
+    return true;
+  });
+}
+function visible() {
+  const base = baseFiltered();
+  return state.type === 'all' ? base : base.filter(o => o.types.includes(state.type));
+}
+
+function defaultCompare(a, b) {
+  const ta = TYPE_ORDER.indexOf(a.types[0]), tb = TYPE_ORDER.indexOf(b.types[0]);
+  if (ta !== tb) return ta - tb;
+  if (a.sizeKey !== b.sizeKey) return a.sizeKey - b.sizeKey;
+  return (a.brand || '').localeCompare(b.brand || '') || a.desc.localeCompare(b.desc);
+}
+function sorted(list) {
+  const { key, dir } = state.sort;
+  if (!key) return [...list].sort(defaultCompare);
+  const num = k => (a, b) => ((Number.isFinite(a[k]) ? a[k] : -Infinity) - (Number.isFinite(b[k]) ? b[k] : -Infinity));
+  const str = k => (a, b) => String(a[k] || '').localeCompare(String(b[k] || ''));
+  const cmp = { size: (a, b) => a.sizeKey - b.sizeKey, qty: num('qty'), retail: num('retail'), cost: num('cost'),
+                tag: str('tag'), code: str('code'), desc: str('desc'), brand: str('brand') }[key] || defaultCompare;
+  return [...list].sort((a, b) => dir * cmp(a, b) || defaultCompare(a, b));
+}
+
+/* ---------- rendering ---------- */
+function render() {
+  const base = baseFiltered();
+  const list = sorted(state.type === 'all' ? base : base.filter(o => o.types.includes(state.type)));
+  renderChips(base);
+  renderRows(list);
+  renderStats(list);
+  renderPrintMeta(list.length);
+  document.body.classList.toggle('page-per-type', $('fPagePerType').checked && state.type === 'all' && !state.sort.key);
+  const has = state.records.length > 0;
+  for (const id of ['btnExport', 'btnCopy', 'btnPrint']) $(id).disabled = !has;
+  document.querySelectorAll('.cost-col').forEach(el => { el.style.display = state.showCost ? '' : 'none'; });
+  document.querySelectorAll('#grid thead th').forEach(th => {
+    th.querySelector('.dir').textContent = state.sort.key === th.dataset.k ? (state.sort.dir > 0 ? '▲' : '▼') : '';
+  });
+}
+
+function renderChips(base) {
+  const counts = { all: base.length };
+  for (const t of TYPE_ORDER) counts[t] = 0;
+  for (const o of base) for (const t of o.types) counts[t]++;
+  const present = TYPE_ORDER.filter(t => state.records.some(o => o.types.includes(t)));
+  let html = chipHTML('all', 'All tires', counts.all);
+  for (const t of present) html += chipHTML(t, TYPES[t].label, counts[t]);
+  $('chips').innerHTML = html;
+  $('chips').querySelectorAll('.chip').forEach(el =>
+    el.addEventListener('click', () => { state.type = el.dataset.t; render(); }));
+}
+function chipHTML(t, label, n) {
+  return `<span class="chip ${state.type === t ? 'active' : ''}" data-t="${t}">${esc(label)}<span class="n">${fmtInt.format(n)}</span></span>`;
+}
+
+function renderRows(list) {
+  const tbody = $('rows');
+  $('empty').style.display = state.records.length ? 'none' : '';
+  const costCell = o => state.showCost ? `<td class="num cost-col">${fmtMoney(o.cost)}</td>` : `<td class="num cost-col" style="display:none"></td>`;
+  const grouped = state.type === 'all' && !state.sort.key;
+  let html = '', lastType = null, first = true;
+  const span = 8;   // cost column stays in the DOM (CSS-hidden), so colspan is constant
+  for (const o of list) {
+    if (grouped && o.types[0] !== lastType) {
+      lastType = o.types[0];
+      const n = list.filter(x => x.types[0] === lastType).length;
+      html += `<tr class="section ${first ? 'first' : ''}"><th colspan="${span}">${esc(TYPES[lastType].label)} <span class="n">— ${fmtInt.format(n)} item${n === 1 ? '' : 's'}</span></th></tr>`;
+      first = false;
+    }
+    const qcls = o.qty > 0 ? 'qty-pos' : (o.qty < 0 ? 'qty-neg' : 'qty-zero');
+    html += `<tr class="${o.inactive ? 'inactive-row' : ''}">
+      <td class="tag">${esc(o.tag)}</td>
+      <td class="size">${esc(o.sizeDisp)}</td>
+      <td class="code">${esc(o.code)}</td>
+      <td>${esc(o.desc)}</td>
+      <td>${esc(o.brand)}</td>
+      <td class="num ${qcls}">${fmtQty(o.qty)}</td>
+      <td class="num">${fmtMoney(o.retail)}</td>
+      ${costCell(o)}
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function renderStats(list) {
+  if (!state.records.length) { $('stats').textContent = ''; return; }
+  const units = list.reduce((s, o) => s + (o.qty > 0 ? o.qty : 0), 0);
+  const value = list.reduce((s, o) => s + ((o.qty > 0 && Number.isFinite(o.retail)) ? o.qty * o.retail : 0), 0);
+  $('stats').innerHTML =
+    `Showing <b>${fmtInt.format(list.length)}</b> of ${fmtInt.format(state.records.length)} tire items · ` +
+    `<b>${fmtInt.format(units)}</b> units in stock in this view · retail value ${fmtMoney(value)}`;
+}
+
+function filterSummary() {
+  const parts = [];
+  parts.push(state.type === 'all' ? 'All tire types' : TYPES[state.type].label);
+  if (state.q.trim()) parts.push(`search “${state.q.trim()}”`);
+  if (state.width) parts.push(`width ${state.width}`);
+  if (state.aspect) parts.push(`aspect ${state.aspect}`);
+  if (state.rim) parts.push(`rim ${state.rim}"`);
+  if (state.brand) parts.push(state.brand);
+  if (state.stockOnly) parts.push('in stock only');
+  if (state.showInactive) parts.push('incl. inactive');
+  return parts.join(' · ');
+}
+function renderPrintMeta(n) {
+  const src = state.fileName ? ` · source: ${state.fileName}` : '';
+  $('printMeta').textContent =
+    `${filterSummary()} · ${fmtInt.format(n)} items · printed ${new Date().toLocaleString('en-CA')}${src}`;
+}
+
+function renderFileStatus() {
+  if (!state.records.length) return;
+  const when = state.loadedAt ? new Date(state.loadedAt).toLocaleString('en-CA') : '';
+  $('fileStatus').innerHTML =
+    `Loaded <strong>${esc(state.fileName || 'inventory')}</strong> — ` +
+    `${fmtInt.format(state.records.length)} tire items · saved in this browser · ${esc(when)}. ` +
+    `Load a newer export any time to replace it.`;
+}
+
+function rebuildSizeOptions() {
+  const opts = (id, values, suffix) => {
+    const sel = $(id), cur = sel.value;
+    sel.innerHTML = '<option value="">any</option>' +
+      values.map(v => `<option value="${v}">${v}${suffix || ''}</option>`).join('');
+    sel.value = values.includes(+cur) || values.includes(cur) ? cur : '';
+  };
+  const nums = pick => [...new Set(state.records.map(pick).filter(v => v != null))].sort((a, b) => a - b);
+  opts('fWidth', nums(o => o.size && o.size.w), '');
+  opts('fAspect', nums(o => o.size && o.size.a), '');
+  opts('fRim', nums(o => o.size && o.size.r), '"');
+  const brands = [...new Set(state.records.map(o => o.brand).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  const sel = $('fBrand'), cur = sel.value;
+  sel.innerHTML = '<option value="">any</option>' + brands.map(b => `<option>${esc(b)}</option>`).join('');
+  sel.value = brands.includes(cur) ? cur : '';
+}
+
+/* ---------- extract: export & copy ---------- */
+function extractColumns() {
+  const cols = [
+    ['type',       o => o.types.map(t => TYPES[t].label).join(' + ')],
+    ['tag',        o => o.tag],
+    ['size',       o => o.sizeDisp],
+    ['item_code',  o => o.code],
+    ['description',o => o.desc],
+    ['brand',      o => o.brand],
+    ['group',      o => o.group],
+    ['qty_on_hand',o => Number.isFinite(o.qty) ? o.qty : ''],
+    ['retail_price', o => Number.isFinite(o.retail) ? o.retail : ''],
+  ];
+  if (state.showCost) cols.push(['cost', o => Number.isFinite(o.cost) ? o.cost : '']);
+  return cols;
+}
+function exportCSV() {
+  const cols = extractColumns();
+  const q = v => { v = String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const lines = [cols.map(c => c[0]).join(',')];
+  for (const o of sorted(visible())) lines.push(cols.map(c => q(c[1](o))).join(','));
+  const label = state.type === 'all' ? 'all-types' : state.type;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/csv' }));
+  a.download = `tires-${label}-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+async function copyTSV() {
+  const cols = extractColumns();
+  const lines = [cols.map(c => c[0]).join('\t')];
+  for (const o of sorted(visible())) lines.push(cols.map(c => String(c[1](o)).replace(/\t/g, ' ')).join('\t'));
+  const text = lines.join('\n');
+  try { await navigator.clipboard.writeText(text); flash('btnCopy', 'Copied!'); }
+  catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove(); flash('btnCopy', 'Copied!');
+  }
+}
+function flash(id, msg) {
+  const b = $(id), old = b.textContent;
+  b.textContent = msg; setTimeout(() => { b.textContent = old; }, 1200);
+}
+
+/* ---------- loading ---------- */
+function loadText(text, fileName) {
+  let rows;
+  try { rows = parseCSV(text); } catch (e) { alert('Could not read that file as CSV.'); return; }
+  let records;
+  try { records = buildRecords(rows); }
+  catch (e) { alert(e.message); return; }
+  if (!records.length) { alert('No tires found in that file — is it the product export?'); return; }
+  state.records = records;
+  state.fileName = fileName;
+  state.loadedAt = new Date().toISOString();
+  save(fileName, records);
+  rebuildSizeOptions();
+  renderFileStatus();
+  render();
+}
+function loadFile(file) {
+  const rd = new FileReader();
+  rd.onload = () => loadText(rd.result, file.name);
+  rd.readAsText(file);
+}
+
+/* ---------- wiring ---------- */
+$('btnLoad').addEventListener('click', () => $('fileInput').click());
+$('fileInput').addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); e.target.value = ''; });
+$('btnExport').addEventListener('click', exportCSV);
+$('btnCopy').addEventListener('click', copyTSV);
+$('btnPrint').addEventListener('click', () => window.print());
+$('btnClear').addEventListener('click', e => {
+  e.preventDefault();
+  if (!confirm('Forget the saved inventory in this browser?')) return;
+  try { localStorage.removeItem(STORAGE_KEY); } catch (err) {}
+  location.reload();
+});
+
+$('q').addEventListener('input', e => { state.q = e.target.value; render(); });
+for (const [id, key] of [['fWidth', 'width'], ['fAspect', 'aspect'], ['fRim', 'rim'], ['fBrand', 'brand']])
+  $(id).addEventListener('change', e => { state[key] = e.target.value; render(); });
+$('fStock').addEventListener('change', e => { state.stockOnly = e.target.checked; render(); });
+$('fInactive').addEventListener('change', e => { state.showInactive = e.target.checked; render(); });
+$('fCost').addEventListener('change', e => { state.showCost = e.target.checked; render(); });
+$('fPagePerType').addEventListener('change', render);
+
+document.querySelectorAll('#grid thead th').forEach(th => th.addEventListener('click', () => {
+  const k = th.dataset.k;
+  if (state.sort.key === k) {
+    if (state.sort.dir === 1) state.sort.dir = -1;
+    else state.sort = { key: null, dir: 1 };   // third click restores grouped default
+  } else state.sort = { key: k, dir: 1 };
+  render();
+}));
+
+// Drag & drop anywhere on the page.
+let dragDepth = 0;
+document.addEventListener('dragenter', e => { e.preventDefault(); if (++dragDepth) $('dropzone').classList.add('on'); });
+document.addEventListener('dragleave', e => { e.preventDefault(); if (--dragDepth <= 0) { dragDepth = 0; $('dropzone').classList.remove('on'); } });
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', e => {
+  e.preventDefault(); dragDepth = 0; $('dropzone').classList.remove('on');
+  const f = e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) loadFile(f);
+});
+
+/* ---------- startup: restore, else try ./data/products.csv over http ---------- */
+(function init() {
+  const saved = restore();
+  if (saved) {
+    state.records = saved.records;
+    state.fileName = saved.fileName;
+    state.loadedAt = saved.loadedAt;
+    rebuildSizeOptions();
+    renderFileStatus();
+    render();
+    return;
+  }
+  render();
+  if (location.protocol.startsWith('http')) {
+    fetch('data/products.csv')
+      .then(r => r.ok ? r.text() : Promise.reject())
+      .then(t => loadText(t, 'data/products.csv'))
+      .catch(() => {});   // no data folder — the drop zone handles it
+  }
+})();
+</script>
+</body>
+</html>
