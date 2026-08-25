@@ -7,6 +7,17 @@ const https = require("https");
 const http = require("http");
 const { URL } = require("url");
 const BASE = process.argv[2] || "https://staging2.tireplus.ca";
+
+// Some checks assert on headers and rewrites that live in .htaccess. A real
+// server applies those; a local static serve of site/ never does, so absence is
+// expected locally and a genuine defect anywhere else.
+//
+// This has to be conditional rather than always-warn. BASE defaults to staging,
+// so an unconditional warning meant a broken redirect there still printed "All
+// tests passed" and exited 0 — a check that cannot fail for the right reason,
+// which is worse than no check at all.
+const IS_LOCAL = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)(:|\/|$)/i.test(BASE);
+const softFail = () => (IS_LOCAL ? "warn" : false);
 const R = { pass: 0, fail: 0, warn: 0, tests: [] };
 
 function fetch(url, opts = {}) {
@@ -89,7 +100,7 @@ async function run() {
     chk("/img/brands/nexen.webp", "Brand: Nexen"),
     // Unified menu (Tires & Wheels merged)
     (h,s) => rec(s, "Menu: Tires & Wheels", />Tires &amp; Wheels</.test(h)),
-    (h,s) => rec(s, "Menu: Request a Service", />Request a Service</.test(h)),
+    (h,s) => rec(s, "Menu: Book Appointment", />Book Appointment</.test(h)),
     // Mxpert AI Chat embed
     chk("Mxpert-Chat", "Mxpert AI chat script"),
     chk("Française", "FR toggle text"),
@@ -117,16 +128,6 @@ async function run() {
     chk("Yellow triangle", "Inventory tip"),
     chk("Centerbore filter", "Wheels-tab Centerbore tip"),
     chk("OE Direct Fit", "OE Direct Fit"),
-  ]);
-
-  // === EN: REQUEST A SERVICE ===
-  console.log("\n━━━ EN: Request a Service ━━━");
-  await testPage("/request-service/", "Request a Service", [
-    chk("Request a Service", "Heading"),
-    chk("app.tireconnect.ca/js/widget.js", "TireConnect widget script"),
-    chk("165d92b73544d5ec4caf11c14e194648", "TireConnect AutoService API key"),
-    chk("TCWidget.initServices", "AutoService init call"),
-    chk('id="tireconnect"', "Widget container"),
   ]);
 
   // === EN: BOOK AN APPOINTMENT (Tekmetric online booking) ===
@@ -184,14 +185,6 @@ async function run() {
     (h,s) => rec(s, "lang=fr-CA", has(h, 'lang="fr-CA"')),
   ]);
 
-  console.log("\n━━━ FR: Demande de service ━━━");
-  await testPage("/fr/demande-de-service/", "Demande de service", [
-    chk("Demande de service", "Heading FR"),
-    chk("app.tireconnect.ca/js/widget.js", "TireConnect widget script"),
-    chk("165d92b73544d5ec4caf11c14e194648", "TireConnect AutoService API key"),
-    chk("TCWidget.initServices", "AutoService init call"),
-  ]);
-
   console.log("\n━━━ FR: Prendre rendez-vous ━━━");
   await testPage("/fr/prendre-rendez-vous/", "Prendre rendez-vous", [
     chk("Prendre rendez-vous", "Heading FR"),
@@ -234,7 +227,7 @@ async function run() {
 
   // === CROSS-PAGE CONSISTENCY ===
   console.log("\n━━━ Consistency ━━━");
-  const pages = ["/","/search/","/request-service/","/book-appointment/","/contact-us/","/fr/","/fr/recherche/","/fr/demande-de-service/","/fr/prendre-rendez-vous/","/fr/contactez-nous/"];
+  const pages = ["/","/search/","/book-appointment/","/contact-us/","/fr/","/fr/recherche/","/fr/prendre-rendez-vous/","/fr/contactez-nous/"];
   for (const p of pages) {
     try {
       const r = await fetch(`${BASE}${p}`);
@@ -249,7 +242,7 @@ async function run() {
 
   // === BILINGUAL INTEGRITY ===
   console.log("\n━━━ Bilingual Integrity ━━━");
-  for (const p of ["/fr/","/fr/recherche/","/fr/demande-de-service/","/fr/prendre-rendez-vous/","/fr/contactez-nous/"]) {
+  for (const p of ["/fr/","/fr/recherche/","/fr/prendre-rendez-vous/","/fr/contactez-nous/"]) {
     try {
       const r = await fetch(`${BASE}${p}`);
       if (r.status === 200) {
@@ -259,7 +252,7 @@ async function run() {
       }
     } catch (e) { rec("bilingual", `${p}`, false, e.message); }
   }
-  for (const p of ["/","/search/","/request-service/","/book-appointment/","/contact-us/"]) {
+  for (const p of ["/","/search/","/book-appointment/","/contact-us/"]) {
     try {
       const r = await fetch(`${BASE}${p}`);
       if (r.status === 200) {
@@ -316,9 +309,40 @@ async function run() {
   // local static server does not — so absence is a warning, not a failure.
   try {
     const r = await fetch(`${BASE}/`);
-    rec("security", "CSP header (enforced)", r.headers["content-security-policy"] ? true : "warn", r.headers["content-security-policy"] ? "" : "absent — expected only for local servers without .htaccess");
-    rec("security", "CSP header (report-only)", r.headers["content-security-policy-report-only"] ? true : "warn", r.headers["content-security-policy-report-only"] ? "" : "absent — expected only for local servers without .htaccess");
+    rec("security", "CSP header (enforced)", r.headers["content-security-policy"] ? true : softFail(), r.headers["content-security-policy"] ? "" : `absent${IS_LOCAL ? " — expected without .htaccess" : " — .htaccess is not being applied"}`);
+    rec("security", "CSP header (report-only)", r.headers["content-security-policy-report-only"] ? true : softFail(), r.headers["content-security-policy-report-only"] ? "" : `absent${IS_LOCAL ? " — expected without .htaccess" : " — .htaccess is not being applied"}`);
   } catch (e) { rec("security", "CSP headers", false, e.message); }
+
+  // === RETIRED: TIRECONNECT SERVICE REQUESTS ===
+  // /request-service/ and /fr/demande-de-service/ ran TireConnect's AutoService
+  // module. Retired because those requests landed in TireConnect rather than
+  // Tekmetric, leaving the shop with two inboxes for one job.
+  //
+  // Two things are checked, because either alone would let the retirement rot.
+  // A surviving link sends customers to a redirect at best; a missing redirect
+  // 404s every inbound link Google and the business listings still carry.
+  console.log("\n━━━ Retired: TireConnect service requests ━━━");
+  for (const p of ["/","/search/","/book-appointment/","/contact-us/","/faq/","/services/brakes/",
+                   "/fr/","/fr/prendre-rendez-vous/","/fr/faq/","/fr/services/freins/"]) {
+    try {
+      const r = await fetch(`${BASE}${p}`);
+      const dead = /href="\/(request-service|fr\/demande-de-service)\//.test(r.body);
+      rec("retired", `${p} has no link to the retired request page`, !dead,
+          dead ? "still links to the TireConnect service request page" : "");
+    } catch (e) { rec("retired", `${p} link scan`, false, e.message); }
+  }
+
+  // The redirects live in .htaccess, which a live server applies and a local
+  // static server does not — so a 404 here is expected locally, not a failure.
+  for (const [from, landing] of [["/request-service/", "Book an Appointment"],
+                                 ["/fr/demande-de-service/", "Prendre rendez-vous"]]) {
+    try {
+      const r = await fetch(`${BASE}${from}`);
+      const ok = r.status === 200 && has(r.body, landing);
+      rec("retired", `${from} redirects to booking`, ok ? true : softFail(),
+          ok ? "" : `got ${r.status}${IS_LOCAL ? " — expected without .htaccess" : " — redirect is broken"}`);
+    } catch (e) { rec("retired", `${from} redirect`, softFail(), e.message); }
+  }
 
   // === SUMMARY ===
   console.log("\n" + "═".repeat(50));

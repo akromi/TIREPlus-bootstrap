@@ -74,6 +74,19 @@ const SCRIPT_BLOCKS = {
   // pattern leaves the banner stuck on "Loading…" forever (confirmed in production).
   // We hide our outer banner immediately after kicking off init; the AutoService widget
   // renders its own internal loading state inside #tireconnect.
+  // PARKED — no page references these two blocks. They drove /request-service/
+  // and /fr/demande-de-service/, which ran TireConnect's AutoService module and
+  // are now retired: those requests landed in TireConnect, not Tekmetric, so the
+  // shop had two inboxes for one job and one of them was not the system of record.
+  //
+  // Kept rather than deleted for one reason: TireConnect AutoService speaks
+  // French (locale: "fr_CA" below) and Tekmetric's booking does not. If Tekmetric
+  // adds French this stays dead and can go. If they decline and French service
+  // requests are worth restoring, this is the working implementation — recreate
+  // the two pages with scripts: tireconnect-services / tireconnect-services-fr.
+  //
+  // The tires/wheels blocks above are NOT affected; /search/ still uses them, and
+  // selling tires is what TireConnect is actually for.
   "tireconnect-services": `
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
   <script>

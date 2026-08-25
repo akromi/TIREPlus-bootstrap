@@ -158,7 +158,6 @@
           <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
             <li class="nav-item"><a class="nav-link" href="/fr/">Accueil</a></li>
             <li class="nav-item"><a class="nav-link" href="/fr/recherche/">Pneus et Roues</a></li>
-            <li class="nav-item"><a class="nav-link" href="/fr/demande-de-service/">Demande de service</a></li>
             <li class="nav-item"><a class="nav-link" href="/fr/prendre-rendez-vous/">Rendez-vous</a></li>
             <li class="nav-item"><a class="nav-link" href="/fr/a-propos/">À propos</a></li>
             <li class="nav-item"><a class="nav-link" href="/fr/faq/">FAQ</a></li>
@@ -193,10 +192,25 @@
             Choisissez votre service, la date et l'heure qui vous conviennent, et nous
             confirmerons. Cela prend quelques minutes et l'outil s'ouvre directement sur cette page.
           </p>
-          <!-- Même bouton que la page anglaise : voir le commentaire dans
-               src/pages/book-appointment/index.html. Tekmetric ne fournit qu'un seul
-               identifiant de boutique, donc l'outil s'affiche dans la langue que
-               Tekmetric choisit — à vérifier une fois en ligne. -->
+          <!-- L'outil de Tekmetric s'affiche EN ANGLAIS SEULEMENT. Vérifié en ligne,
+               pas supposé. Leur intégration n'accepte que shopId et orgId — aucun
+               paramètre de langue — et le contenu est servi dans une iframe d'une
+               autre origine, donc ni le CSS ni le JS d'ici ne peuvent le traduire.
+               Rien à corriger de notre côté; c'est une demande à faire à Tekmetric.
+               L'avis ci-dessous le dit franchement plutôt que de laisser le client
+               le découvrir après avoir cliqué, et dirige vers le téléphone, qui
+               reste le seul service en français. À retirer le jour où Tekmetric
+               offrira le français. -->
+          <div class="alert alert-secondary d-flex align-items-start gap-2 mx-auto mb-4 text-start"
+               style="max-width:34rem;" role="note">
+            <i class="bi bi-translate fs-5 mt-1" aria-hidden="true"></i>
+            <div class="small">
+              L'outil de réservation s'affiche <strong>en anglais seulement</strong>.
+              Pour réserver en français, appelez-nous au
+              <a href="tel:6138347325" class="fw-bold">613-834-7325</a> — nous vous
+              répondons en français.
+            </div>
+          </div>
           <button type="button" class="btn btn-lg btn-cta btn-cta-primary"
                   data-ga-event="booking_start"
                   onclick="onShowBooking('b5337652-038c-429f-8e6a-dcabed405dee')">
@@ -245,7 +259,6 @@
           <ul>
             <li><a href="/fr/">Accueil</a></li>
             <li><a href="/fr/recherche/">Pneus et Roues</a></li>
-            <li><a href="/fr/demande-de-service/">Demande de service</a></li>
             <li><a href="/fr/prendre-rendez-vous/">Rendez-vous</a></li>
             <li><a href="/fr/a-propos/">À propos</a></li>
             <li><a href="/fr/faq/">FAQ</a></li>

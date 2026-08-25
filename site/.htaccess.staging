@@ -8,8 +8,15 @@
   RewriteRule ^wheel-search/?$ /search/ [R=301,L]
   RewriteRule ^fr/recherche-pneus/?$ /fr/recherche/ [R=301,L]
   RewriteRule ^fr/recherche-roues/?$ /fr/recherche/ [R=301,L]
-  RewriteRule ^appointments/?$ /request-service/ [R=301,L]
-  RewriteRule ^fr/rendez-vous/?$ /fr/demande-de-service/ [R=301,L]
+  RewriteRule ^appointments/?$ /book-appointment/ [R=301,L]
+  RewriteRule ^fr/rendez-vous/?$ /fr/prendre-rendez-vous/ [R=301,L]
+  # /request-service/ ran TireConnect's AutoService module. Retired: its requests
+  # landed in TireConnect rather than Tekmetric, so the shop had two inboxes for
+  # one job. Redirected rather than left to 404 — these URLs are in Google, in
+  # business listings, and on printed material, and a 404 loses the customer
+  # where a redirect keeps them.
+  RewriteRule ^request-service/?$ /book-appointment/ [R=301,L]
+  RewriteRule ^fr/demande-de-service/?$ /fr/prendre-rendez-vous/ [R=301,L]
 </IfModule>
 
 <IfModule mod_headers.c>

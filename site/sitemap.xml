@@ -31,13 +31,6 @@
     <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/recherche/"/>
   </url>
   <url>
-    <loc>https://tireplus.ca/request-service/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en-ca" href="https://tireplus.ca/request-service/"/>
-    <xhtml:link rel="alternate" hreflang="fr-ca" href="https://tireplus.ca/fr/demande-de-service/"/>
-  </url>
-  <url>
     <loc>https://tireplus.ca/book-appointment/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
@@ -63,11 +56,6 @@
     <loc>https://tireplus.ca/fr/recherche/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://tireplus.ca/fr/demande-de-service/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://tireplus.ca/fr/prendre-rendez-vous/</loc>
