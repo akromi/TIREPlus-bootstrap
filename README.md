@@ -71,6 +71,10 @@ Every push to `main` deploys to **staging2.tireplus.ca**.
 - Action: `SamKirkland/FTP-Deploy-Action@v4.3.5` over FTPS
 - The staging `.htaccess` disables SiteGround Dynamic Cache and sets
   `X-Robots-Tag: noindex` so staging never gets indexed.
+- Deploys are serialised by a repo-wide `concurrency: deploy` group, so two
+  merges close together queue instead of racing. They used to overlap, and with
+  the clean-slate wipe below that meant one deploy deleting the tree another was
+  uploading into — it fails with "Server sent FIN packet unexpectedly".
 - `dangerous-clean-slate: true` wipes the staging web root on each deploy,
   so stale assets are never an issue.
 
