@@ -180,13 +180,16 @@ async function testEN() {
     rec(sec3, "Inventory tip", has(r3.body, "Yellow triangle"));
   }
 
-  // Appointments
-  const sec4 = "EN: Appointments";
-  const r4 = await fp("/request-service/");
+  // Booking. Was /request-service/ asserting a Workshop Software token — the
+  // wrong vendor, gone since the Tekmetric switch, so this had been failing
+  // unnoticed. Now points at the Tekmetric booking page that replaced it.
+  const sec4 = "EN: Book an Appointment";
+  const r4 = await fp("/book-appointment/");
   rec(sec4, "HTTP 200", r4.status === 200);
   if (r4.status === 200) {
-    rec(sec4, "Book Now", has(r4.body, "Book Now"));
-    rec(sec4, "WS token", has(r4.body, "o36ivi"));
+    rec(sec4, "Tekmetric modal loader", has(r4.body, "booking.tekmetric.com/iframe/modal.js"));
+    rec(sec4, "Shop id on button", has(r4.body, "b5337652-038c-429f-8e6a-dcabed405dee"));
+    rec(sec4, "No Workshop Software", !has(r4.body, "workshopsoftware.com") && !has(r4.body, "myworkshop.site"));
   }
 
   // Contact
@@ -255,13 +258,14 @@ async function testFR() {
     rec(sec3, "FR inventory tip", has(r3.body, "Triangle jaune"));
   }
 
-  // Rendez-vous
-  const sec4 = "FR: Rendez-vous";
-  const r4 = await fp("/fr/demande-de-service/");
+  // Rendez-vous — same retarget as the English section above.
+  const sec4 = "FR: Prendre rendez-vous";
+  const r4 = await fp("/fr/prendre-rendez-vous/");
   rec(sec4, "HTTP 200", r4.status === 200);
   if (r4.status === 200) {
-    rec(sec4, "FR book button", has(r4.body, "Réserver maintenant"));
-    rec(sec4, "WS URL", has(r4.body, "workshopsoftware.com"));
+    rec(sec4, "Tekmetric modal loader", has(r4.body, "booking.tekmetric.com/iframe/modal.js"));
+    rec(sec4, "Shop id on button", has(r4.body, "b5337652-038c-429f-8e6a-dcabed405dee"));
+    rec(sec4, "English-only notice", has(r4.body, "en anglais seulement"));
   }
 
   // Contactez-nous
@@ -303,7 +307,7 @@ async function testAssets() {
 
 async function testConsistency() {
   const sec = "Consistency";
-  const pages = ["/", "/search/", "/search/", "/request-service/", "/contact-us/", "/fr/", "/fr/recherche/", "/fr/recherche/", "/fr/demande-de-service/", "/fr/contactez-nous/"];
+  const pages = ["/", "/search/", "/search/", "/book-appointment/", "/contact-us/", "/fr/", "/fr/recherche/", "/fr/recherche/", "/fr/prendre-rendez-vous/", "/fr/contactez-nous/"];
   for (const p of pages) {
     const r = await fp(p);
     if (r.status === 200) {
@@ -317,7 +321,7 @@ async function testConsistency() {
 
 async function testBilingual() {
   const sec = "Bilingual";
-  const fr = ["/fr/", "/fr/recherche/", "/fr/recherche/", "/fr/demande-de-service/", "/fr/contactez-nous/"];
+  const fr = ["/fr/", "/fr/recherche/", "/fr/recherche/", "/fr/prendre-rendez-vous/", "/fr/contactez-nous/"];
   for (const p of fr) {
     const r = await fp(p);
     if (r.status === 200) {
@@ -326,7 +330,7 @@ async function testBilingual() {
       rec(sec, p + " no EN nav", !has(r.body, ">Home<"));
     }
   }
-  const en = ["/", "/search/", "/search/", "/request-service/", "/contact-us/"];
+  const en = ["/", "/search/", "/search/", "/book-appointment/", "/contact-us/"];
   for (const p of en) {
     const r = await fp(p);
     if (r.status === 200) {

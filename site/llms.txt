@@ -32,7 +32,7 @@ Atturo, BFGoodrich, Bridgestone, Continental, Cooper, Dunlop, Falken, Firestone,
 ## Contact and booking
 - [Book an appointment](https://tireplus.ca/book-appointment/) — choose a service and time slot online ([Français](https://tireplus.ca/fr/prendre-rendez-vous/))
 - [Contact page](https://tireplus.ca/contact-us/) — send a message
-- [Request a service](https://tireplus.ca/request-service/)
+- [Book an appointment](https://tireplus.ca/book-appointment/)
 - [Français](https://tireplus.ca/fr/)
 - Phone: 613-834-7325
 
