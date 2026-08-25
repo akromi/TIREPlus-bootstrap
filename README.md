@@ -125,6 +125,22 @@ Run `node build.js` to propagate changes to every page in `site/`.
 Edit `src/pages/services/<slug>/index.html` (and the FR equivalent).
 Service pages are independent — no shared service template.
 
+### Point booking at a different Tekmetric shop
+Edit `TEKMETRIC_SHOP_ID` in `build.js` — one constant, substituted into both
+booking pages as `{{TEKMETRIC_SHOP_ID}}` and into the config global in the
+`tekmetric-booking` script block — then `node build.js`, commit, push.
+
+Get the id from Tekmetric -> Marketing -> Online Booking -> "Add to your
+website": it is the UUID inside `onShowBooking('...')` in the second code
+block. Make sure you are in the PRODUCTION Tekmetric account, not a sandbox.
+
+A wrong shop id has no visible symptom: the button opens, the scheduler
+renders, the customer believes they have an appointment, and the booking
+reaches a different shop. `test.js` pins the expected id, so **update
+`PRODUCTION_SHOP_ID` there in the same commit** — otherwise the suite fails,
+which is the intended behaviour for an unplanned change and an annoyance for a
+planned one.
+
 ### Edit `.htaccess` rules
 - Staging-only changes: edit `site/.htaccess.staging`
 - Production-only changes: edit `site/.htaccess.production`

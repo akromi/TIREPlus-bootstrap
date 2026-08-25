@@ -199,7 +199,7 @@
                Tekmetric choisit — à vérifier une fois en ligne. -->
           <button type="button" class="btn btn-lg btn-cta btn-cta-primary"
                   data-ga-event="booking_start"
-                  onclick="onShowBooking('c4cd3a3d-f612-4b8d-84be-df5f941b9e55')">
+                  onclick="onShowBooking('b5337652-038c-429f-8e6a-dcabed405dee')">
             <i class="bi bi-calendar-plus me-2" aria-hidden="true"></i>Prendre rendez-vous
           </button>
           <p class="small text-muted mt-3 mb-0">
@@ -284,6 +284,8 @@
   <script src="https://elfsightcdn.com/platform.js" async></script>
 
   <script>
+    window.tekmetricBooking = { shopId: 'b5337652-038c-429f-8e6a-dcabed405dee', orgId: undefined };
+
     window.addEventListener('load', function () {
       var script = document.createElement('script');
       script.src = 'https://booking.tekmetric.com/iframe/modal.js?time=' + new Date().getTime();
