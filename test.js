@@ -7,6 +7,17 @@ const https = require("https");
 const http = require("http");
 const { URL } = require("url");
 const BASE = process.argv[2] || "https://staging2.tireplus.ca";
+
+// Some checks assert on headers and rewrites that live in .htaccess. A real
+// server applies those; a local static serve of site/ never does, so absence is
+// expected locally and a genuine defect anywhere else.
+//
+// This has to be conditional rather than always-warn. BASE defaults to staging,
+// so an unconditional warning meant a broken redirect there still printed "All
+// tests passed" and exited 0 — a check that cannot fail for the right reason,
+// which is worse than no check at all.
+const IS_LOCAL = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)(:|\/|$)/i.test(BASE);
+const softFail = () => (IS_LOCAL ? "warn" : false);
 const R = { pass: 0, fail: 0, warn: 0, tests: [] };
 
 function fetch(url, opts = {}) {
@@ -298,8 +309,8 @@ async function run() {
   // local static server does not — so absence is a warning, not a failure.
   try {
     const r = await fetch(`${BASE}/`);
-    rec("security", "CSP header (enforced)", r.headers["content-security-policy"] ? true : "warn", r.headers["content-security-policy"] ? "" : "absent — expected only for local servers without .htaccess");
-    rec("security", "CSP header (report-only)", r.headers["content-security-policy-report-only"] ? true : "warn", r.headers["content-security-policy-report-only"] ? "" : "absent — expected only for local servers without .htaccess");
+    rec("security", "CSP header (enforced)", r.headers["content-security-policy"] ? true : softFail(), r.headers["content-security-policy"] ? "" : `absent${IS_LOCAL ? " — expected without .htaccess" : " — .htaccess is not being applied"}`);
+    rec("security", "CSP header (report-only)", r.headers["content-security-policy-report-only"] ? true : softFail(), r.headers["content-security-policy-report-only"] ? "" : `absent${IS_LOCAL ? " — expected without .htaccess" : " — .htaccess is not being applied"}`);
   } catch (e) { rec("security", "CSP headers", false, e.message); }
 
   // === RETIRED: TIRECONNECT SERVICE REQUESTS ===
@@ -328,9 +339,9 @@ async function run() {
     try {
       const r = await fetch(`${BASE}${from}`);
       const ok = r.status === 200 && has(r.body, landing);
-      rec("retired", `${from} redirects to booking`, ok ? true : "warn",
-          ok ? "" : `got ${r.status} — expected only for local servers without .htaccess`);
-    } catch (e) { rec("retired", `${from} redirect`, "warn", e.message); }
+      rec("retired", `${from} redirects to booking`, ok ? true : softFail(),
+          ok ? "" : `got ${r.status}${IS_LOCAL ? " — expected without .htaccess" : " — redirect is broken"}`);
+    } catch (e) { rec("retired", `${from} redirect`, softFail(), e.message); }
   }
 
   // === SUMMARY ===
