@@ -34,6 +34,20 @@ const partials = {
   fr: { head: readPartial("head-fr.html"), nav: readPartial("nav-fr.html"), footer: readPartial("footer-fr.html") },
 };
 
+// The Tekmetric shop this site books into: Tire Plus, Orleans — the production
+// shop, not the sandbox this launched against. Declared ONCE and substituted
+// into pages as {{TEKMETRIC_SHOP_ID}}, because it appeared in two page sources
+// before and a swap that updated one and missed the other would leave that
+// language silently booking into the wrong shop — a failure with no visible
+// symptom on the page that broke.
+//
+// Source: Tekmetric -> Marketing -> Online Booking -> "Add to your website".
+// A wrong value here is invisible from the page: the button opens, the
+// scheduler renders, and the customer believes they have an appointment that
+// no one received. test.js asserts this exact id, so changing it by accident
+// fails the suite instead of reaching customers.
+const TEKMETRIC_SHOP_ID = "b5337652-038c-429f-8e6a-dcabed405dee";
+
 const SCRIPT_BLOCKS = {
   "tireconnect-tires": `
   <script src="/assets/js/tireconnect-config.js"></script>
@@ -96,6 +110,13 @@ const SCRIPT_BLOCKS = {
   // the day something else did, with booking as the casualty. addEventListener
   // has identical timing (both fire on the load event) and cannot clobber.
   //
+  // window.tekmetricBooking is Tekmetric's own config global, added to their
+  // snippet after this page first shipped. Set synchronously here, before
+  // modal.js is ever appended, so it is in place whichever way their script
+  // reads the shop — from this object or from the onShowBooking() argument.
+  // Both carry the same id: test.js asserts they agree, because a page where
+  // they disagree books into whichever one their script happens to prefer.
+  //
   // The ?time= cache-buster is Tekmetric's own, kept as shipped: it refetches
   // both files on every page load, which costs a round trip but means their
   // fixes land without a deploy here.
@@ -106,6 +127,8 @@ const SCRIPT_BLOCKS = {
   // so the page renders "refused to connect". This modal is the supported path.
   "tekmetric-booking": `
   <script>
+    window.tekmetricBooking = { shopId: '${TEKMETRIC_SHOP_ID}', orgId: undefined };
+
     window.addEventListener('load', function () {
       var script = document.createElement('script');
       script.src = 'https://booking.tekmetric.com/iframe/modal.js?time=' + new Date().getTime();
@@ -145,7 +168,8 @@ function buildPage(pagePath) {
   let head = p.head.replace("{{TITLE}}", meta.title || "Tire Plus").replace("{{DESCRIPTION}}", meta.description || "");
   const scriptBlock = SCRIPT_BLOCKS[meta.scripts] || "";
   let footer = p.footer.replace("{{SCRIPTS}}", scriptBlock);
-  return head + "\n" + p.nav + "\n" + body + "\n" + footer;
+  const pageBody = body.split("{{TEKMETRIC_SHOP_ID}}").join(TEKMETRIC_SHOP_ID);
+  return head + "\n" + p.nav + "\n" + pageBody + "\n" + footer;
 }
 
 function walkPages(dir, relBase) {

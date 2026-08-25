@@ -45,6 +45,29 @@ async function testPage(path, title, checks) {
 }
 function chk(t, l) { return (h, s) => rec(s, l || `Contains "${t}"`, has(h, t)); }
 
+// Which Tekmetric shop the page books into. Nothing on the page looks wrong when
+// this is wrong: the button opens, the scheduler renders, and the customer
+// believes they have an appointment that no one received. This is the only place
+// that discrepancy is visible, so it is asserted rather than eyeballed.
+//
+// The id reaches the page twice — window.tekmetricBooking for their config global
+// and the onShowBooking() argument for the button — so both are checked, and
+// checked against each other. A page where the two disagree books into whichever
+// one their script happens to read.
+const PRODUCTION_SHOP_ID = "b5337652-038c-429f-8e6a-dcabed405dee";
+const SANDBOX_SHOP_ID = "c4cd3a3d-f612-4b8d-84be-df5f941b9e55";
+function bookingShopId(h, s) {
+  const btn = h.match(/onShowBooking\('([0-9a-fA-F-]{36})'\)/);
+  rec(s, "Booking button carries a shop id", !!btn, btn ? btn[1] : "no onShowBooking(uuid) found");
+  const cfg = h.match(/tekmetricBooking\s*=\s*\{\s*shopId:\s*'([0-9a-fA-F-]{36})'/);
+  rec(s, "Booking config global carries a shop id", !!cfg, cfg ? cfg[1] : "no window.tekmetricBooking found");
+  if (!btn || !cfg) return;
+  const b = btn[1].toLowerCase(), c = cfg[1].toLowerCase();
+  rec(s, "Button and config agree on the shop", b === c, b === c ? b : `button ${b} vs config ${c}`);
+  rec(s, "Shop id is the Tire Plus production shop", b === PRODUCTION_SHOP_ID,
+      b === SANDBOX_SHOP_ID ? "SANDBOX SHOP — bookings do not reach Tire Plus" : b);
+}
+
 async function run() {
   console.log(`\n🔧 TirePlus Test Harness\n   Target: ${BASE}\n   Time:   ${new Date().toISOString()}\n`);
 
@@ -112,7 +135,7 @@ async function run() {
     chk("Book an Appointment", "Heading"),
     chk("booking.tekmetric.com/iframe/modal.js", "Tekmetric modal loader"),
     chk("booking.tekmetric.com/iframe/modal.css", "Tekmetric modal stylesheet"),
-    chk("onShowBooking('c4cd3a3d-f612-4b8d-84be-df5f941b9e55')", "Booking button + shop id"),
+    bookingShopId,
     chk("613-834-7325", "Phone fallback"),
     chk('data-ga-event="booking_start"', "GA booking_start hook"),
     // The iframe embed was refused by the scheduler (X-Frame-Options); the modal
@@ -173,7 +196,7 @@ async function run() {
   await testPage("/fr/prendre-rendez-vous/", "Prendre rendez-vous", [
     chk("Prendre rendez-vous", "Heading FR"),
     chk("booking.tekmetric.com/iframe/modal.js", "Tekmetric modal loader"),
-    chk("onShowBooking('c4cd3a3d-f612-4b8d-84be-df5f941b9e55')", "Booking button + shop id"),
+    bookingShopId,
     chk("613-834-7325", "Phone fallback FR"),
     chk('data-ga-event="booking_start"', "GA booking_start hook"),
     (h, s) => rec(s, "No legacy myworkshop.site iframe", !has(h, "myworkshop.site")),
