@@ -13,6 +13,27 @@ on:
           - staging
           - production
 
+# Deploys must not overlap. Two merges 24 seconds apart put two of these on the
+# wire at once, and with dangerous-clean-slate each one WIPES the web root before
+# uploading — so one deploy deleted the directory tree the other was uploading
+# into. The second died on "Server sent FIN packet unexpectedly" while creating
+# a folder, and staging was left holding whichever run happened to finish last
+# rather than the newest commit.
+#
+# One group covering the whole workflow, not one per target: staging and
+# production use the same FTP account, so overlapping them risks the same
+# collision even though the remote directories differ.
+#
+# cancel-in-progress is deliberately FALSE. Cancelling an FTP deploy mid-flight
+# is the one outcome worse than queueing behind it — dangerous-clean-slate means
+# the kill could land after the wipe and before the upload, leaving the site
+# empty. A queued run waits instead; if another queues behind it, GitHub drops
+# the older pending one, which is correct here since every run deploys main and
+# the newest content supersedes it.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
