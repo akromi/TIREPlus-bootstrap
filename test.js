@@ -283,6 +283,10 @@ async function run() {
       const css = r.body.replace(/\s+/g, " ");
       rec("css", "Root font-size: 125% (25% boost)", /font-size:\s*125%/.test(css));
       rec("css", "reCAPTCHA badge hidden", /\.grecaptcha-badge[^}]*visibility\s*:\s*hidden/i.test(css));
+      rec("css", "Tekmetric modal widened past its 400px default",
+          /#tekmetricBookingModal\s+\.tekmetric-booking-modal[^}]*width\s*:\s*min\(/i.test(css));
+      rec("css", "Tekmetric booking iframe fills the widened modal",
+          /#tekmetricBookingModal\s+\.tekmetric-booking-iframe[^}]*width\s*:\s*100%/i.test(css));
     } else {
       rec("css", "Fetch style.css", false, `Got ${r.status}`);
     }
