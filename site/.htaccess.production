@@ -84,11 +84,22 @@
   #   2. Add any origin the console reports to the matching directive here.
   #   3. Once a full pass is clean, merge these directives into the enforced
   #      header above and delete this one.
-  # Served as an error document, /404.html carries Apache's 404 status and is
-  # not indexable. Requested DIRECTLY it is an ordinary file and returns 200 —
-  # indexable, and worth nothing in results. It is not in sitemap.xml, so this
-  # only matters if something links to it, but the cost of being wrong is a
-  # "Page not found" entry in Google under the shop's own domain.
+  # Second layer only. The page itself carries <meta name="robots" content=
+  # "noindex"> (set from front-matter in build.js) and THAT is the mechanism
+  # being relied on.
+  #
+  # This header is kept because it costs nothing, not because it is known to
+  # work: staging sets X-Robots-Tag site-wide and a direct request for
+  # /404.html came back without it, so SiteGround looks to serve static .html
+  # without mod_headers running. If that is also true here, this block does
+  # nothing and the meta tag is carrying the whole job — which is why the meta
+  # tag is what test.js asserts.
+  #
+  # Why it matters at all: served as an error document /404.html carries a 404
+  # and is not indexable, but requested DIRECTLY it is an ordinary file
+  # returning 200. It is not in sitemap.xml, so it takes an inbound link to
+  # find — the cost of being wrong is a "Page not found" entry in Google under
+  # the shop's own domain.
   <Files "404.html">
     Header set X-Robots-Tag "noindex"
   </Files>

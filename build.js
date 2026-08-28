@@ -234,6 +234,18 @@ function buildPage(pagePath) {
   const lang = meta.lang === "fr" ? "fr" : "en";
   const p = partials[lang];
   let head = p.head.replace("{{TITLE}}", meta.title || "Tire Plus").replace("{{DESCRIPTION}}", meta.description || "");
+
+  // robots: in front-matter emits a meta tag; absent, the slot leaves no trace.
+  //
+  // A meta tag rather than the X-Robots-Tag header this used to rely on. That
+  // header never reached a directly-requested /404.html on SiteGround — proven
+  // on staging, where a site-wide `Header set X-Robots-Tag` is configured and
+  // the response carried none. Static .html appears to be served without
+  // mod_headers running. A meta tag is in the document, so it survives that,
+  // survives being served as an ErrorDocument, and survives a move to a host
+  // with no .htaccess at all.
+  head = head.replace("{{ROBOTS}}\n",
+    meta.robots ? `  <meta name="robots" content="${meta.robots}">\n` : "");
   const scriptBlock = SCRIPT_BLOCKS[meta.scripts] || "";
   let footer = p.footer.replace("{{SCRIPTS}}", scriptBlock);
   const pageBody = body.split("{{TEKMETRIC_SHOP_ID}}").join(TEKMETRIC_SHOP_ID);

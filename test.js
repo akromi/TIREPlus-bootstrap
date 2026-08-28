@@ -413,16 +413,20 @@ async function run() {
     rec("404", "/404.html is published", r.status === 200, r.status === 200 ? "" : `got ${r.status}`);
     const bilingual = has(r.body, "Page not found") && has(r.body, "Page introuvable");
     rec("404", "/404.html is bilingual", bilingual, bilingual ? "" : "expected both 'Page not found' and 'Page introuvable'");
-    // Only meaningful when the file is actually served. A 404 response still
-    // carries staging's site-wide X-Robots-Tag, so asserting this against a
-    // missing page passes for the wrong reason — green while reporting that the
-    // page it describes does not exist. Caught doing exactly that on staging
-    // before this PR was deployed.
-    if (r.status === 200) {
-      const robots = r.headers["x-robots-tag"] || "";
-      rec("404", "/404.html is noindex", /noindex/i.test(robots) ? true : softFail(),
-          /noindex/i.test(robots) ? "" : `X-Robots-Tag: ${robots || "absent"}${IS_LOCAL ? " — expected without .htaccess" : " — a direct hit is indexable"}`);
-    }
+    // The META TAG, not the X-Robots-Tag header this used to check. Staging is
+    // configured with a site-wide `Header set X-Robots-Tag "noindex, nofollow"`
+    // and a direct hit on /404.html carried none of it, so SiteGround appears to
+    // serve static .html without mod_headers running. Asserting the header would
+    // be a permanent warning that reports nothing about whether the page is
+    // actually protected.
+    //
+    // The tag is in the document. It holds on any host, with or without
+    // .htaccess, and whether the page arrives as an error document or a direct
+    // 200 — which is the case that needs it, since only the direct hit is
+    // indexable in the first place.
+    const noindexed = /<meta\s+name="robots"\s+content="[^"]*noindex/i.test(r.body);
+    rec("404", "/404.html is noindex", noindexed,
+        noindexed ? "" : 'expected <meta name="robots" content="noindex"> in the page');
   } catch (e) { rec("404", "/404.html", false, e.message); }
 
   for (const [p, label] of [["/no-such-page-xyz/", "EN"], ["/fr/aucune-page-xyz/", "FR"]]) {
