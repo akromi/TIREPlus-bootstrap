@@ -413,9 +413,16 @@ async function run() {
     rec("404", "/404.html is published", r.status === 200, r.status === 200 ? "" : `got ${r.status}`);
     const bilingual = has(r.body, "Page not found") && has(r.body, "Page introuvable");
     rec("404", "/404.html is bilingual", bilingual, bilingual ? "" : "expected both 'Page not found' and 'Page introuvable'");
-    const robots = r.headers["x-robots-tag"] || "";
-    rec("404", "/404.html is noindex", /noindex/i.test(robots) ? true : softFail(),
-        /noindex/i.test(robots) ? "" : `X-Robots-Tag: ${robots || "absent"}${IS_LOCAL ? " — expected without .htaccess" : " — a direct hit is indexable"}`);
+    // Only meaningful when the file is actually served. A 404 response still
+    // carries staging's site-wide X-Robots-Tag, so asserting this against a
+    // missing page passes for the wrong reason — green while reporting that the
+    // page it describes does not exist. Caught doing exactly that on staging
+    // before this PR was deployed.
+    if (r.status === 200) {
+      const robots = r.headers["x-robots-tag"] || "";
+      rec("404", "/404.html is noindex", /noindex/i.test(robots) ? true : softFail(),
+          /noindex/i.test(robots) ? "" : `X-Robots-Tag: ${robots || "absent"}${IS_LOCAL ? " — expected without .htaccess" : " — a direct hit is indexable"}`);
+    }
   } catch (e) { rec("404", "/404.html", false, e.message); }
 
   for (const [p, label] of [["/no-such-page-xyz/", "EN"], ["/fr/aucune-page-xyz/", "FR"]]) {
