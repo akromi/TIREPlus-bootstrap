@@ -22,8 +22,18 @@
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType text/html "access plus 1 hour"
-  ExpiresByType text/css "access plus 1 month"
-  ExpiresByType application/javascript "access plus 1 month"
+  # A year, not a month, because every reference to these carries a ?v= content
+  # hash from build.js — the URL changes the moment the bytes do, so a long life
+  # costs nothing and buys a returning visitor the whole site from cache.
+  #
+  # This is only safe while EVERY reference is versioned. An unversioned
+  # /css/style.css would be pinned for a year at a URL that never changes, which
+  # is the same bug this replaced, a year long instead of a month. The
+  # "local assets are cache-busted" job in .github/workflows/ci.yml fails the
+  # build if an unversioned reference ever lands, so the rule is enforced rather
+  # than remembered.
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
   ExpiresByType image/png "access plus 1 year"
   ExpiresByType image/jpeg "access plus 1 year"
   ExpiresByType image/svg+xml "access plus 1 year"

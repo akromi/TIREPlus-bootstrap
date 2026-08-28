@@ -146,6 +146,31 @@ reaches a different shop. `test.js` pins the expected id, so **update
 which is the intended behaviour for an unplanned change and an annoyance for a
 planned one.
 
+### Edit the CSS or JS
+
+Edit `site/css/style.css` or `site/js/main.js` directly — they are hand-written
+sources that live in `site/`, not build output — then run `node build.js`.
+
+The rebuild is not optional. Every reference to a local CSS/JS file carries a
+`?v=` content hash, and `build.js` recomputes it from the file's bytes. Editing
+the file without rebuilding leaves every page pointing at the OLD hash, and
+`.htaccess.production` caches these for a year — so returning visitors would
+keep the old file until 2027. CI's "site/ is in sync with src/" check fails the
+build if you forget, so this is caught rather than shipped.
+
+Adding a new local asset:
+
+1. Add it to `ASSET_VERSIONS` in `build.js` with a `{{TOKEN}}` name.
+2. Reference it as `/path/to/file.js?v={{TOKEN}}`.
+
+The "local assets are cache-busted" CI job scans the built HTML and fails on any
+unversioned reference to a known local asset, so the year-long cache stays safe
+without anyone having to remember why.
+
+Note images are cached for a year but are **not** versioned. Replacing an image
+in place under the same filename will not reach returning visitors; give the new
+file a new name.
+
 ### Edit the 404 page
 
 Source is `src/pages/404.html`, built to `site/404.html`. Both `.htaccess`

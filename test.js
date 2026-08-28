@@ -348,6 +348,57 @@ async function run() {
     } catch (e) { rec("retired", `${from} redirect`, softFail(), e.message); }
   }
 
+  // === ASSET CACHE-BUSTING ===
+  // .htaccess.production caches CSS and JS for a year, which is only safe while
+  // every reference carries a ?v= content hash. An unversioned URL never
+  // changes, so a visitor holds a stale file for a year and no deploy can
+  // dislodge it.
+  //
+  // CI blocks an unversioned reference from landing; this is the other half —
+  // proof that what is actually SERVED carries the hash, and that the hashed URL
+  // resolves rather than 404ing. Both languages, because the EN and FR partials
+  // are separate files and only one of them may have been updated.
+  console.log("\n━━━ Asset cache-busting ━━━");
+  const busted = [
+    ["/", "EN home"], ["/fr/", "FR home"],
+    ["/search/", "EN search"], ["/fr/recherche/", "FR search"],
+  ];
+  for (const [p, label] of busted) {
+    try {
+      const r = await fetch(`${BASE}${p}`);
+      const cssRef = r.body.match(/\/css\/style\.css\?v=([a-f0-9]+)/);
+      const jsRef = r.body.match(/\/js\/main\.js\?v=([a-f0-9]+)/);
+      rec("cache-bust", `${label} CSS is versioned`, !!cssRef,
+          cssRef ? "" : "reference has no ?v= — a year-long cache on a URL that never changes");
+      rec("cache-bust", `${label} JS is versioned`, !!jsRef,
+          jsRef ? "" : "reference has no ?v= — a year-long cache on a URL that never changes");
+
+      // A hash that points at nothing is worse than no hash: the page loses its
+      // stylesheet outright rather than serving a stale one.
+      if (cssRef) {
+        const a = await fetch(`${BASE}/css/style.css?v=${cssRef[1]}`);
+        rec("cache-bust", `${label} versioned CSS resolves`, a.status === 200, a.status === 200 ? "" : `got ${a.status}`);
+      }
+      if (jsRef) {
+        const a = await fetch(`${BASE}/js/main.js?v=${jsRef[1]}`);
+        rec("cache-bust", `${label} versioned JS resolves`, a.status === 200, a.status === 200 ? "" : `got ${a.status}`);
+      }
+    } catch (e) { rec("cache-bust", label, false, e.message); }
+  }
+
+  // The TireConnect widget config carries the apiKey, locale and locationId.
+  // It is injected by a SCRIPT_BLOCK rather than a partial, so it versions
+  // through a separate code path and can regress on its own.
+  for (const [p, label] of [["/search/", "EN"], ["/fr/recherche/", "FR"]]) {
+    try {
+      const r = await fetch(`${BASE}${p}`);
+      const ok = /\/assets\/js\/tireconnect-config(-fr)?\.js\?v=[a-f0-9]+/.test(r.body)
+              && /\/assets\/js\/tireconnect-init\.js\?v=[a-f0-9]+/.test(r.body);
+      rec("cache-bust", `${label} TireConnect scripts are versioned`, ok,
+          ok ? "" : "widget config or init has no ?v= — a locationId change would not reach returning visitors");
+    } catch (e) { rec("cache-bust", `${label} TireConnect scripts`, false, e.message); }
+  }
+
   // === 404 PAGE ===
   // ErrorDocument used to point at /index.html, so a bad URL returned the
   // HOMEPAGE BODY under a 404 status. Status alone therefore proves nothing

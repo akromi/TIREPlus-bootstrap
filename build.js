@@ -17,6 +17,7 @@
  *   ---
  */
 
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -24,6 +25,60 @@ const SRC_DIR = path.join(__dirname, "src");
 const OUT_DIR = path.join(__dirname, "site");
 const PARTIALS_DIR = path.join(SRC_DIR, "_partials");
 const PAGES_DIR = path.join(SRC_DIR, "pages");
+
+// --- Asset cache-busting ---------------------------------------------------
+//
+// .htaccess.production gives CSS and JS a long Expires, and these five files
+// have fixed names that never change between deploys. Without a version in the
+// URL a returning visitor keeps whatever copy they already have until it
+// expires — new HTML against old CSS and old JS, with nothing anywhere saying
+// so. main.js alone carries the language toggle's langMap, the TireConnect
+// lazy-init and the GA event handlers, so "ship a fix and a chunk of returning
+// visitors don't get it for weeks" is the actual failure, not a theoretical one.
+//
+// Appending a content hash makes the URL change exactly when the bytes change:
+// edit the file and every visitor refetches on their next page load; leave it
+// alone and the long cache stands. That is what makes the year-long Expires in
+// .htaccess.production safe rather than dangerous.
+//
+// A query string rather than a hashed FILENAME, because site/css/ and site/js/
+// are hand-written sources that live in site/ (see README) — not build output.
+// Renaming them would either destroy the file being edited or leave a hashed
+// duplicate beside it, and the deploy uploads all of site/, so both would ship.
+//
+// These files are read from site/, so they must exist before a build. They are
+// committed, so they do; a missing one is a broken checkout and says so.
+function assetVersion(relPath) {
+  const full = path.join(OUT_DIR, relPath);
+  let buf;
+  try {
+    buf = fs.readFileSync(full);
+  } catch (e) {
+    console.error(`\n  ✗  Cannot hash ${relPath} — ${full} is missing.`);
+    console.error("     site/css, site/js and site/assets/js are committed sources, not build output.\n");
+    throw e;
+  }
+  return crypto.createHash("sha256").update(buf).digest("hex").slice(0, 8);
+}
+
+// Token → version. Any {{...}} below is substituted into the finished page, so
+// a reference works from a partial, a page source or a SCRIPT_BLOCK alike.
+// Adding a local asset? Add it here, reference it as /path?v={{TOKEN}}, and the
+// CI check in .github/workflows/ci.yml will hold the line for the next person.
+const ASSET_VERSIONS = {
+  "{{CSS_V}}": assetVersion("css/style.css"),
+  "{{JS_V}}": assetVersion("js/main.js"),
+  "{{TC_CONFIG_V}}": assetVersion("assets/js/tireconnect-config.js"),
+  "{{TC_CONFIG_FR_V}}": assetVersion("assets/js/tireconnect-config-fr.js"),
+  "{{TC_INIT_V}}": assetVersion("assets/js/tireconnect-init.js"),
+};
+
+function applyAssetVersions(html) {
+  for (const [token, version] of Object.entries(ASSET_VERSIONS)) {
+    html = html.split(token).join(version);
+  }
+  return html;
+}
 
 function readPartial(name) {
   return fs.readFileSync(path.join(PARTIALS_DIR, name), "utf-8");
@@ -50,25 +105,25 @@ const TEKMETRIC_SHOP_ID = "b5337652-038c-429f-8e6a-dcabed405dee";
 
 const SCRIPT_BLOCKS = {
   "tireconnect-tires": `
-  <script src="/assets/js/tireconnect-config.js"></script>
+  <script src="/assets/js/tireconnect-config.js?v={{TC_CONFIG_V}}"></script>
   <script>window.TC_PAGE = { type: "tires" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
-  <script src="/assets/js/tireconnect-init.js"></script>`,
+  <script src="/assets/js/tireconnect-init.js?v={{TC_INIT_V}}"></script>`,
   "tireconnect-wheels": `
-  <script src="/assets/js/tireconnect-config.js"></script>
+  <script src="/assets/js/tireconnect-config.js?v={{TC_CONFIG_V}}"></script>
   <script>window.TC_PAGE = { type: "wheels" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
-  <script src="/assets/js/tireconnect-init.js"></script>`,
+  <script src="/assets/js/tireconnect-init.js?v={{TC_INIT_V}}"></script>`,
   "tireconnect-tires-fr": `
-  <script src="/assets/js/tireconnect-config-fr.js"></script>
+  <script src="/assets/js/tireconnect-config-fr.js?v={{TC_CONFIG_FR_V}}"></script>
   <script>window.TC_PAGE = { type: "tires" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
-  <script src="/assets/js/tireconnect-init.js"></script>`,
+  <script src="/assets/js/tireconnect-init.js?v={{TC_INIT_V}}"></script>`,
   "tireconnect-wheels-fr": `
-  <script src="/assets/js/tireconnect-config-fr.js"></script>
+  <script src="/assets/js/tireconnect-config-fr.js?v={{TC_CONFIG_FR_V}}"></script>
   <script>window.TC_PAGE = { type: "wheels" };</script>
   <script src="https://app.tireconnect.ca/js/widget.js"></script>
-  <script src="/assets/js/tireconnect-init.js"></script>`,
+  <script src="/assets/js/tireconnect-init.js?v={{TC_INIT_V}}"></script>`,
   // NOTE: Unlike init()/initWheels() (see tireconnect-init.js), TCWidget.initServices()
   // returns a long-lived promise that never settles, so a Promise.then(hideLoading)
   // pattern leaves the banner stuck on "Loading…" forever (confirmed in production).
@@ -182,7 +237,7 @@ function buildPage(pagePath) {
   const scriptBlock = SCRIPT_BLOCKS[meta.scripts] || "";
   let footer = p.footer.replace("{{SCRIPTS}}", scriptBlock);
   const pageBody = body.split("{{TEKMETRIC_SHOP_ID}}").join(TEKMETRIC_SHOP_ID);
-  return head + "\n" + p.nav + "\n" + pageBody + "\n" + footer;
+  return applyAssetVersions(head + "\n" + p.nav + "\n" + pageBody + "\n" + footer);
 }
 
 function walkPages(dir, relBase) {
