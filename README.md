@@ -164,8 +164,11 @@ Adding a new local asset:
 2. Reference it as `/path/to/file.js?v={{TOKEN}}`.
 
 The "local assets are cache-busted" CI job scans the built HTML and fails on any
-unversioned reference to a known local asset, so the year-long cache stays safe
-without anyone having to remember why.
+root-relative `.css`/`.js` reference that does not end in `?v=<hash>` — every
+one, not a list of the files that exist today, because `ExpiresByType` caches by
+MIME type and so already covers a file nobody has added yet. Forget step 1 or 2
+above and CI says so, rather than the year-long cache quietly applying to an
+address that never changes.
 
 Note images are cached for a year but are **not** versioned. Replacing an image
 in place under the same filename will not reach returning visitors; give the new

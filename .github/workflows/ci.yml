@@ -79,16 +79,31 @@ jobs:
       # for a year at a URL that never changes — a stale stylesheet or a stale
       # main.js that no deploy can dislodge and nothing reports.
       #
+      # Scans EVERY root-relative .css/.js reference, not a list of the assets
+      # that exist today. ExpiresByType matches on MIME type, so the year-long
+      # cache already applies to a file nobody has added yet — an allowlist here
+      # would go quiet for exactly the new file whose author had not yet learned
+      # the rule. Anything not ending in ?v=<hex> fails, so a wrong query string
+      # is caught alongside a missing one.
+      #
       # The failure is invisible in review: /css/style.css looks perfectly
       # correct next to /css/style.css?v=a1b2c3d4. So check the built output
       # rather than trusting the partial it came from.
+      #
+      # -o so each reference is judged on its own: a line carrying a good and a
+      # bad reference must still fail. || true because grep -v exits 1 when it
+      # filters everything out, which is the passing case, and the step runs
+      # under -e.
       - name: local assets are cache-busted
         run: |
-          if grep -rEn '(href|src)="/(css/style\.css|js/main\.js|assets/js/tireconnect-[a-z-]+\.js)"' site --include='*.html'; then
-            echo "::error::The references above have no ?v= cache-buster. .htaccess.production caches CSS/JS for a year, so an unversioned URL pins visitors to a stale file for a year. Reference it as /path?v={{TOKEN}} and add the token to ASSET_VERSIONS in build.js."
+          unversioned=$(grep -rnoE '(href|src)="/[^"]*\.(css|js)[^"]*"' site --include='*.html' \
+                        | grep -vE '\?v=[a-f0-9]+"$' || true)
+          if [ -n "$unversioned" ]; then
+            echo "$unversioned"
+            echo "::error::The references above are not cache-busted. .htaccess.production caches CSS/JS for a year by MIME type, so an unversioned URL pins visitors to a stale file for a year. Reference it as /path?v={{TOKEN}} and add the token to ASSET_VERSIONS in build.js."
             exit 1
           fi
-          echo "All local CSS/JS references carry a ?v= content hash."
+          echo "Every root-relative CSS/JS reference carries a ?v= content hash."
 
       # This site is bilingual by construction: every page exists in both
       # languages, and the language toggle depends on the pair. The README's
