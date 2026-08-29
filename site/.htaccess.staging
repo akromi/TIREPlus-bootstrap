@@ -49,4 +49,9 @@
 AddDefaultCharset UTF-8
 
 # Error pages
-ErrorDocument 404 /index.html
+#
+# Was /index.html, which served the HOMEPAGE BODY under a 404 status: a visitor
+# who mistyped a URL got the front page with nothing telling them the address
+# was wrong, and a French visitor got it in English. /404.html says what
+# happened, in both languages, and offers the routes back in.
+ErrorDocument 404 /404.html

@@ -348,6 +348,38 @@ async function run() {
     } catch (e) { rec("retired", `${from} redirect`, softFail(), e.message); }
   }
 
+  // === 404 PAGE ===
+  // ErrorDocument used to point at /index.html, so a bad URL returned the
+  // HOMEPAGE BODY under a 404 status. Status alone therefore proves nothing
+  // here and never did — both the old and new config return 404. What changed
+  // is the body, so that is what these assert.
+  //
+  // The .htaccess-dependent checks soft-fail locally: a static serve of site/
+  // has no ErrorDocument and answers with its own 404.
+  console.log("\n━━━ 404 page ━━━");
+  try {
+    const r = await fetch(`${BASE}/404.html`);
+    rec("404", "/404.html is published", r.status === 200, r.status === 200 ? "" : `got ${r.status}`);
+    const bilingual = has(r.body, "Page not found") && has(r.body, "Page introuvable");
+    rec("404", "/404.html is bilingual", bilingual, bilingual ? "" : "expected both 'Page not found' and 'Page introuvable'");
+    const robots = r.headers["x-robots-tag"] || "";
+    rec("404", "/404.html is noindex", /noindex/i.test(robots) ? true : softFail(),
+        /noindex/i.test(robots) ? "" : `X-Robots-Tag: ${robots || "absent"}${IS_LOCAL ? " — expected without .htaccess" : " — a direct hit is indexable"}`);
+  } catch (e) { rec("404", "/404.html", false, e.message); }
+
+  for (const [p, label] of [["/no-such-page-xyz/", "EN"], ["/fr/aucune-page-xyz/", "FR"]]) {
+    try {
+      const r = await fetch(`${BASE}${p}`);
+      rec("404", `${label} unknown URL returns 404`, r.status === 404, r.status === 404 ? "" : `got ${r.status}`);
+      // The homepage hero is the tell: if it is here, ErrorDocument is serving
+      // index.html again and the visitor has no idea the URL was wrong.
+      const isHome = has(r.body, "hero-phone") && !has(r.body, "Page not found");
+      rec("404", `${label} unknown URL serves the 404 page`, !isHome && has(r.body, "Page not found") ? true : softFail(),
+          isHome ? "served the HOMEPAGE — ErrorDocument is pointing at /index.html"
+                 : (has(r.body, "Page not found") ? "" : `no 404 page in body${IS_LOCAL ? " — expected without .htaccess" : ""}`));
+    } catch (e) { rec("404", `${label} unknown URL`, softFail(), e.message); }
+  }
+
   // === SUMMARY ===
   console.log("\n" + "═".repeat(50));
   console.log(`  RESULTS: ${R.pass} passed, ${R.fail} failed, ${R.warn} warnings`);

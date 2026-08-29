@@ -1,0 +1,68 @@
+---
+title: Page Not Found / Page introuvable | Tire Plus
+description: That page could not be found. Search for tires, book an appointment, or call Tire Plus in Orleans at 613-834-7325.
+---
+  <main id="main-content">
+    <section class="page-header" style="padding:1.5rem 0 1rem;">
+      <div class="container">
+        <h1 style="margin-bottom:.25rem;">Page not found</h1>
+        <p class="small mb-0" style="opacity:.9;" lang="fr-CA">Page introuvable</p>
+      </div>
+    </section>
+
+    <section class="section-padding">
+      <div class="container" style="max-width:880px;">
+
+        <!-- Bilingual on ONE page, deliberately. Apache's ErrorDocument is a
+             single global directive, so a per-language 404 would need either a
+             second .htaccess under /fr/ or a rewrite that branches on the
+             requested path — a moving part in the one place a visitor is
+             already lost. Both languages here means the page is right whichever
+             URL was mistyped, and it carries over unchanged to any host that
+             can point its 404 at a file. The page is en-CA; the French blocks
+             declare lang="fr-CA" so screen readers switch voice correctly. -->
+
+        <p class="lead">The page you were looking for isn't here. It may have moved, or the link that brought you here may be out of date.</p>
+        <p class="lead" lang="fr-CA">La page que vous cherchez n'est pas ici. Elle a peut-être été déplacée, ou le lien qui vous a mené ici n'est plus à jour.</p>
+
+        <div class="d-flex flex-wrap gap-2 mt-4 mb-2">
+          <a class="btn btn-primary btn-cta" href="/">Go to the homepage</a>
+          <a class="btn btn-outline-primary btn-cta" href="/fr/" lang="fr-CA">Aller à l'accueil</a>
+          <a class="btn btn-outline-secondary btn-cta" href="tel:6138347325">Call 613-834-7325</a>
+        </div>
+
+        <hr class="my-5">
+
+        <h2 class="h4 mb-3">Looking for one of these?</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="service-card h-100">
+              <div class="sc-header"><div class="sc-icon"><i class="bi bi-search"></i></div><h3 class="h6 mb-0">Tires &amp; wheels</h3></div>
+              <p class="mb-0">Shop by vehicle or size. <a href="/search/">Search tires</a> &middot; <a href="/fr/recherche/" lang="fr-CA">Recherche de pneus</a></p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="service-card h-100">
+              <div class="sc-header"><div class="sc-icon"><i class="bi bi-calendar-check"></i></div><h3 class="h6 mb-0">Book an appointment</h3></div>
+              <p class="mb-0">Pick a time online. <a href="/book-appointment/">Book now</a> &middot; <a href="/fr/prendre-rendez-vous/" lang="fr-CA">Prendre rendez-vous</a></p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="service-card h-100">
+              <div class="sc-header"><div class="sc-icon"><i class="bi bi-tools"></i></div><h3 class="h6 mb-0">Our services</h3></div>
+              <p class="mb-0">Brakes, alignment, oil, exhaust and more. <a href="/services/tires/">Services</a> &middot; <a href="/fr/services/pneus/" lang="fr-CA">Nos services</a></p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="service-card h-100">
+              <div class="sc-header"><div class="sc-icon"><i class="bi bi-chat-dots"></i></div><h3 class="h6 mb-0">Contact us</h3></div>
+              <p class="mb-0">Questions, quotes, directions. <a href="/contact-us/">Contact us</a> &middot; <a href="/fr/contactez-nous/" lang="fr-CA">Contactez-nous</a></p>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-4 mb-0 text-muted small">Tire Plus &middot; 2006 St. Joseph Blvd, Orleans, ON &middot; <a href="tel:6138347325">613-834-7325</a></p>
+
+      </div>
+    </section>
+  </main>

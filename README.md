@@ -19,6 +19,7 @@ src/
   pages/        Page HTML (EN at root, FR under src/pages/fr/)
   _partials/    Shared header/nav/footer fragments
 site/           Build output — committed to git and uploaded via FTP
+  404.html      Bilingual not-found page (ErrorDocument target)
   css/          Hand-written CSS
   js/           Site JS (main.js)
   assets/js/    Third-party widget config (TireConnect)
@@ -144,6 +145,26 @@ reaches a different shop. `test.js` pins the expected id, so **update
 `PRODUCTION_SHOP_ID` there in the same commit** — otherwise the suite fails,
 which is the intended behaviour for an unplanned change and an annoyance for a
 planned one.
+
+### Edit the 404 page
+
+Source is `src/pages/404.html`, built to `site/404.html`. Both `.htaccess`
+variants point `ErrorDocument 404` at it.
+
+It is one bilingual page rather than an EN and an FR one. `ErrorDocument` is a
+single global directive, so per-language 404s would need a second `.htaccess`
+under `site/fr/` or a rewrite branching on the request path — a moving part in
+the one place a visitor is already lost. One page is right whichever URL was
+mistyped, and carries over to any host that can point its 404 at a file.
+
+Two things keep it out of the way of CI: it is `404.html`, not `404/index.html`,
+so the sitemap check (which scans `index.html` files) does not require a sitemap
+entry for it, and the EN/FR parity check does not count it on either side. Keep
+that filename if you move it.
+
+Production also sends `X-Robots-Tag: noindex` for `404.html` specifically —
+served as an error document it carries a 404 and is not indexable, but requested
+directly it is an ordinary 200. Staging already sends that header site-wide.
 
 ### Edit `.htaccess` rules
 - Staging-only changes: edit `site/.htaccess.staging`

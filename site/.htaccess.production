@@ -74,6 +74,15 @@
   #   2. Add any origin the console reports to the matching directive here.
   #   3. Once a full pass is clean, merge these directives into the enforced
   #      header above and delete this one.
+  # Served as an error document, /404.html carries Apache's 404 status and is
+  # not indexable. Requested DIRECTLY it is an ordinary file and returns 200 —
+  # indexable, and worth nothing in results. It is not in sitemap.xml, so this
+  # only matters if something links to it, but the cost of being wrong is a
+  # "Page not found" entry in Google under the shop's own domain.
+  <Files "404.html">
+    Header set X-Robots-Tag "noindex"
+  </Files>
+
   Header set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://elfsightcdn.com https://app.tireconnect.ca https://booking.tekmetric.com https://www.googletagmanager.com https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://booking.tekmetric.com https://elfsightcdn.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https:; connect-src 'self' https://api-new.getmxpert.com https://app.tireconnect.ca https://booking.tekmetric.com https://cdn.jsdelivr.net https://elfsightcdn.com https://*.elfsight.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src 'self' https://www.google.com https://booking.tekmetric.com https://app.tireconnect.ca https://*.elfsight.com https://td.doubleclick.net; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
 </IfModule>
 
@@ -91,4 +100,9 @@
 AddDefaultCharset UTF-8
 
 # Error pages
-ErrorDocument 404 /index.html
+#
+# Was /index.html, which served the HOMEPAGE BODY under a 404 status: a visitor
+# who mistyped a URL got the front page with nothing telling them the address
+# was wrong, and a French visitor got it in English. /404.html says what
+# happened, in both languages, and offers the routes back in.
+ErrorDocument 404 /404.html
