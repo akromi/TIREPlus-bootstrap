@@ -176,8 +176,16 @@ page:
 5. Add both URLs to `site/sitemap.xml`.
 6. `node build.js`, commit, push.
 
-Steps 2, 3 and 5 are enforced by CI, so a half-finished page fails the pull
-request rather than reaching the site.
+CI catches only part of this, so don't read the list as self-checking. It
+counts English and French pages, so a missing French file fails the build, and
+it fails any built page that isn't in `sitemap.xml`. It does **not** check that
+`lang: fr` is present, that the nav links were added, or that `langMap` gained
+its entry — those three are yours to verify.
+
+None of the three errors when missing, which is what makes them worth checking
+by hand: without `lang: fr` the page renders in French with English navigation,
+and without its `langMap` entry the language toggle quietly sends visitors to
+the wrong page.
 
 ---
 
@@ -223,11 +231,16 @@ one step that makes a CSS or JS change actually reach visitors.
 right one into place. A committed `site/.htaccess` would override that and could
 apply staging's "hide from Google" rule to the live site.
 
-**Don't change the Bootstrap version without updating its `integrity` hash.**
-The stylesheet and script tags in `src/_partials/head.html` and `footer.html`
-carry a cryptographic fingerprint. Change the version number alone and the
-browser refuses to load the file — the site loses all styling. Both the version
-and the hash change together, or neither does.
+**Don't change the Bootstrap version without updating its `integrity` hash —
+in all four partials.** The stylesheet and script tags carry a cryptographic
+fingerprint, and each of `src/_partials/head.html`, `head-fr.html`,
+`footer.html` and `footer-fr.html` holds its own copy of both the pinned URL
+and the hash. Nothing in the build or CI keeps the four in step.
+
+Change a version number without its matching hash and the browser refuses the
+file outright — that page loses all styling. Update only the two English
+partials and every French page silently stays on the old version. The version
+and the hash move together, in all four files, or neither moves.
 
 **Don't rename `404.html` or move it into a folder.** Its filename is what
 keeps it out of the sitemap and page-parity checks.
